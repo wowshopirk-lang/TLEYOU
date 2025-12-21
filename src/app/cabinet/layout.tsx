@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
 // Icons
@@ -53,6 +54,37 @@ const navItems = [
 
 export default function CabinetLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    
+    try {
+      // Очищаем данные пользователя из localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        localStorage.removeItem('auth');
+        sessionStorage.clear();
+      }
+      
+      // Здесь можно добавить вызов API для выхода
+      // await fetch('/api/auth/logout', { method: 'POST' });
+      
+      // Небольшая задержка для плавности
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Перенаправляем на главную страницу
+      router.push('/');
+    } catch (error) {
+      console.error('Ошибка при выходе:', error);
+      // В случае ошибки всё равно перенаправляем
+      router.push('/');
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#0a0c0a] flex">
@@ -97,11 +129,15 @@ export default function CabinetLayout({ children }: { children: React.ReactNode 
 
         {/* Bottom section */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/[0.06]">
-          <button className="flex items-center gap-3 px-4 py-3 rounded-xl text-white/40 hover:text-white/60 transition-colors w-full">
+          <button 
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-white/40 hover:text-white/60 transition-colors w-full disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <div className="w-5 h-5">
               <LogoutIcon />
             </div>
-            <span className="text-sm">Выйти</span>
+            <span className="text-sm">{isLoggingOut ? 'Выход...' : 'Выйти'}</span>
           </button>
         </div>
       </aside>
@@ -127,6 +163,16 @@ export default function CabinetLayout({ children }: { children: React.ReactNode 
               </Link>
             );
           })}
+          <button
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="flex flex-col items-center gap-1 px-4 py-2 text-white/40 hover:text-white/60 transition-colors disabled:opacity-50"
+          >
+            <div className="w-6 h-6">
+              <LogoutIcon />
+            </div>
+            <span className="text-[10px]">{isLoggingOut ? 'Выход...' : 'Выйти'}</span>
+          </button>
         </div>
       </nav>
 
