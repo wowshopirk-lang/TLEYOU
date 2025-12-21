@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0d1a0d;
+  --foreground: #f5f5f5;
+  --color-moss: #4a6741;
+  --color-moss-light: #6b8f5c;
+  --color-charcoal: #1a1a1a;
+  --color-cream: #f5f0e8;
+  --color-stone: #6b6b6b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Hero Video Styles */
+.video-background {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+}
+
+.video-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.45) 0%,
+    rgba(0, 0, 0, 0.35) 30%,
+    rgba(0, 0, 0, 0.40) 60%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+  pointer-events: none;
+}
+
+/* Breathing animation */
+@keyframes breathe {
+  0%, 100% {
+    opacity: 0.95;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+}
+
+.animate-breathe {
+  animation: breathe 4s ease-in-out infinite;
+}
+
+/* Section Background Images */
+.section-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.section-bg-cta {
+  background-image: url('/images/backgrounds/barefoot-moss.jpg');
+  background-position: center top;
+}
+
+.section-bg-social {
+  background-image: url('/images/backgrounds/woman-silhouette.jpg');
+  background-position: center center;
+}
+
+.section-bg-solution {
+  background-image: url('/images/backgrounds/mossy-tree-up.jpg');
+  background-position: center bottom;
+}
+
+.section-bg-subscription {
+  background-image: url('/images/backgrounds/tree-cross-section.jpg');
+  background-position: center center;
+}
+
+/* Dark overlay for readability on dark backgrounds */
+.bg-overlay-dark {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 12, 10, 0.75) 0%,
+    rgba(10, 12, 10, 0.6) 30%,
+    rgba(10, 12, 10, 0.65) 70%,
+    rgba(10, 12, 10, 0.8) 100%
+  );
+  pointer-events: none;
+}
+
+/* Light overlay for readability on light backgrounds */
+.bg-overlay-light {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(245, 240, 232, 0.88) 0%,
+    rgba(245, 240, 232, 0.82) 50%,
+    rgba(245, 240, 232, 0.88) 100%
+  );
+  pointer-events: none;
+}
+
+/* Warm overlay for social proof section */
+.bg-overlay-warm {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(10, 12, 10, 0.85) 0%,
+    rgba(20, 18, 15, 0.7) 50%,
+    rgba(10, 12, 10, 0.85) 100%
+  );
+  pointer-events: none;
+}
+
+/* Green-tinted overlay for nature sections */
+.bg-overlay-nature {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(13, 26, 13, 0.8) 0%,
+    rgba(13, 26, 13, 0.65) 40%,
+    rgba(13, 26, 13, 0.7) 70%,
+    rgba(13, 26, 13, 0.85) 100%
+  );
+  pointer-events: none;
+}
+
+/* Dark premium overlay for subscription section */
+.bg-overlay-subscription {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 12, 10, 0.7) 0%,
+    rgba(15, 18, 14, 0.6) 30%,
+    rgba(12, 15, 12, 0.65) 60%,
+    rgba(10, 12, 10, 0.75) 100%
+  );
+  pointer-events: none;
+}
