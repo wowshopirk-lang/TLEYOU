@@ -85,7 +85,7 @@ function FAQItem({
       initial={{ opacity: 0, y: 15 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.06 }}
+      transition={{ duration: 0.4, delay: index * 0.04 }}
       className="group"
     >
       <button
@@ -93,15 +93,15 @@ function FAQItem({
         className="w-full text-left"
         aria-expanded={isOpen}
       >
-        <div className={`flex items-start justify-between gap-4 py-5 border-b transition-colors duration-300 ${
+        <div className={`flex items-start justify-between gap-3 py-3 border-b transition-colors duration-300 ${
           isOpen ? 'border-[#90a955]/40' : 'border-white/10 hover:border-white/20'
         }`}>
-          <span className={`text-base md:text-lg font-medium transition-colors duration-300 ${
+          <span className={`text-sm md:text-base font-medium transition-colors duration-300 ${
             isOpen ? 'text-[#90a955]' : 'text-white group-hover:text-[#90a955]'
           }`}>
             {question}
           </span>
-          <span className={`flex-shrink-0 w-6 h-6 mt-0.5 transition-all duration-300 ${
+          <span className={`flex-shrink-0 w-5 h-5 mt-0.5 transition-all duration-300 ${
             isOpen ? 'text-[#90a955]' : 'text-white/50 group-hover:text-[#90a955]'
           }`}>
             {isOpen ? <MinusIcon /> : <PlusIcon />}
@@ -118,7 +118,7 @@ function FAQItem({
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <p className="py-4 text-white/60 leading-relaxed text-sm md:text-base pr-10">
+            <p className="py-3 text-white/60 leading-relaxed text-xs md:text-sm pr-8">
               {answer}
             </p>
           </motion.div>
@@ -146,7 +146,7 @@ export default function BentoFAQ() {
   };
 
   return (
-    <section className="relative py-24 md:py-32 overflow-hidden">
+    <section className="relative py-12 md:py-16 overflow-hidden min-h-screen flex items-center">
       {/* Schema.org JSON-LD */}
       <script
         type="application/ld+json"
@@ -208,26 +208,26 @@ export default function BentoFAQ() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-12 md:mb-16"
+          className="text-center mb-8"
         >
           <motion.div 
-            className="w-12 h-px bg-gradient-to-r from-transparent via-[#90a955]/60 to-transparent mx-auto mb-6"
+            className="w-10 h-px bg-gradient-to-r from-transparent via-[#90a955]/60 to-transparent mx-auto mb-4"
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
           />
           
-          <span className="inline-block text-xs uppercase tracking-[0.4em] text-[#90a955] mb-4">
+          <span className="inline-block text-[10px] uppercase tracking-[0.4em] text-[#90a955] mb-3">
             Вопросы
           </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-light text-white">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-light text-white">
             Частые вопросы
           </h2>
         </motion.div>
 
         {/* FAQ List */}
-        <div className="mb-16">
+        <div className="mb-10">
           {faqs.map((faq, index) => (
             <FAQItem
               key={index}
@@ -248,16 +248,16 @@ export default function BentoFAQ() {
           transition={{ duration: 0.6 }}
           className="text-center"
         >
-          <p className="text-white/40 mb-6 text-sm md:text-base">
+          <p className="text-white/40 mb-4 text-xs md:text-sm">
             Остались вопросы? Напиши нам
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-3">
             <Link
               href="/product"
-              className="group inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#4a6741] text-white hover:bg-[#5a7a51] transition-colors duration-300"
+              className="group inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-[#4a6741] text-white hover:bg-[#5a7a51] transition-colors duration-300 text-xs md:text-sm"
             >
               <span>Заказать набор</span>
-              <div className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300">
+              <div className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-300">
                 <ArrowIcon />
               </div>
             </Link>
@@ -265,7 +265,7 @@ export default function BentoFAQ() {
               href="https://t.me/tleyou"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-white/20 text-white/70 hover:bg-white/5 hover:text-white hover:border-white/30 transition-all duration-300"
+              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full border border-white/20 text-white/70 hover:bg-white/5 hover:text-white hover:border-white/30 transition-all duration-300 text-xs md:text-sm"
             >
               Telegram
             </a>
