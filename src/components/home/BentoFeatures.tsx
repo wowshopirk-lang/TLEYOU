@@ -14,7 +14,7 @@ const CircularDiagram = () => {
   ];
 
   return (
-    <div className="relative w-72 h-72 md:w-96 md:h-96 mx-auto">
+    <div className="relative w-56 h-56 md:w-72 md:h-72 mx-auto">
       {/* Main circle */}
       <svg viewBox="0 0 400 400" className="w-full h-full">
         {/* Outer circle */}
@@ -46,24 +46,24 @@ const CircularDiagram = () => {
       
       {/* Labels */}
       {/* Top */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-10 md:-translate-y-12 text-center px-2">
-        <span className="block text-sm md:text-base uppercase tracking-widest text-white/60 mb-0.5">{items[0].label}</span>
-        <span className="block text-xs md:text-sm uppercase tracking-wide text-white/40">{items[0].sublabel}</span>
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-8 md:-translate-y-10 text-center px-2">
+        <span className="block text-xs md:text-sm uppercase tracking-widest text-white/60 mb-0.5">{items[0].label}</span>
+        <span className="block text-[10px] md:text-xs uppercase tracking-wide text-white/40">{items[0].sublabel}</span>
       </div>
       {/* Bottom */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-10 md:translate-y-12 text-center px-2">
-        <span className="block text-sm md:text-base uppercase tracking-widest text-white/60 mb-0.5">{items[3].label}</span>
-        <span className="block text-xs md:text-sm uppercase tracking-wide text-white/40">{items[3].sublabel}</span>
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-8 md:translate-y-10 text-center px-2">
+        <span className="block text-xs md:text-sm uppercase tracking-widest text-white/60 mb-0.5">{items[3].label}</span>
+        <span className="block text-[10px] md:text-xs uppercase tracking-wide text-white/40">{items[3].sublabel}</span>
       </div>
       {/* Left */}
-      <div className="absolute top-1/2 left-0 -translate-x-full -translate-y-1/2 text-right pr-5 md:pr-6 max-w-[120px]">
-        <span className="block text-sm md:text-base uppercase tracking-widest text-white/60 mb-0.5">{items[1].label}</span>
-        <span className="block text-xs md:text-sm uppercase tracking-wide text-white/40">{items[1].sublabel}</span>
+      <div className="absolute top-1/2 left-0 -translate-x-full -translate-y-1/2 text-right pr-3 md:pr-4 max-w-[100px]">
+        <span className="block text-xs md:text-sm uppercase tracking-widest text-white/60 mb-0.5">{items[1].label}</span>
+        <span className="block text-[10px] md:text-xs uppercase tracking-wide text-white/40">{items[1].sublabel}</span>
       </div>
       {/* Right */}
-      <div className="absolute top-1/2 right-0 translate-x-full -translate-y-1/2 text-left pl-5 md:pl-6 max-w-[120px]">
-        <span className="block text-sm md:text-base uppercase tracking-widest text-white/60 mb-0.5">{items[2].label}</span>
-        <span className="block text-xs md:text-sm uppercase tracking-wide text-white/40">{items[2].sublabel}</span>
+      <div className="absolute top-1/2 right-0 translate-x-full -translate-y-1/2 text-left pl-3 md:pl-4 max-w-[100px]">
+        <span className="block text-xs md:text-sm uppercase tracking-widest text-white/60 mb-0.5">{items[2].label}</span>
+        <span className="block text-[10px] md:text-xs uppercase tracking-wide text-white/40">{items[2].sublabel}</span>
       </div>
       
       {/* Center icon */}
@@ -108,7 +108,7 @@ const ProductBubbles = () => {
       {items.map((item, index) => (
         <motion.div
           key={index}
-          className="relative z-10 my-2"
+          className="relative z-10 my-1.5"
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
@@ -116,12 +116,12 @@ const ProductBubbles = () => {
         >
           {/* Bubble */}
           <div className="relative group cursor-pointer">
-            <svg width="220" height="130" viewBox="0 0 220 130" className="transition-transform duration-300 group-hover:scale-105">
+            <svg width="200" height="110" viewBox="0 0 200 110" className="transition-transform duration-300 group-hover:scale-105">
               {/* Pill shape */}
               <rect 
                 x="5" y="5" 
-                width="210" height="120" 
-                rx="60" 
+                width="190" height="100" 
+                rx="50" 
                 stroke="rgba(255,255,255,0.15)" 
                 strokeWidth="1" 
                 fill={item.filled ? item.fillColor : "rgba(255,255,255,0.02)"}
@@ -130,11 +130,11 @@ const ProductBubbles = () => {
             </svg>
             
             {/* Content */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 py-4">
-              <span className={`text-xs md:text-sm uppercase tracking-[0.12em] mb-1.5 leading-tight transition-colors duration-300 max-w-[85%] ${item.filled ? 'text-white/90' : 'text-white/60 group-hover:text-white/80'}`}>
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-5 py-3">
+              <span className={`text-[11px] md:text-xs uppercase tracking-[0.12em] mb-1 leading-tight transition-colors duration-300 max-w-[85%] ${item.filled ? 'text-white/90' : 'text-white/60 group-hover:text-white/80'}`}>
                 {item.title}
               </span>
-              <span className="text-[11px] md:text-xs text-white/40">{item.description}</span>
+              <span className="text-[10px] md:text-[11px] text-white/40">{item.description}</span>
             </div>
           </div>
           
@@ -209,7 +209,7 @@ export default function BentoFeatures() {
     <section 
       ref={sectionRef}
       id="features"
-      className="relative py-24 md:py-32 overflow-hidden"
+      className="relative py-12 md:py-16 overflow-hidden min-h-screen flex items-center"
     >
       {/* Background Image - Woman silhouette */}
       <div className="section-bg section-bg-social" />
@@ -249,28 +249,28 @@ export default function BentoFeatures() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          className="text-center mb-8"
         >
           {/* Down arrow */}
           <motion.div 
-            className="flex justify-center mb-6"
+            className="flex justify-center mb-3"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <svg width="20" height="28" viewBox="0 0 20 28" fill="none">
-              <path d="M10 0 L10 24 M4 18 L10 24 L16 18" stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+            <svg width="20" height="24" viewBox="0 0 20 24" fill="none">
+              <path d="M10 0 L10 20 M4 14 L10 20 L16 14" stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </motion.div>
           
-          <span className="inline-block text-xs uppercase tracking-[0.4em] text-[#8fb583]/60 mb-4">
+          <span className="inline-block text-[10px] uppercase tracking-[0.4em] text-[#8fb583]/60 mb-3">
             Что внутри
           </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-light text-white/90 mb-4">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-light text-white/90 mb-3">
             Набор TLEYOU
           </h2>
-          <p className="text-base md:text-lg text-white/50 max-w-xl mx-auto leading-relaxed mb-6">
+          <p className="text-sm md:text-base text-white/50 max-w-xl mx-auto leading-relaxed mb-4">
             Всё необходимое для ежедневного ритуала
           </p>
           
@@ -283,7 +283,7 @@ export default function BentoFeatures() {
         </motion.div>
 
         {/* Main content grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-12">
           {/* Left - Product bubbles */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -302,11 +302,11 @@ export default function BentoFeatures() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative"
           >
-            <div className="text-center mb-6">
-              <span className="text-xs md:text-sm uppercase tracking-[0.3em] text-white/40">Баланс жизни</span>
+            <div className="text-center mb-4">
+              <span className="text-[10px] md:text-xs uppercase tracking-[0.3em] text-white/40">Баланс жизни</span>
             </div>
             <CircularDiagram />
-            <p className="text-center mt-6 text-xs text-white/40 italic">
+            <p className="text-center mt-4 text-[10px] md:text-xs text-white/40 italic">
               Ритуал как точка равновесия в ежедневном хаосе
             </p>
           </motion.div>
@@ -320,60 +320,60 @@ export default function BentoFeatures() {
           transition={{ duration: 0.8 }}
           className="relative"
         >
-          <div className="relative bg-white/[0.02] border border-white/[0.06] rounded-2xl p-8 md:p-10">
+          <div className="relative bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 md:p-8">
             {/* Corner decorations */}
-            <div className="absolute top-0 left-0 w-8 h-8">
-              <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
-                <path d="M0 10 L0 0 L10 0" stroke="rgba(143,181,131,0.2)" strokeWidth="1" fill="none" />
+            <div className="absolute top-0 left-0 w-6 h-6">
+              <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+                <path d="M0 8 L0 0 L8 0" stroke="rgba(143,181,131,0.2)" strokeWidth="1" fill="none" />
               </svg>
             </div>
-            <div className="absolute top-0 right-0 w-8 h-8">
-              <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
-                <path d="M22 0 L32 0 L32 10" stroke="rgba(143,181,131,0.2)" strokeWidth="1" fill="none" />
+            <div className="absolute top-0 right-0 w-6 h-6">
+              <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+                <path d="M16 0 L24 0 L24 8" stroke="rgba(143,181,131,0.2)" strokeWidth="1" fill="none" />
               </svg>
             </div>
-            <div className="absolute bottom-0 left-0 w-8 h-8">
-              <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
-                <path d="M0 22 L0 32 L10 32" stroke="rgba(143,181,131,0.2)" strokeWidth="1" fill="none" />
+            <div className="absolute bottom-0 left-0 w-6 h-6">
+              <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+                <path d="M0 16 L0 24 L8 24" stroke="rgba(143,181,131,0.2)" strokeWidth="1" fill="none" />
               </svg>
             </div>
-            <div className="absolute bottom-0 right-0 w-8 h-8">
-              <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
-                <path d="M22 32 L32 32 L32 22" stroke="rgba(143,181,131,0.2)" strokeWidth="1" fill="none" />
+            <div className="absolute bottom-0 right-0 w-6 h-6">
+              <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+                <path d="M16 24 L24 24 L24 16" stroke="rgba(143,181,131,0.2)" strokeWidth="1" fill="none" />
               </svg>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
               {/* Price */}
-              <div className="flex flex-col items-center justify-center text-center lg:border-r border-white/[0.06] lg:pr-10">
-                <span className="text-xs md:text-sm uppercase tracking-[0.3em] text-white/40 mb-3">Цена набора</span>
-                <div className="mb-4">
-                  <span className="text-sm text-white/40 line-through mr-2">4 990 ₽</span>
-                  <span className="text-4xl md:text-5xl font-heading font-light text-white">4 490 ₽</span>
+              <div className="flex flex-col items-center justify-center text-center lg:border-r border-white/[0.06] lg:pr-6">
+                <span className="text-[10px] md:text-xs uppercase tracking-[0.3em] text-white/40 mb-2">Цена набора</span>
+                <div className="mb-3">
+                  <span className="text-xs text-white/40 line-through mr-2">4 990 ₽</span>
+                  <span className="text-3xl md:text-4xl font-heading font-light text-white">4 490 ₽</span>
                 </div>
-                <span className="text-xs text-[#8fb583]/70 mb-6">при заказе через сайт</span>
+                <span className="text-[10px] text-[#8fb583]/70 mb-4">при заказе через сайт</span>
                 
                 <Link
                   href="/product"
-                  className="group inline-flex items-center gap-2 px-6 py-3 bg-[#4a6741]/40 hover:bg-[#4a6741]/60 border border-[#8fb583]/30 hover:border-[#8fb583]/50 rounded-full text-white text-sm transition-all duration-300"
+                  className="group inline-flex items-center gap-2 px-5 py-2.5 bg-[#4a6741]/40 hover:bg-[#4a6741]/60 border border-[#8fb583]/30 hover:border-[#8fb583]/50 rounded-full text-white text-xs md:text-sm transition-all duration-300"
                 >
                   <span>Заказать</span>
-                  <div className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300">
+                  <div className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-300">
                     <ArrowIcon />
                   </div>
                 </Link>
               </div>
 
               {/* Comparison */}
-              <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Without */}
                 <div>
-                  <p className="text-xs md:text-sm uppercase tracking-[0.25em] text-white/30 mb-4 text-center flex items-center justify-center gap-2">
+                  <p className="text-[10px] md:text-xs uppercase tracking-[0.25em] text-white/30 mb-3 text-center flex items-center justify-center gap-2">
                     <span className="w-4 h-px bg-white/10" />
                     Без ритуала
                     <span className="w-4 h-px bg-white/10" />
                   </p>
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {comparisonData.without.map((item, index) => (
                       <motion.div
                         key={index}
@@ -381,15 +381,15 @@ export default function BentoFeatures() {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.4, delay: index * 0.1 }}
-                        className="flex items-center gap-3"
+                        className="flex items-center gap-2"
                       >
-                        <div className="w-4 h-4 flex-shrink-0">
+                        <div className="w-3.5 h-3.5 flex-shrink-0">
                           <svg viewBox="0 0 16 16" fill="none" className="w-full h-full text-red-400/50">
                             <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1" />
                             <path d="M5 5 L11 11 M11 5 L5 11" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
                           </svg>
                         </div>
-                        <span className="text-sm text-white/40 line-through">{item}</span>
+                        <span className="text-xs text-white/40 line-through">{item}</span>
                       </motion.div>
                     ))}
                   </div>
@@ -397,12 +397,12 @@ export default function BentoFeatures() {
 
                 {/* With */}
                 <div>
-                  <p className="text-xs md:text-sm uppercase tracking-[0.25em] text-[#8fb583]/70 mb-4 text-center flex items-center justify-center gap-2">
+                  <p className="text-[10px] md:text-xs uppercase tracking-[0.25em] text-[#8fb583]/70 mb-3 text-center flex items-center justify-center gap-2">
                     <span className="w-4 h-px bg-[#8fb583]/20" />
                     С TLEYOU
                     <span className="w-4 h-px bg-[#8fb583]/20" />
                   </p>
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {comparisonData.with.map((item, index) => (
                       <motion.div
                         key={index}
@@ -410,15 +410,15 @@ export default function BentoFeatures() {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.4, delay: index * 0.1 }}
-                        className="flex items-center gap-3"
+                        className="flex items-center gap-2"
                       >
-                        <div className="w-4 h-4 flex-shrink-0">
+                        <div className="w-3.5 h-3.5 flex-shrink-0">
                           <svg viewBox="0 0 16 16" fill="none" className="w-full h-full text-[#8fb583]">
                             <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1" />
                             <path d="M5 8 L7 10 L11 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                           </svg>
                         </div>
-                        <span className="text-sm text-white/70">{item}</span>
+                        <span className="text-xs text-white/70">{item}</span>
                       </motion.div>
                     ))}
                   </div>
@@ -434,22 +434,22 @@ export default function BentoFeatures() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="mt-12 text-center"
+          className="mt-8 text-center"
         >
-          <div className="flex items-center justify-center gap-3 mb-4">
+          <div className="flex items-center justify-center gap-3 mb-3">
             <div className="w-1 h-1 rounded-full bg-white/20" />
-            <svg width="30" height="2"><line x1="0" y1="1" x2="30" y2="1" stroke="rgba(255,255,255,0.15)" strokeWidth="1" /></svg>
-            <span className="text-xs md:text-sm uppercase tracking-[0.2em] text-white/40">Попробуй бесплатно</span>
-            <svg width="30" height="2"><line x1="0" y1="1" x2="30" y2="1" stroke="rgba(255,255,255,0.15)" strokeWidth="1" /></svg>
+            <svg width="24" height="2"><line x1="0" y1="1" x2="24" y2="1" stroke="rgba(255,255,255,0.15)" strokeWidth="1" /></svg>
+            <span className="text-[10px] md:text-xs uppercase tracking-[0.2em] text-white/40">Попробуй бесплатно</span>
+            <svg width="24" height="2"><line x1="0" y1="1" x2="24" y2="1" stroke="rgba(255,255,255,0.15)" strokeWidth="1" /></svg>
             <div className="w-1 h-1 rounded-full bg-white/20" />
           </div>
           
           <Link
             href="/card-of-day"
-            className="inline-flex items-center gap-2 px-6 py-3 text-sm text-white/50 hover:text-white/80 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300"
+            className="inline-flex items-center gap-2 px-5 py-2.5 text-xs md:text-sm text-white/50 hover:text-white/80 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300"
           >
             Получить карточку дня
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
           </Link>
