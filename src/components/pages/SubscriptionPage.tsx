@@ -154,7 +154,12 @@ export default function SubscriptionPage() {
       </section>
 
       {/* Pricing */}
-      <section className="relative py-16 md:py-24 overflow-hidden">
+      <section className="relative py-16 md:py-24 overflow-visible">
+        {/* Background */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0f120e]/30 to-transparent" />
+        </div>
+        
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {plans.map((plan, index) => {
@@ -164,7 +169,7 @@ export default function SubscriptionPage() {
                   key={plan.name}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
+                  viewport={{ once: true, margin: "-50px" }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   className={`relative rounded-2xl p-6 md:p-8 transition-all duration-500 ${
                     plan.popular
