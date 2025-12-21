@@ -40,16 +40,16 @@ const ConnectedCirclesFlow = () => {
   ];
 
   return (
-    <div className="relative flex flex-col items-center py-10">
+    <div className="relative flex flex-col items-center py-4">
       {/* Vertical connecting line */}
-      <svg className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-full" viewBox="0 0 4 700" preserveAspectRatio="none">
-        <line x1="2" y1="100" x2="2" y2="600" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+      <svg className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-full" viewBox="0 0 4 500" preserveAspectRatio="none">
+        <line x1="2" y1="60" x2="2" y2="440" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
       </svg>
       
       {steps.map((step, index) => (
         <motion.div
           key={index}
-          className="relative flex items-center justify-center my-5 md:my-6"
+          className="relative flex items-center justify-center my-2 md:my-3"
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
@@ -57,25 +57,25 @@ const ConnectedCirclesFlow = () => {
         >
           {/* Left annotation */}
           {step.annotation && step.annotationSide === "left" && (
-            <div className="absolute right-full mr-4 flex items-center gap-2">
-              <span className="text-xs md:text-sm text-white/40 italic tracking-wide whitespace-nowrap">
+            <div className="absolute right-full mr-3 flex items-center gap-2">
+              <span className="text-[10px] md:text-xs text-white/40 italic tracking-wide whitespace-nowrap">
                 {step.annotation}
               </span>
-              <svg width="20" height="2" viewBox="0 0 20 2">
-                <line x1="0" y1="1" x2="20" y2="1" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+              <svg width="16" height="2" viewBox="0 0 16 2">
+                <line x1="0" y1="1" x2="16" y2="1" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
               </svg>
-              <div className="w-1.5 h-1.5 rounded-full bg-white/30" />
+              <div className="w-1 h-1 rounded-full bg-white/30" />
             </div>
           )}
           
           {/* Circle */}
           <div className="relative">
             {/* Outer ring */}
-            <svg width="180" height="180" viewBox="0 0 180 180" className="w-40 h-40 md:w-44 md:h-44 lg:w-48 lg:h-48">
+            <svg width="140" height="140" viewBox="0 0 140 140" className="w-28 h-28 md:w-32 md:h-32 lg:w-36 lg:h-36">
               <circle 
-                cx="90" 
-                cy="90" 
-                r="85" 
+                cx="70" 
+                cy="70" 
+                r="65" 
                 stroke="rgba(255,255,255,0.2)" 
                 strokeWidth="1" 
                 fill={step.filled ? step.fillColor : "none"}
@@ -83,9 +83,9 @@ const ConnectedCirclesFlow = () => {
               {/* Inner decorative circle */}
               {!step.filled && (
                 <circle 
-                  cx="90" 
-                  cy="90" 
-                  r="68" 
+                  cx="70" 
+                  cy="70" 
+                  r="52" 
                   stroke="rgba(255,255,255,0.08)" 
                   strokeWidth="0.5" 
                   strokeDasharray="3 5"
@@ -95,11 +95,11 @@ const ConnectedCirclesFlow = () => {
             </svg>
             
             {/* Text inside circle */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center px-4 py-5 md:px-5 md:py-6 text-center">
-              <span className="text-[10px] md:text-xs uppercase tracking-[0.15em] text-white/40 mb-2">
+            <div className="absolute inset-0 flex flex-col items-center justify-center px-3 py-4 md:px-4 md:py-5 text-center">
+              <span className="text-[9px] md:text-[10px] uppercase tracking-[0.15em] text-white/40 mb-1.5">
                 {step.label}
               </span>
-              <span className={`text-xs md:text-sm leading-snug font-light max-w-[90%] ${step.filled ? 'text-white/90' : 'text-white/60'}`}>
+              <span className={`text-[11px] md:text-xs leading-snug font-light max-w-[90%] ${step.filled ? 'text-white/90' : 'text-white/60'}`}>
                 {step.text}
               </span>
             </div>
@@ -107,12 +107,12 @@ const ConnectedCirclesFlow = () => {
           
           {/* Right annotation */}
           {step.annotation && step.annotationSide === "right" && (
-            <div className="absolute left-full ml-4 flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-white/30" />
-              <svg width="20" height="2" viewBox="0 0 20 2">
-                <line x1="0" y1="1" x2="20" y2="1" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+            <div className="absolute left-full ml-3 flex items-center gap-2">
+              <div className="w-1 h-1 rounded-full bg-white/30" />
+              <svg width="16" height="2" viewBox="0 0 16 2">
+                <line x1="0" y1="1" x2="16" y2="1" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
               </svg>
-              <span className="text-xs md:text-sm text-white/40 italic tracking-wide whitespace-nowrap">
+              <span className="text-[10px] md:text-xs text-white/40 italic tracking-wide whitespace-nowrap">
                 {step.annotation}
               </span>
             </div>
@@ -120,7 +120,7 @@ const ConnectedCirclesFlow = () => {
           
           {/* Connection dot below (except last) */}
           {index < steps.length - 1 && (
-            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-white/20" />
+            <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-white/20" />
           )}
         </motion.div>
       ))}
@@ -155,7 +155,7 @@ export default function BentoProblemSolution() {
     <section
       ref={sectionRef}
       id="problem"
-      className="relative py-24 md:py-32 overflow-hidden"
+      className="relative py-12 md:py-16 overflow-hidden min-h-screen flex items-center"
     >
       {/* Background Image - Mossy tree looking up */}
       <div className="section-bg section-bg-solution" />
@@ -218,38 +218,38 @@ export default function BentoProblemSolution() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-12"
+          className="text-center mb-6"
         >
           {/* Decorative arrow down */}
           <motion.div 
-            className="flex justify-center mb-6"
+            className="flex justify-center mb-3"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <svg width="24" height="32" viewBox="0 0 24 32" fill="none">
-              <path d="M12 0 L12 28 M6 22 L12 28 L18 22" stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+            <svg width="20" height="24" viewBox="0 0 20 24" fill="none">
+              <path d="M10 0 L10 20 M5 15 L10 20 L15 15" stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </motion.div>
           
           {/* Pill tags */}
-          <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-4">
             <PillTag active>ОСОЗНАННОСТЬ</PillTag>
             <PillTag>ТИШИНА</PillTag>
             <PillTag>РЕФЛЕКСИЯ</PillTag>
           </div>
           
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-light text-white/90 mb-3 uppercase tracking-wide">
+          <h2 className="text-xl md:text-2xl lg:text-3xl font-heading font-light text-white/90 mb-2 uppercase tracking-wide">
             Путь к себе
           </h2>
-          <p className="text-sm md:text-base text-white/50 max-w-md mx-auto leading-relaxed">
+          <p className="text-xs md:text-sm text-white/50 max-w-md mx-auto leading-relaxed">
             От хаоса к ясности через простой ежедневный ритуал
           </p>
         </motion.div>
 
         {/* Main content - Two columns */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
           {/* Left - Connected Circles Flow */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -270,90 +270,90 @@ export default function BentoProblemSolution() {
             className="relative"
           >
             {/* Solution frame */}
-            <div className="relative border border-white/[0.08] rounded-2xl p-8 md:p-10 bg-white/[0.02]">
+            <div className="relative border border-white/[0.08] rounded-2xl p-6 md:p-7 bg-white/[0.02]">
               {/* Corner decorations */}
-              <div className="absolute top-0 left-0 w-6 h-6">
+              <div className="absolute top-0 left-0 w-5 h-5">
                 <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
                   <path d="M0 8 L0 0 L8 0" stroke="rgba(143,181,131,0.3)" strokeWidth="1" fill="none" />
                 </svg>
               </div>
-              <div className="absolute top-0 right-0 w-6 h-6">
+              <div className="absolute top-0 right-0 w-5 h-5">
                 <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
                   <path d="M16 0 L24 0 L24 8" stroke="rgba(143,181,131,0.3)" strokeWidth="1" fill="none" />
                 </svg>
               </div>
-              <div className="absolute bottom-0 left-0 w-6 h-6">
+              <div className="absolute bottom-0 left-0 w-5 h-5">
                 <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
                   <path d="M0 16 L0 24 L8 24" stroke="rgba(143,181,131,0.3)" strokeWidth="1" fill="none" />
                 </svg>
               </div>
-              <div className="absolute bottom-0 right-0 w-6 h-6">
+              <div className="absolute bottom-0 right-0 w-5 h-5">
                 <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
                   <path d="M16 24 L24 24 L24 16" stroke="rgba(143,181,131,0.3)" strokeWidth="1" fill="none" />
                 </svg>
               </div>
 
               {/* Label */}
-              <span className="inline-block text-xs md:text-sm uppercase tracking-[0.3em] text-[#8fb583]/70 mb-6">
+              <span className="inline-block text-[10px] md:text-xs uppercase tracking-[0.3em] text-[#8fb583]/70 mb-3">
                 Решение
               </span>
               
               {/* Logo */}
-              <div className="flex justify-start mb-6">
+              <div className="flex justify-start mb-3">
                 <img
                   src="/images/logo/tleyou-logo-white.svg"
                   alt="TLEYOU"
-                  className="h-10 md:h-12 w-auto"
+                  className="h-8 md:h-9 w-auto"
                 />
               </div>
               
               {/* Description */}
-              <p className="text-base md:text-lg text-white/70 mb-4 leading-relaxed font-heading font-light">
+              <p className="text-sm md:text-base text-white/70 mb-2 leading-relaxed font-heading font-light">
                 Твой ежедневный ритуал тишины
               </p>
               
-              <p className="text-sm text-white/40 mb-8 leading-relaxed">
+              <p className="text-xs text-white/40 mb-5 leading-relaxed">
                 10 минут для себя каждый день.
                 <span className="block mt-1 text-white/30">Травяная скрутка · Карточка с вопросом · Ты</span>
               </p>
 
               {/* Stats row */}
-              <div className="flex items-center gap-6 mb-8 pb-8 border-b border-white/[0.06]">
+              <div className="flex items-center gap-4 mb-5 pb-5 border-b border-white/[0.06]">
                 <div className="text-center">
-                  <span className="block text-2xl md:text-3xl font-heading font-light text-white/90">10</span>
-                  <span className="text-xs uppercase tracking-widest text-white/40">минут</span>
+                  <span className="block text-xl md:text-2xl font-heading font-light text-white/90">10</span>
+                  <span className="text-[10px] uppercase tracking-widest text-white/40">минут</span>
                 </div>
-                <div className="w-px h-10 bg-white/[0.1]" />
+                <div className="w-px h-8 bg-white/[0.1]" />
                 <div className="text-center">
-                  <span className="block text-2xl md:text-3xl font-heading font-light text-white/90">30</span>
-                  <span className="text-xs uppercase tracking-widest text-white/40">карточек</span>
+                  <span className="block text-xl md:text-2xl font-heading font-light text-white/90">30</span>
+                  <span className="text-[10px] uppercase tracking-widest text-white/40">карточек</span>
                 </div>
-                <div className="w-px h-10 bg-white/[0.1]" />
+                <div className="w-px h-8 bg-white/[0.1]" />
                 <div className="text-center">
-                  <span className="block text-2xl md:text-3xl font-heading font-light text-white/90">∞</span>
-                  <span className="text-xs uppercase tracking-widest text-white/40">спокойствие</span>
+                  <span className="block text-xl md:text-2xl font-heading font-light text-white/90">∞</span>
+                  <span className="text-[10px] uppercase tracking-widest text-white/40">спокойствие</span>
                 </div>
               </div>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row items-start gap-4">
+              <div className="flex flex-col sm:flex-row items-start gap-3">
                 <Link
                   href="/product"
-                  className="group relative inline-flex items-center gap-3 px-6 py-3 bg-[#4a6741]/30 hover:bg-[#4a6741]/50 border border-[#4a6741]/40 hover:border-[#4a6741]/60 rounded-full text-white transition-all duration-300"
+                  className="group relative inline-flex items-center gap-2 px-5 py-2.5 bg-[#4a6741]/30 hover:bg-[#4a6741]/50 border border-[#4a6741]/40 hover:border-[#4a6741]/60 rounded-full text-white transition-all duration-300"
                 >
                   <div className="absolute inset-0 rounded-full bg-[#4a6741]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <span className="relative z-10 text-sm tracking-wide">Узнать о наборе</span>
-                  <svg className="relative z-10 w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                  <span className="relative z-10 text-xs md:text-sm tracking-wide">Узнать о наборе</span>
+                  <svg className="relative z-10 w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
                 </Link>
                 
                 <Link
                   href="#features"
-                  className="inline-flex items-center gap-2 px-5 py-3 text-sm text-white/50 hover:text-white/80 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 text-xs md:text-sm text-white/50 hover:text-white/80 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300"
                 >
                   Что внутри
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
                 </Link>
@@ -368,19 +368,19 @@ export default function BentoProblemSolution() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="mt-16 flex items-center justify-center gap-4"
+          className="mt-6 flex items-center justify-center gap-3"
         >
-          <div className="w-1.5 h-1.5 rounded-full bg-[#8fb583]/40" />
-          <svg width="40" height="2" viewBox="0 0 40 2">
-            <line x1="0" y1="1" x2="40" y2="1" stroke="rgba(143,181,131,0.3)" strokeWidth="1" />
+          <div className="w-1 h-1 rounded-full bg-[#8fb583]/40" />
+          <svg width="30" height="2" viewBox="0 0 30 2">
+            <line x1="0" y1="1" x2="30" y2="1" stroke="rgba(143,181,131,0.3)" strokeWidth="1" />
           </svg>
-          <p className="text-sm text-white/40 italic">
+          <p className="text-xs md:text-sm text-white/40 italic">
             Каждый день ты отдаёшь себя другим. А на себя не остаётся ни времени, ни сил.
           </p>
-          <svg width="40" height="2" viewBox="0 0 40 2">
-            <line x1="0" y1="1" x2="40" y2="1" stroke="rgba(143,181,131,0.3)" strokeWidth="1" />
+          <svg width="30" height="2" viewBox="0 0 30 2">
+            <line x1="0" y1="1" x2="30" y2="1" stroke="rgba(143,181,131,0.3)" strokeWidth="1" />
           </svg>
-          <div className="w-1.5 h-1.5 rounded-full bg-[#8fb583]/40" />
+          <div className="w-1 h-1 rounded-full bg-[#8fb583]/40" />
         </motion.div>
       </motion.div>
     </section>
