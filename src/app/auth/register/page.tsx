@@ -12,7 +12,7 @@ export default function Register() {
   return (
     <>
       <Header />
-      <main className="pt-20">
+      <main className="pt-20 lg:pt-24">
         <RegisterPage />
       </main>
       <Footer />

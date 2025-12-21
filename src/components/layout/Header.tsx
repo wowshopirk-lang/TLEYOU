@@ -2,15 +2,18 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Search, X, ChevronDown, User } from "lucide-react";
 import Container from "@/components/ui/Container";
 import Logo from "@/components/ui/Logo";
 
 export default function Header() {
+  const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [hasScrolled, setHasScrolled] = useState(false);
+  // На страницах без Hero показываем фон сразу
+  const [hasScrolled, setHasScrolled] = useState(pathname !== '/');
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
 
@@ -34,17 +37,29 @@ export default function Header() {
 
   // Track scroll to show/hide header background
   useEffect(() => {
+    // Устанавливаем начальное состояние в зависимости от страницы
+    const isHomePage = pathname === '/';
+    if (!isHomePage) {
+      setHasScrolled(true); // На страницах без Hero показываем фон сразу
+    }
+
     const handleScroll = () => {
-      const heroHeight = window.innerHeight;
       const scrollPosition = window.scrollY;
-      setHasScrolled(scrollPosition > heroHeight * 0.8);
+      // На главной странице показываем фон после 80% высоты экрана
+      if (isHomePage) {
+        const heroHeight = window.innerHeight;
+        setHasScrolled(scrollPosition > heroHeight * 0.8);
+      } else {
+        // На других страницах фон всегда виден
+        setHasScrolled(true);
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
     handleScroll();
     
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [pathname]);
 
   const navLinks = [
     { href: "/", label: "Главная" },

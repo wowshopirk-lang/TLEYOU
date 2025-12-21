@@ -13,7 +13,7 @@ export default function CardOfDay() {
   return (
     <>
       <Header />
-      <div className="pt-20">
+      <div className="pt-20 lg:pt-24">
         <CardOfDayPage />
       </div>
       <Footer />

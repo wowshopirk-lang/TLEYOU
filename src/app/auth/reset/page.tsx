@@ -12,7 +12,7 @@ export default function Reset() {
   return (
     <>
       <Header />
-      <main className="pt-20">
+      <main className="pt-20 lg:pt-24">
         <ResetPage />
       </main>
       <Footer />

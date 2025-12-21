@@ -13,7 +13,7 @@ export default function Contacts() {
   return (
     <>
       <Header />
-      <div className="pt-20">
+      <div className="pt-20 lg:pt-24">
         <ContactsPage />
       </div>
       <Footer />
