@@ -245,7 +245,7 @@ export default function BentoFeatures() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="flex justify-center"
+            className="flex justify-center lg:justify-start"
           >
             <ProductBubbles />
           </motion.div>
@@ -256,45 +256,47 @@ export default function BentoFeatures() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative"
+            className="flex justify-center lg:justify-end"
           >
-            {/* Grid layout for diagram with labels */}
-            <div className="grid grid-rows-[auto_1fr_auto] gap-3">
-              {/* Top label */}
-              <div className="text-center">
-                <span className="block text-[10px] md:text-xs uppercase tracking-widest text-white/60 leading-tight">ДИВЕРСИФИКАЦИЯ</span>
-                <span className="block text-[9px] md:text-[10px] uppercase tracking-wide text-white/40">ЭНЕРГИИ</span>
-              </div>
-              
-              {/* Middle row: left label + diagram + right label */}
-              <div className="flex items-center justify-center gap-4 md:gap-5">
-                {/* Left label */}
-                <div className="text-right w-[70px] md:w-[85px]">
-                  <span className="block text-[10px] md:text-xs uppercase tracking-widest text-white/60 leading-tight">СТАБИЛЬНЫЙ</span>
-                  <span className="block text-[9px] md:text-[10px] uppercase tracking-wide text-white/40">РИТУАЛ</span>
+            <div>
+              {/* Grid layout for diagram with labels */}
+              <div className="grid grid-rows-[auto_1fr_auto] gap-3">
+                {/* Top label */}
+                <div className="text-center">
+                  <span className="block text-[10px] md:text-xs uppercase tracking-widest text-white/60 leading-tight">ДИВЕРСИФИКАЦИЯ</span>
+                  <span className="block text-[9px] md:text-[10px] uppercase tracking-wide text-white/40">ЭНЕРГИИ</span>
                 </div>
                 
-                {/* Diagram */}
-                <CircularDiagram />
+                {/* Middle row: left label + diagram + right label */}
+                <div className="flex items-center justify-center gap-4 md:gap-5">
+                  {/* Left label */}
+                  <div className="text-right w-[70px] md:w-[85px]">
+                    <span className="block text-[10px] md:text-xs uppercase tracking-widest text-white/60 leading-tight">СТАБИЛЬНЫЙ</span>
+                    <span className="block text-[9px] md:text-[10px] uppercase tracking-wide text-white/40">РИТУАЛ</span>
+                  </div>
+                  
+                  {/* Diagram */}
+                  <CircularDiagram />
+                  
+                  {/* Right label */}
+                  <div className="text-left w-[70px] md:w-[85px]">
+                    <span className="block text-[10px] md:text-xs uppercase tracking-widest text-white/60 leading-tight">ЗДОРОВОЕ</span>
+                    <span className="block text-[9px] md:text-[10px] uppercase tracking-wide text-white/40">МЫШЛЕНИЕ</span>
+                  </div>
+                </div>
                 
-                {/* Right label */}
-                <div className="text-left w-[70px] md:w-[85px]">
-                  <span className="block text-[10px] md:text-xs uppercase tracking-widest text-white/60 leading-tight">ЗДОРОВОЕ</span>
-                  <span className="block text-[9px] md:text-[10px] uppercase tracking-wide text-white/40">МЫШЛЕНИЕ</span>
+                {/* Bottom label */}
+                <div className="text-center">
+                  <span className="block text-[10px] md:text-xs uppercase tracking-widest text-white/60 leading-tight">РАБОТА</span>
+                  <span className="block text-[9px] md:text-[10px] uppercase tracking-wide text-white/40">С СОБОЙ</span>
                 </div>
               </div>
               
-              {/* Bottom label */}
-              <div className="text-center">
-                <span className="block text-[10px] md:text-xs uppercase tracking-widest text-white/60 leading-tight">РАБОТА</span>
-                <span className="block text-[9px] md:text-[10px] uppercase tracking-wide text-white/40">С СОБОЙ</span>
-              </div>
+              {/* Subtitle */}
+              <p className="text-center mt-3 text-[9px] md:text-[10px] text-white/25 italic">
+                Ритуал как точка равновесия
+              </p>
             </div>
-            
-            {/* Subtitle */}
-            <p className="text-center mt-3 text-[9px] md:text-[10px] text-white/25 italic">
-              Ритуал как точка равновесия
-            </p>
           </motion.div>
         </div>
 
