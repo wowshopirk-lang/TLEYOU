@@ -40,16 +40,16 @@ const ConnectedCirclesFlow = () => {
   ];
 
   return (
-    <div className="relative flex flex-col items-center py-6">
+    <div className="relative flex flex-col items-center justify-between h-full py-0">
       {/* Vertical connecting line */}
-      <svg className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-full" viewBox="0 0 4 600" preserveAspectRatio="none">
-        <line x1="2" y1="80" x2="2" y2="520" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+      <svg className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-full" viewBox="0 0 4 700" preserveAspectRatio="none">
+        <line x1="2" y1="100" x2="2" y2="600" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
       </svg>
       
       {steps.map((step, index) => (
         <motion.div
           key={index}
-          className="relative flex items-center justify-center my-3 md:my-4"
+          className="relative flex items-center justify-center"
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
@@ -57,12 +57,12 @@ const ConnectedCirclesFlow = () => {
         >
           {/* Left annotation */}
           {step.annotation && step.annotationSide === "left" && (
-            <div className="absolute right-full mr-4 flex items-center gap-2">
+            <div className="absolute right-full mr-4 md:mr-5 flex items-center gap-2">
               <span className="text-xs md:text-sm text-white/40 italic tracking-wide whitespace-nowrap">
                 {step.annotation}
               </span>
-              <svg width="20" height="2" viewBox="0 0 20 2">
-                <line x1="0" y1="1" x2="20" y2="1" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+              <svg width="24" height="2" viewBox="0 0 24 2">
+                <line x1="0" y1="1" x2="24" y2="1" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
               </svg>
               <div className="w-1.5 h-1.5 rounded-full bg-white/30" />
             </div>
@@ -71,11 +71,11 @@ const ConnectedCirclesFlow = () => {
           {/* Circle */}
           <div className="relative">
             {/* Outer ring */}
-            <svg width="160" height="160" viewBox="0 0 160 160" className="w-36 h-36 md:w-40 md:h-40">
+            <svg width="180" height="180" viewBox="0 0 180 180" className="w-40 h-40 md:w-44 md:h-44">
               <circle 
-                cx="80" 
-                cy="80" 
-                r="75" 
+                cx="90" 
+                cy="90" 
+                r="85" 
                 stroke="rgba(255,255,255,0.2)" 
                 strokeWidth="1" 
                 fill={step.filled ? step.fillColor : "none"}
@@ -83,9 +83,9 @@ const ConnectedCirclesFlow = () => {
               {/* Inner decorative circle */}
               {!step.filled && (
                 <circle 
-                  cx="80" 
-                  cy="80" 
-                  r="60" 
+                  cx="90" 
+                  cy="90" 
+                  r="68" 
                   stroke="rgba(255,255,255,0.08)" 
                   strokeWidth="0.5" 
                   strokeDasharray="3 5"
@@ -107,10 +107,10 @@ const ConnectedCirclesFlow = () => {
           
           {/* Right annotation */}
           {step.annotation && step.annotationSide === "right" && (
-            <div className="absolute left-full ml-4 flex items-center gap-2">
+            <div className="absolute left-full ml-4 md:ml-5 flex items-center gap-2">
               <div className="w-1.5 h-1.5 rounded-full bg-white/30" />
-              <svg width="20" height="2" viewBox="0 0 20 2">
-                <line x1="0" y1="1" x2="20" y2="1" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+              <svg width="24" height="2" viewBox="0 0 24 2">
+                <line x1="0" y1="1" x2="24" y2="1" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
               </svg>
               <span className="text-xs md:text-sm text-white/40 italic tracking-wide whitespace-nowrap">
                 {step.annotation}
@@ -120,7 +120,7 @@ const ConnectedCirclesFlow = () => {
           
           {/* Connection dot below (except last) */}
           {index < steps.length - 1 && (
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-white/20" />
+            <div className="absolute -bottom-3 md:-bottom-4 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-white/20" />
           )}
         </motion.div>
       ))}
@@ -249,14 +249,14 @@ export default function BentoProblemSolution() {
         </motion.div>
 
         {/* Main content - Two columns */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 xl:gap-24 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 xl:gap-24 items-stretch">
           {/* Left - Connected Circles Flow */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative"
+            className="relative h-full flex items-center"
           >
             <ConnectedCirclesFlow />
           </motion.div>
@@ -267,10 +267,10 @@ export default function BentoProblemSolution() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="relative flex items-center"
+            className="relative flex items-stretch"
           >
             {/* Solution frame */}
-            <div className="relative border border-white/[0.08] rounded-2xl p-8 md:p-10 bg-white/[0.02] w-full">
+            <div className="relative border border-white/[0.08] rounded-2xl p-8 md:p-10 bg-white/[0.02] w-full flex flex-col justify-center">
               {/* Corner decorations */}
               <div className="absolute top-0 left-0 w-6 h-6">
                 <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
