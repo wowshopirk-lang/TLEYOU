@@ -51,21 +51,18 @@ const ProductBubbles = () => {
     { 
       title: "КЕРАМИЧЕСКАЯ ПОДСТАВКА", 
       description: "Ручная работа",
-      filled: false,
-      badge: "основа"
+      filled: false
     },
     { 
       title: "ТРАВЯНАЯ СКРУТКА", 
       description: "Лаванда, шалфей",
-      filled: false,
-      badge: null
+      filled: false
     },
     { 
       title: "30 КАРТОЧЕК", 
       description: "Вопросы для рефлексии",
       filled: true,
-      fillColor: "rgba(180,155,120,0.4)",
-      badge: "главное"
+      fillColor: "rgba(180,155,120,0.4)"
     },
   ];
 
@@ -97,13 +94,6 @@ const ProductBubbles = () => {
                 className="transition-all duration-300 group-hover:stroke-[rgba(143,181,131,0.3)]"
               />
             </svg>
-            
-            {/* Badge */}
-            {item.badge && (
-              <div className="absolute -top-2 -right-2 px-2 py-0.5 rounded-full bg-[#8fb583]/20 border border-[#8fb583]/30">
-                <span className="text-[9px] uppercase tracking-wider text-[#8fb583]">{item.badge}</span>
-              </div>
-            )}
             
             {/* Content */}
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-5 py-3">
@@ -248,7 +238,7 @@ export default function BentoFeatures() {
         </motion.div>
 
         {/* Main content grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-center mb-12">
           {/* Left - Product bubbles */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -269,40 +259,40 @@ export default function BentoFeatures() {
             className="relative"
           >
             {/* Grid layout for diagram with labels */}
-            <div className="grid grid-rows-[auto_1fr_auto] gap-4">
+            <div className="grid grid-rows-[auto_1fr_auto] gap-3">
               {/* Top label */}
               <div className="text-center">
-                <span className="block text-xs md:text-sm uppercase tracking-widest text-white/60">ДИВЕРСИФИКАЦИЯ</span>
-                <span className="block text-[10px] md:text-xs uppercase tracking-wide text-white/40">ЭНЕРГИИ</span>
+                <span className="block text-[10px] md:text-xs uppercase tracking-widest text-white/60 leading-tight">ДИВЕРСИФИКАЦИЯ</span>
+                <span className="block text-[9px] md:text-[10px] uppercase tracking-wide text-white/40">ЭНЕРГИИ</span>
               </div>
               
               {/* Middle row: left label + diagram + right label */}
-              <div className="flex items-center justify-center gap-6 md:gap-8">
+              <div className="flex items-center justify-center gap-4 md:gap-5">
                 {/* Left label */}
-                <div className="text-right min-w-[80px] md:min-w-[100px]">
-                  <span className="block text-xs md:text-sm uppercase tracking-widest text-white/60">СТАБИЛЬНЫЙ</span>
-                  <span className="block text-[10px] md:text-xs uppercase tracking-wide text-white/40">РИТУАЛ</span>
+                <div className="text-right w-[70px] md:w-[85px]">
+                  <span className="block text-[10px] md:text-xs uppercase tracking-widest text-white/60 leading-tight">СТАБИЛЬНЫЙ</span>
+                  <span className="block text-[9px] md:text-[10px] uppercase tracking-wide text-white/40">РИТУАЛ</span>
                 </div>
                 
                 {/* Diagram */}
                 <CircularDiagram />
                 
                 {/* Right label */}
-                <div className="text-left min-w-[80px] md:min-w-[100px]">
-                  <span className="block text-xs md:text-sm uppercase tracking-widest text-white/60">ЗДОРОВОЕ</span>
-                  <span className="block text-[10px] md:text-xs uppercase tracking-wide text-white/40">МЫШЛЕНИЕ</span>
+                <div className="text-left w-[70px] md:w-[85px]">
+                  <span className="block text-[10px] md:text-xs uppercase tracking-widest text-white/60 leading-tight">ЗДОРОВОЕ</span>
+                  <span className="block text-[9px] md:text-[10px] uppercase tracking-wide text-white/40">МЫШЛЕНИЕ</span>
                 </div>
               </div>
               
               {/* Bottom label */}
               <div className="text-center">
-                <span className="block text-xs md:text-sm uppercase tracking-widest text-white/60">РАБОТА</span>
-                <span className="block text-[10px] md:text-xs uppercase tracking-wide text-white/40">С СОБОЙ</span>
+                <span className="block text-[10px] md:text-xs uppercase tracking-widest text-white/60 leading-tight">РАБОТА</span>
+                <span className="block text-[9px] md:text-[10px] uppercase tracking-wide text-white/40">С СОБОЙ</span>
               </div>
             </div>
             
             {/* Subtitle */}
-            <p className="text-center mt-4 text-[10px] md:text-xs text-white/30 italic">
+            <p className="text-center mt-3 text-[9px] md:text-[10px] text-white/25 italic">
               Ритуал как точка равновесия
             </p>
           </motion.div>
