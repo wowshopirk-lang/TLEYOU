@@ -63,7 +63,7 @@ const TelegramIcon = () => (
 // Pill Tag component - consistent with other sections
 const PillTag = ({ children, active = false }: { children: React.ReactNode; active?: boolean }) => (
   <span className={`
-    inline-flex items-center px-4 py-1.5 rounded-full text-xs md:text-sm uppercase tracking-[0.2em]
+    inline-flex items-center px-3 py-1 rounded-full text-[10px] md:text-xs uppercase tracking-[0.2em]
     border transition-all duration-300
     ${active 
       ? 'border-[#8fb583]/40 text-[#8fb583]/80 bg-[#8fb583]/5' 
@@ -112,7 +112,7 @@ const guarantees = [
 
 export default function BentoCTA() {
   return (
-    <section className="relative py-24 md:py-32 overflow-hidden">
+    <section className="relative py-12 md:py-16 overflow-hidden min-h-screen flex items-center">
       {/* Background - dark gradient with nature image */}
       <div className="absolute inset-0 z-0">
         <div className="section-bg section-bg-cta" />
@@ -178,24 +178,24 @@ export default function BentoCTA() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-14 md:mb-20"
+          className="text-center mb-8"
         >
           {/* Decorative arrow down */}
           <motion.div 
-            className="flex justify-center mb-8"
+            className="flex justify-center mb-4"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <svg width="24" height="32" viewBox="0 0 24 32" fill="none">
-              <path d="M12 0 L12 28 M6 22 L12 28 L18 22" stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+            <svg width="20" height="24" viewBox="0 0 20 24" fill="none">
+              <path d="M10 0 L10 20 M4 14 L10 20 L16 14" stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </motion.div>
           
           {/* Pill tags */}
           <motion.div 
-            className="flex flex-wrap items-center justify-center gap-3 mb-8"
+            className="flex flex-wrap items-center justify-center gap-2 mb-4"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -211,7 +211,7 @@ export default function BentoCTA() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-heading font-light text-white/90 mb-5"
+            className="text-2xl md:text-3xl lg:text-4xl font-heading font-light text-white/90 mb-3"
           >
             Начни сегодня
           </motion.h2>
@@ -221,7 +221,7 @@ export default function BentoCTA() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="text-base md:text-lg text-white/50 max-w-lg mx-auto leading-relaxed"
+            className="text-sm md:text-base text-white/50 max-w-lg mx-auto leading-relaxed"
           >
             Всего 10 минут в день могут изменить всё
           </motion.p>
@@ -232,19 +232,19 @@ export default function BentoCTA() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="mt-6 flex items-center justify-center gap-3"
+            className="mt-4 flex items-center justify-center gap-2"
           >
-            <div className="w-1.5 h-1.5 rounded-full bg-[#8fb583]/40" />
-            <svg width="30" height="2" viewBox="0 0 30 2">
-              <line x1="0" y1="1" x2="30" y2="1" stroke="rgba(143,181,131,0.3)" strokeWidth="1" />
+            <div className="w-1 h-1 rounded-full bg-[#8fb583]/40" />
+            <svg width="24" height="2" viewBox="0 0 24 2">
+              <line x1="0" y1="1" x2="24" y2="1" stroke="rgba(143,181,131,0.3)" strokeWidth="1" />
             </svg>
-            <p className="text-sm text-white/30 italic">
+            <p className="text-xs md:text-sm text-white/30 italic">
               "Ты заслуживаешь эти 10 минут"
             </p>
-            <svg width="30" height="2" viewBox="0 0 30 2">
-              <line x1="0" y1="1" x2="30" y2="1" stroke="rgba(143,181,131,0.3)" strokeWidth="1" />
+            <svg width="24" height="2" viewBox="0 0 24 2">
+              <line x1="0" y1="1" x2="24" y2="1" stroke="rgba(143,181,131,0.3)" strokeWidth="1" />
             </svg>
-            <div className="w-1.5 h-1.5 rounded-full bg-[#8fb583]/40" />
+            <div className="w-1 h-1 rounded-full bg-[#8fb583]/40" />
           </motion.div>
         </motion.div>
 
@@ -254,7 +254,7 @@ export default function BentoCTA() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-14"
+          className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8"
         >
           {ctaOptions.map((option, index) => {
             const Icon = option.icon;
@@ -273,74 +273,74 @@ export default function BentoCTA() {
                 >
                   {/* Badge */}
                   {option.badge && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-[#90a955] text-white text-xs md:text-sm font-medium tracking-wide">
+                    <div className="absolute -top-2 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-[#90a955] text-white text-[10px] md:text-xs font-medium tracking-wide">
                       {option.badge}
                     </div>
                   )}
                   
                   {/* Card content with proper padding */}
-                  <div className="p-8 md:p-10">
+                  <div className="p-5 md:p-6">
                     {/* Corner decorations */}
-                    <div className="absolute top-0 left-0 w-6 h-6">
-                      <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-                        <path d="M0 8 L0 0 L8 0" stroke={option.primary ? "rgba(255,255,255,0.3)" : "rgba(143,181,131,0.2)"} strokeWidth="1" fill="none" />
+                    <div className="absolute top-0 left-0 w-5 h-5">
+                      <svg viewBox="0 0 20 20" fill="none" className="w-full h-full">
+                        <path d="M0 6 L0 0 L6 0" stroke={option.primary ? "rgba(255,255,255,0.3)" : "rgba(143,181,131,0.2)"} strokeWidth="1" fill="none" />
                       </svg>
                     </div>
-                    <div className="absolute top-0 right-0 w-6 h-6">
-                      <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-                        <path d="M16 0 L24 0 L24 8" stroke={option.primary ? "rgba(255,255,255,0.3)" : "rgba(143,181,131,0.2)"} strokeWidth="1" fill="none" />
+                    <div className="absolute top-0 right-0 w-5 h-5">
+                      <svg viewBox="0 0 20 20" fill="none" className="w-full h-full">
+                        <path d="M14 0 L20 0 L20 6" stroke={option.primary ? "rgba(255,255,255,0.3)" : "rgba(143,181,131,0.2)"} strokeWidth="1" fill="none" />
                       </svg>
                     </div>
-                    <div className="absolute bottom-0 left-0 w-6 h-6">
-                      <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-                        <path d="M0 16 L0 24 L8 24" stroke={option.primary ? "rgba(255,255,255,0.3)" : "rgba(143,181,131,0.2)"} strokeWidth="1" fill="none" />
+                    <div className="absolute bottom-0 left-0 w-5 h-5">
+                      <svg viewBox="0 0 20 20" fill="none" className="w-full h-full">
+                        <path d="M0 14 L0 20 L6 20" stroke={option.primary ? "rgba(255,255,255,0.3)" : "rgba(143,181,131,0.2)"} strokeWidth="1" fill="none" />
                       </svg>
                     </div>
-                    <div className="absolute bottom-0 right-0 w-6 h-6">
-                      <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-                        <path d="M16 24 L24 24 L24 16" stroke={option.primary ? "rgba(255,255,255,0.3)" : "rgba(143,181,131,0.2)"} strokeWidth="1" fill="none" />
+                    <div className="absolute bottom-0 right-0 w-5 h-5">
+                      <svg viewBox="0 0 20 20" fill="none" className="w-full h-full">
+                        <path d="M14 20 L20 20 L20 14" stroke={option.primary ? "rgba(255,255,255,0.3)" : "rgba(143,181,131,0.2)"} strokeWidth="1" fill="none" />
                       </svg>
                     </div>
                     
                     {/* Icon */}
-                    <div className={`w-16 h-16 md:w-20 md:h-20 mx-auto mb-6 transition-transform duration-500 group-hover:scale-110 ${
+                    <div className={`w-12 h-12 md:w-14 md:h-14 mx-auto mb-4 transition-transform duration-500 group-hover:scale-110 ${
                       option.primary ? 'text-white' : 'text-[#90a955]'
                     }`}>
                       <Icon />
                     </div>
                     
                     {/* Title */}
-                    <h3 className="text-xl md:text-2xl font-heading font-light text-white mb-3">
+                    <h3 className="text-lg md:text-xl font-heading font-light text-white mb-2">
                       {option.title}
                     </h3>
                     
                     {/* Price */}
-                    <div className="mb-4">
+                    <div className="mb-3">
                       {option.originalPrice && (
-                        <span className="text-sm text-white/40 line-through mr-2">
+                        <span className="text-xs text-white/40 line-through mr-2">
                           {option.originalPrice}
                         </span>
                       )}
-                      <span className={`text-2xl md:text-3xl font-heading font-light ${option.primary ? 'text-white' : 'text-[#90a955]'}`}>
+                      <span className={`text-xl md:text-2xl font-heading font-light ${option.primary ? 'text-white' : 'text-[#90a955]'}`}>
                         {option.price}
                       </span>
                       {option.priceNote && (
-                        <span className="block text-xs md:text-sm text-white/50 mt-1">
+                        <span className="block text-[10px] md:text-xs text-white/50 mt-1">
                           {option.priceNote}
                         </span>
                       )}
                     </div>
                     
                     {/* Description */}
-                    <p className={`text-sm md:text-base mb-6 ${option.primary ? 'text-white/70' : 'text-white/50'}`}>
+                    <p className={`text-xs md:text-sm mb-4 ${option.primary ? 'text-white/70' : 'text-white/50'}`}>
                       {option.description}
                     </p>
                     
                     {/* Arrow button */}
-                    <div className={`mx-auto w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 group-hover:translate-x-1 ${
+                    <div className={`mx-auto w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 group-hover:translate-x-1 ${
                       option.primary ? 'bg-white/20 border border-white/30' : 'bg-white/5 border border-white/10'
                     }`}>
-                      <div className="w-5 h-5 text-white">
+                      <div className="w-4 h-4 text-white">
                         <ArrowIcon />
                       </div>
                     </div>
@@ -357,29 +357,29 @@ export default function BentoCTA() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.8 }}
-          className="relative bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 md:p-8 mb-10"
+          className="relative bg-white/[0.02] border border-white/[0.06] rounded-2xl p-4 md:p-5 mb-6"
         >
           {/* Corner decorations */}
-          <div className="absolute top-0 left-0 w-5 h-5">
-            <svg viewBox="0 0 20 20" fill="none" className="w-full h-full">
-              <path d="M0 6 L0 0 L6 0" stroke="rgba(143,181,131,0.2)" strokeWidth="1" fill="none" />
+          <div className="absolute top-0 left-0 w-4 h-4">
+            <svg viewBox="0 0 16 16" fill="none" className="w-full h-full">
+              <path d="M0 5 L0 0 L5 0" stroke="rgba(143,181,131,0.2)" strokeWidth="1" fill="none" />
             </svg>
           </div>
-          <div className="absolute top-0 right-0 w-5 h-5">
-            <svg viewBox="0 0 20 20" fill="none" className="w-full h-full">
-              <path d="M14 0 L20 0 L20 6" stroke="rgba(143,181,131,0.2)" strokeWidth="1" fill="none" />
+          <div className="absolute top-0 right-0 w-4 h-4">
+            <svg viewBox="0 0 16 16" fill="none" className="w-full h-full">
+              <path d="M11 0 L16 0 L16 5" stroke="rgba(143,181,131,0.2)" strokeWidth="1" fill="none" />
             </svg>
           </div>
           
-          <div className="flex flex-wrap justify-center gap-8 md:gap-12">
+          <div className="flex flex-wrap justify-center gap-4 md:gap-6">
             {guarantees.map((guarantee, index) => {
               const Icon = guarantee.icon;
               return (
-                <div key={index} className="flex items-center gap-3">
-                  <div className="w-5 h-5 text-[#8fb583]">
+                <div key={index} className="flex items-center gap-2">
+                  <div className="w-4 h-4 text-[#8fb583]">
                     <Icon />
                   </div>
-                  <span className="text-sm md:text-base text-white/50">{guarantee.text}</span>
+                  <span className="text-xs md:text-sm text-white/50">{guarantee.text}</span>
                 </div>
               );
             })}
@@ -394,15 +394,15 @@ export default function BentoCTA() {
           transition={{ duration: 0.8, delay: 0.9 }}
           className="text-center"
         >
-          <div className="flex items-center justify-center gap-3 mb-5">
+          <div className="flex items-center justify-center gap-2 mb-3">
             <div className="w-1 h-1 rounded-full bg-white/20" />
-            <svg width="30" height="2"><line x1="0" y1="1" x2="30" y2="1" stroke="rgba(255,255,255,0.1)" strokeWidth="1" /></svg>
-            <span className="text-xs md:text-sm uppercase tracking-[0.2em] text-white/30">Есть вопросы?</span>
-            <svg width="30" height="2"><line x1="0" y1="1" x2="30" y2="1" stroke="rgba(255,255,255,0.1)" strokeWidth="1" /></svg>
+            <svg width="24" height="2"><line x1="0" y1="1" x2="24" y2="1" stroke="rgba(255,255,255,0.1)" strokeWidth="1" /></svg>
+            <span className="text-[10px] md:text-xs uppercase tracking-[0.2em] text-white/30">Есть вопросы?</span>
+            <svg width="24" height="2"><line x1="0" y1="1" x2="24" y2="1" stroke="rgba(255,255,255,0.1)" strokeWidth="1" /></svg>
             <div className="w-1 h-1 rounded-full bg-white/20" />
           </div>
           
-          <p className="text-white/40 mb-5 text-sm md:text-base">
+          <p className="text-white/40 mb-4 text-xs md:text-sm">
             Ответим за 5 минут
           </p>
           
@@ -410,12 +410,12 @@ export default function BentoCTA() {
             href="https://t.me/tleyou"
             target="_blank"
             rel="noopener noreferrer"
-            className="group inline-flex items-center gap-3 px-6 py-3 rounded-full border border-white/15 text-white/60 hover:bg-white/5 hover:text-white hover:border-[#8fb583]/30 transition-all duration-300"
+            className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/15 text-white/60 hover:bg-white/5 hover:text-white hover:border-[#8fb583]/30 transition-all duration-300 text-xs md:text-sm"
           >
-            <div className="w-5 h-5 group-hover:scale-110 transition-transform duration-300">
+            <div className="w-4 h-4 group-hover:scale-110 transition-transform duration-300">
               <TelegramIcon />
             </div>
-            <span className="text-sm md:text-base">Написать в Telegram</span>
+            <span>Написать в Telegram</span>
           </a>
         </motion.div>
       </div>
