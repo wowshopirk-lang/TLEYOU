@@ -109,7 +109,7 @@ const pricingOptions = [
 
 export default function BentoSubscription() {
   return (
-    <section className="relative py-24 md:py-32 overflow-hidden">
+    <section className="relative py-12 md:py-16 overflow-hidden min-h-screen flex items-center">
       {/* Background - dark gradients like other sections */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0c0a] via-[#0f120e] to-[#0c0e0c]" />
@@ -168,28 +168,28 @@ export default function BentoSubscription() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16 md:mb-20"
+          className="text-center mb-8"
         >
           <motion.div 
-            className="w-16 h-px bg-gradient-to-r from-transparent via-[#90a955]/60 to-transparent mx-auto mb-6"
+            className="w-12 h-px bg-gradient-to-r from-transparent via-[#90a955]/60 to-transparent mx-auto mb-4"
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
           />
           
-          <span className="inline-block text-xs uppercase tracking-[0.4em] text-[#90a955] mb-4">
+          <span className="inline-block text-[10px] uppercase tracking-[0.4em] text-[#90a955] mb-3">
             Выбери свой путь
           </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-light text-white mb-4">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-light text-white mb-3">
             Три способа начать
           </h2>
-          <p className="text-base md:text-lg text-white/60 max-w-xl mx-auto leading-relaxed">
+          <p className="text-sm md:text-base text-white/60 max-w-xl mx-auto leading-relaxed">
             Попробуй бесплатно, закажи набор или оформи подписку
           </p>
           
           <motion.div 
-            className="w-10 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mx-auto mt-6"
+            className="w-8 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mx-auto mt-4"
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
             viewport={{ once: true }}
@@ -198,7 +198,7 @@ export default function BentoSubscription() {
         </motion.div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
           {pricingOptions.map((option, index) => {
             const Icon = option.icon;
             return (
@@ -208,10 +208,10 @@ export default function BentoSubscription() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className={`group relative ${option.highlight ? 'md:-mt-4 md:mb-4' : ''}`}
+                className={`group relative ${option.highlight ? 'md:-mt-2 md:mb-2' : ''}`}
               >
                 {/* Card */}
-                <div className={`relative h-full rounded-2xl p-6 md:p-8 flex flex-col transition-all duration-500 ${
+                <div className={`relative h-full rounded-2xl p-5 md:p-6 flex flex-col transition-all duration-500 ${
                   option.highlight 
                     ? "bg-gradient-to-br from-[#4a6741] to-[#3a5232] text-white shadow-2xl shadow-[#4a6741]/30" 
                     : "bg-white/[0.03] backdrop-blur-sm border border-white/[0.08] hover:border-white/15 hover:bg-white/[0.05]"
@@ -219,76 +219,76 @@ export default function BentoSubscription() {
                   
                   {/* Badge */}
                   {option.badge && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-[#90a955] text-white text-xs font-medium shadow-lg">
+                    <div className="absolute -top-2 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-[#90a955] text-white text-[10px] font-medium shadow-lg">
                       {option.badge}
                     </div>
                   )}
                   
                   {/* Corner decorations */}
-                  <div className="absolute top-0 left-0 w-5 h-5">
-                    <svg viewBox="0 0 20 20" fill="none" className="w-full h-full">
-                      <path d="M0 6 L0 0 L6 0" stroke={option.highlight ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.1)"} strokeWidth="1" fill="none" />
+                  <div className="absolute top-0 left-0 w-4 h-4">
+                    <svg viewBox="0 0 16 16" fill="none" className="w-full h-full">
+                      <path d="M0 5 L0 0 L5 0" stroke={option.highlight ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.1)"} strokeWidth="1" fill="none" />
                     </svg>
                   </div>
-                  <div className="absolute top-0 right-0 w-5 h-5">
-                    <svg viewBox="0 0 20 20" fill="none" className="w-full h-full">
-                      <path d="M14 0 L20 0 L20 6" stroke={option.highlight ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.1)"} strokeWidth="1" fill="none" />
+                  <div className="absolute top-0 right-0 w-4 h-4">
+                    <svg viewBox="0 0 16 16" fill="none" className="w-full h-full">
+                      <path d="M11 0 L16 0 L16 5" stroke={option.highlight ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.1)"} strokeWidth="1" fill="none" />
                     </svg>
                   </div>
-                  <div className="absolute bottom-0 left-0 w-5 h-5">
-                    <svg viewBox="0 0 20 20" fill="none" className="w-full h-full">
-                      <path d="M0 14 L0 20 L6 20" stroke={option.highlight ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.1)"} strokeWidth="1" fill="none" />
+                  <div className="absolute bottom-0 left-0 w-4 h-4">
+                    <svg viewBox="0 0 16 16" fill="none" className="w-full h-full">
+                      <path d="M0 11 L0 16 L5 16" stroke={option.highlight ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.1)"} strokeWidth="1" fill="none" />
                     </svg>
                   </div>
-                  <div className="absolute bottom-0 right-0 w-5 h-5">
-                    <svg viewBox="0 0 20 20" fill="none" className="w-full h-full">
-                      <path d="M14 20 L20 20 L20 14" stroke={option.highlight ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.1)"} strokeWidth="1" fill="none" />
+                  <div className="absolute bottom-0 right-0 w-4 h-4">
+                    <svg viewBox="0 0 16 16" fill="none" className="w-full h-full">
+                      <path d="M11 16 L16 16 L16 11" stroke={option.highlight ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.1)"} strokeWidth="1" fill="none" />
                     </svg>
                   </div>
 
                   {/* Icon */}
-                  <div className={`w-14 h-14 mb-5 ${option.highlight ? 'text-white/80' : 'text-[#90a955]'} group-hover:scale-110 transition-transform duration-500`}>
+                  <div className={`w-12 h-12 mb-4 ${option.highlight ? 'text-white/80' : 'text-[#90a955]'} group-hover:scale-110 transition-transform duration-500`}>
                     <Icon />
                   </div>
                   
                   {/* Label */}
-                  <span className={`text-xs uppercase tracking-[0.2em] mb-1 ${option.highlight ? 'text-white/60' : 'text-white/40'}`}>
+                  <span className={`text-[10px] uppercase tracking-[0.2em] mb-1 ${option.highlight ? 'text-white/60' : 'text-white/40'}`}>
                     {option.subtitle}
                   </span>
                   
                   {/* Title */}
-                  <h3 className={`text-xl font-heading font-medium mb-3 ${option.highlight ? 'text-white' : 'text-white'}`}>
+                  <h3 className={`text-lg md:text-xl font-heading font-medium mb-2 ${option.highlight ? 'text-white' : 'text-white'}`}>
                     {option.title}
                   </h3>
                   
                   {/* Price */}
-                  <div className="mb-4">
+                  <div className="mb-3">
                     {option.originalPrice && (
-                      <span className="text-sm text-white/40 line-through mr-2">
+                      <span className="text-xs text-white/40 line-through mr-2">
                         {option.originalPrice}
                       </span>
                     )}
-                    <span className={`text-3xl md:text-4xl font-heading font-light ${option.highlight ? 'text-white' : 'text-white'}`}>
+                    <span className={`text-2xl md:text-3xl font-heading font-light ${option.highlight ? 'text-white' : 'text-white'}`}>
                       {option.price}
                     </span>
-                    <span className={`text-sm ml-2 ${option.highlight ? 'text-white/70' : 'text-[#90a955]'}`}>
+                    <span className={`text-xs ml-2 ${option.highlight ? 'text-white/70' : 'text-[#90a955]'}`}>
                       {option.priceNote}
                     </span>
                   </div>
                   
                   {/* Description */}
-                  <p className={`text-sm mb-6 ${option.highlight ? 'text-white/70' : 'text-white/50'}`}>
+                  <p className={`text-xs md:text-sm mb-4 ${option.highlight ? 'text-white/70' : 'text-white/50'}`}>
                     {option.description}
                   </p>
                   
                   {/* Features */}
-                  <ul className="space-y-2.5 mb-8 flex-grow">
+                  <ul className="space-y-2 mb-6 flex-grow">
                     {option.features.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-3">
-                        <div className={`w-5 h-5 flex-shrink-0 mt-0.5 ${option.highlight ? 'text-white' : 'text-[#90a955]'}`}>
+                      <li key={i} className="flex items-start gap-2">
+                        <div className={`w-4 h-4 flex-shrink-0 mt-0.5 ${option.highlight ? 'text-white' : 'text-[#90a955]'}`}>
                           <CheckIcon />
                         </div>
-                        <span className={`text-sm ${option.highlight ? 'text-white/85' : 'text-white/70'}`}>
+                        <span className={`text-xs ${option.highlight ? 'text-white/85' : 'text-white/70'}`}>
                           {feature}
                         </span>
                       </li>
@@ -298,14 +298,14 @@ export default function BentoSubscription() {
                   {/* CTA Button */}
                   <Link
                     href={option.ctaLink}
-                    className={`group/btn relative inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 rounded-full text-sm font-medium transition-all duration-300 ${
+                    className={`group/btn relative inline-flex items-center justify-center gap-2 w-full px-5 py-2.5 rounded-full text-xs md:text-sm font-medium transition-all duration-300 ${
                       option.highlight 
                         ? 'bg-white text-[#4a6741] hover:bg-white/90' 
                         : 'bg-[#4a6741] text-white hover:bg-[#5a7a51]'
                     }`}
                   >
                     <span>{option.cta}</span>
-                    <div className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300">
+                    <div className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform duration-300">
                       <ArrowIcon />
                     </div>
                   </Link>
@@ -321,12 +321,12 @@ export default function BentoSubscription() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="text-center mt-12"
+          className="text-center mt-8"
         >
-          <p className="text-sm text-white/40 mb-4">
+          <p className="text-xs md:text-sm text-white/40 mb-3">
             На Ozon — 4 990 ₽ · Через сайт или Telegram — скидка 10%
           </p>
-          <div className="flex flex-wrap justify-center gap-4 text-xs text-white/30">
+          <div className="flex flex-wrap justify-center gap-3 text-[10px] md:text-xs text-white/30">
             <span>30 дней гарантия возврата</span>
             <span>·</span>
             <span>Безопасная оплата</span>
