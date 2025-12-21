@@ -6,15 +6,8 @@ import Link from "next/link";
 
 // Circular Diagram Component - inspired by reference design
 const CircularDiagram = () => {
-  const items = [
-    { label: "ДИВЕРСИФИКАЦИЯ", sublabel: "ЭНЕРГИИ", position: "top" },
-    { label: "СТАБИЛЬНЫЙ", sublabel: "РИТУАЛ", position: "left" },
-    { label: "ЗДОРОВОЕ", sublabel: "МЫШЛЕНИЕ", position: "right" },
-    { label: "РАБОТА", sublabel: "С СОБОЙ", position: "bottom" },
-  ];
-
   return (
-    <div className="relative w-72 h-72 md:w-96 md:h-96 mx-auto">
+    <div className="relative w-64 h-64 md:w-80 md:h-80 mx-auto">
       {/* Main circle */}
       <svg viewBox="0 0 400 400" className="w-full h-full">
         {/* Outer circle */}
@@ -22,7 +15,7 @@ const CircularDiagram = () => {
         {/* Inner circle */}
         <circle cx="200" cy="200" r="120" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" fill="none" />
         {/* Center circle */}
-        <circle cx="200" cy="200" r="35" stroke="rgba(143,181,131,0.2)" strokeWidth="1" fill="none" />
+        <circle cx="200" cy="200" r="50" stroke="rgba(143,181,131,0.2)" strokeWidth="1" fill="none" />
         
         {/* Cross arrows */}
         <path d="M200 80 L200 100" stroke="rgba(255,255,255,0.2)" strokeWidth="1" markerEnd="url(#arrowhead)" />
@@ -37,40 +30,16 @@ const CircularDiagram = () => {
           </marker>
         </defs>
         
-        {/* Connection dots */}
-        <circle cx="200" cy="20" r="5" fill="rgba(255,255,255,0.3)" />
-        <circle cx="200" cy="380" r="5" fill="rgba(255,255,255,0.3)" />
-        <circle cx="20" cy="200" r="5" fill="rgba(255,255,255,0.3)" />
-        <circle cx="380" cy="200" r="5" fill="rgba(255,255,255,0.3)" />
+        {/* Connection dots on circle */}
+        <circle cx="200" cy="30" r="4" fill="rgba(255,255,255,0.3)" />
+        <circle cx="200" cy="370" r="4" fill="rgba(255,255,255,0.3)" />
+        <circle cx="30" cy="200" r="4" fill="rgba(255,255,255,0.3)" />
+        <circle cx="370" cy="200" r="4" fill="rgba(255,255,255,0.3)" />
       </svg>
       
-      {/* Labels */}
-      {/* Top */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-12 md:-translate-y-14 text-center px-3">
-        <span className="block text-sm md:text-base uppercase tracking-widest text-white/60 mb-1">{items[0].label}</span>
-        <span className="block text-xs md:text-sm uppercase tracking-wide text-white/40">{items[0].sublabel}</span>
-      </div>
-      {/* Bottom */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-12 md:translate-y-14 text-center px-3">
-        <span className="block text-sm md:text-base uppercase tracking-widest text-white/60 mb-1">{items[3].label}</span>
-        <span className="block text-xs md:text-sm uppercase tracking-wide text-white/40">{items[3].sublabel}</span>
-      </div>
-      {/* Left - aligned to left edge */}
-      <div className="absolute top-1/2 -translate-y-1/2 text-left max-w-[140px]" style={{ right: 'calc(100% + 1.25rem)' }}>
-        <span className="block text-sm md:text-base uppercase tracking-widest text-white/60 mb-1">{items[1].label}</span>
-        <span className="block text-xs md:text-sm uppercase tracking-wide text-white/40">{items[1].sublabel}</span>
-      </div>
-      {/* Right - aligned to right edge */}
-      <div className="absolute top-1/2 -translate-y-1/2 text-right max-w-[140px]" style={{ left: 'calc(100% + 1.25rem)' }}>
-        <span className="block text-sm md:text-base uppercase tracking-widest text-white/60 mb-1">{items[2].label}</span>
-        <span className="block text-xs md:text-sm uppercase tracking-wide text-white/40">{items[2].sublabel}</span>
-      </div>
-      
-      {/* Center icon */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10">
-        <svg viewBox="0 0 40 40" fill="none" className="w-full h-full text-white/40">
-          <circle cx="20" cy="20" r="3" fill="currentColor" />
-        </svg>
+      {/* Center text */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+        <span className="text-[10px] md:text-xs uppercase tracking-[0.2em] text-white/50">Баланс</span>
       </div>
     </div>
   );
@@ -83,32 +52,32 @@ const ProductBubbles = () => {
       title: "КЕРАМИЧЕСКАЯ ПОДСТАВКА", 
       description: "Ручная работа",
       filled: false,
-      annotation: "основа ритуала"
+      badge: "основа"
     },
     { 
       title: "ТРАВЯНАЯ СКРУТКА", 
       description: "Лаванда, шалфей",
       filled: false,
-      annotation: null
+      badge: null
     },
     { 
       title: "30 КАРТОЧЕК", 
       description: "Вопросы для рефлексии",
       filled: true,
       fillColor: "rgba(180,155,120,0.4)",
-      annotation: "главный инструмент"
+      badge: "главное"
     },
   ];
 
   return (
-    <div className="relative flex flex-col items-center">
+    <div className="relative flex flex-col items-center gap-3">
       {/* Vertical line */}
-      <div className="absolute top-16 bottom-16 left-1/2 w-px bg-white/10 -translate-x-1/2" />
+      <div className="absolute top-12 bottom-12 left-1/2 w-px bg-white/10 -translate-x-1/2" />
       
       {items.map((item, index) => (
         <motion.div
           key={index}
-          className="relative z-10 my-4"
+          className="relative z-10"
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
@@ -116,12 +85,12 @@ const ProductBubbles = () => {
         >
           {/* Bubble */}
           <div className="relative group cursor-pointer">
-            <svg width="240" height="130" viewBox="0 0 240 130" className="transition-transform duration-300 group-hover:scale-105">
+            <svg width="220" height="100" viewBox="0 0 220 100" className="transition-transform duration-300 group-hover:scale-105">
               {/* Pill shape */}
               <rect 
                 x="5" y="5" 
-                width="230" height="120" 
-                rx="60" 
+                width="210" height="90" 
+                rx="45" 
                 stroke="rgba(255,255,255,0.15)" 
                 strokeWidth="1" 
                 fill={item.filled ? item.fillColor : "rgba(255,255,255,0.02)"}
@@ -129,27 +98,25 @@ const ProductBubbles = () => {
               />
             </svg>
             
+            {/* Badge */}
+            {item.badge && (
+              <div className="absolute -top-2 -right-2 px-2 py-0.5 rounded-full bg-[#8fb583]/20 border border-[#8fb583]/30">
+                <span className="text-[9px] uppercase tracking-wider text-[#8fb583]">{item.badge}</span>
+              </div>
+            )}
+            
             {/* Content */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 py-4">
-              <span className={`text-xs md:text-sm uppercase tracking-[0.12em] mb-1.5 leading-tight transition-colors duration-300 max-w-[85%] ${item.filled ? 'text-white/90' : 'text-white/60 group-hover:text-white/80'}`}>
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-5 py-3">
+              <span className={`text-[11px] md:text-xs uppercase tracking-[0.1em] mb-1 leading-tight transition-colors duration-300 ${item.filled ? 'text-white/90' : 'text-white/60 group-hover:text-white/80'}`}>
                 {item.title}
               </span>
-              <span className="text-[11px] md:text-xs text-white/40">{item.description}</span>
+              <span className="text-[10px] md:text-[11px] text-white/40">{item.description}</span>
             </div>
           </div>
           
-          {/* Annotation */}
-          {item.annotation && (
-            <div className={`absolute top-1/2 -translate-y-1/2 flex items-center ${index === 0 ? 'gap-3' : 'gap-3 flex-row-reverse'}`} style={index === 0 ? { right: 'calc(100% + 1rem)' } : { left: 'calc(100% + 1rem)' }}>
-              <div className="w-1.5 h-1.5 rounded-full bg-white/30" />
-              <svg width="20" height="2"><line x1="0" y1="1" x2="20" y2="1" stroke="rgba(255,255,255,0.2)" strokeWidth="1" /></svg>
-              <span className={`text-sm md:text-base text-white/40 italic whitespace-nowrap ${index === 0 ? 'text-left' : 'text-right'}`}>{item.annotation}</span>
-            </div>
-          )}
-          
           {/* Connection dot */}
           {index < items.length - 1 && (
-            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-white/20" />
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-white/20" />
           )}
         </motion.div>
       ))}
@@ -281,32 +248,62 @@ export default function BentoFeatures() {
         </motion.div>
 
         {/* Main content grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-12">
           {/* Left - Product bubbles */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="overflow-visible"
+            className="flex justify-center"
           >
             <ProductBubbles />
           </motion.div>
 
-          {/* Right - Circular diagram */}
+          {/* Right - Circular diagram with labels */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative overflow-visible"
+            className="relative"
           >
-            <div className="text-center mb-6">
-              <span className="text-xs md:text-sm uppercase tracking-[0.3em] text-white/40">Баланс жизни</span>
+            {/* Grid layout for diagram with labels */}
+            <div className="grid grid-rows-[auto_1fr_auto] gap-4">
+              {/* Top label */}
+              <div className="text-center">
+                <span className="block text-xs md:text-sm uppercase tracking-widest text-white/60">ДИВЕРСИФИКАЦИЯ</span>
+                <span className="block text-[10px] md:text-xs uppercase tracking-wide text-white/40">ЭНЕРГИИ</span>
+              </div>
+              
+              {/* Middle row: left label + diagram + right label */}
+              <div className="flex items-center justify-center gap-6 md:gap-8">
+                {/* Left label */}
+                <div className="text-right min-w-[80px] md:min-w-[100px]">
+                  <span className="block text-xs md:text-sm uppercase tracking-widest text-white/60">СТАБИЛЬНЫЙ</span>
+                  <span className="block text-[10px] md:text-xs uppercase tracking-wide text-white/40">РИТУАЛ</span>
+                </div>
+                
+                {/* Diagram */}
+                <CircularDiagram />
+                
+                {/* Right label */}
+                <div className="text-left min-w-[80px] md:min-w-[100px]">
+                  <span className="block text-xs md:text-sm uppercase tracking-widest text-white/60">ЗДОРОВОЕ</span>
+                  <span className="block text-[10px] md:text-xs uppercase tracking-wide text-white/40">МЫШЛЕНИЕ</span>
+                </div>
+              </div>
+              
+              {/* Bottom label */}
+              <div className="text-center">
+                <span className="block text-xs md:text-sm uppercase tracking-widest text-white/60">РАБОТА</span>
+                <span className="block text-[10px] md:text-xs uppercase tracking-wide text-white/40">С СОБОЙ</span>
+              </div>
             </div>
-            <CircularDiagram />
-            <p className="text-center mt-6 text-xs md:text-sm text-white/40 italic">
-              Ритуал как точка равновесия в ежедневном хаосе
+            
+            {/* Subtitle */}
+            <p className="text-center mt-4 text-[10px] md:text-xs text-white/30 italic">
+              Ритуал как точка равновесия
             </p>
           </motion.div>
         </div>
