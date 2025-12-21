@@ -2,29 +2,78 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cards, categoryNames, categoryColors, Card } from "@/data/cards";
-import { X, RotateCcw } from "lucide-react";
+
+// Icons
+const RefreshIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+    <path d="M4 12 C4 7.58, 7.58 4, 12 4 C15.35 4, 18.19 6.04, 19.43 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M20 12 C20 16.42, 16.42 20, 12 20 C8.65 20, 5.81 17.96, 4.57 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M16 9 L20 9 L20 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M8 15 L4 15 L4 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const QuoteIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+    <path d="M10 8 C10 8, 6 8, 6 12 C6 16, 10 16, 10 16 L10 12 L6 12" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M18 8 C18 8, 14 8, 14 12 C14 16, 18 16, 18 16 L18 12 L14 12" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+    <path d="M5 12 L10 17 L19 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+// All cards
+const allCards = [
+  "Что сегодня заставило тебя улыбнуться?",
+  "За что ты благодарна прямо сейчас?",
+  "Какая мысль не даёт тебе покоя?",
+  "Что бы ты сделала, если бы не боялась?",
+  "Какое чувство ты сейчас испытываешь?",
+  "Что ты откладываешь на потом?",
+  "Кого бы ты хотела поблагодарить?",
+  "Что для тебя значит быть собой?",
+  "Какой урок преподнёс тебе сегодняшний день?",
+  "Что ты можешь отпустить прямо сейчас?",
+  "Какая твоя самая смелая мечта?",
+  "Что приносит тебе настоящую радость?",
+  "О чём ты давно хотела поговорить?",
+  "Что ты можешь простить себе?",
+  "Какой момент сегодня был особенным?",
+  "Что ты ценишь в себе больше всего?",
+  "Куда зовёт тебя твоё сердце?",
+  "Что ты хотела бы изменить?",
+  "Какая мелочь сделала бы твой день лучше?",
+  "С кем ты чувствуешь себя настоящей?",
+  "Что ты делаешь только для себя?",
+  "Какой совет ты бы дала себе год назад?",
+  "Что помогает тебе чувствовать покой?",
+  "Какую привычку ты хотела бы сформировать?",
+  "Что делает тебя уникальной?",
+  "За что ты можешь похвалить себя сегодня?",
+  "Какое решение ты откладываешь?",
+  "Что ты узнала о себе недавно?",
+  "Какой страх держит тебя на месте?",
+  "Что значит для тебя любовь к себе?",
+];
 
 export default function CabinetCards() {
-  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
-  const [activeCategory, setActiveCategory] = useState<Card["category"] | "all">("all");
+  const [selectedCard, setSelectedCard] = useState<number | null>(null);
+  const [completedCards, setCompletedCards] = useState<number[]>([0, 1, 2, 3, 4]);
 
-  const filteredCards =
-    activeCategory === "all"
-      ? cards
-      : cards.filter((c) => c.category === activeCategory);
-
-  const allCategories: (Card["category"] | "all")[] = [
-    "all",
-    "self",
-    "feelings",
-    "desires",
-    "relationships",
-    "future",
-  ];
+  const toggleComplete = (index: number) => {
+    if (completedCards.includes(index)) {
+      setCompletedCards(completedCards.filter(i => i !== index));
+    } else {
+      setCompletedCards([...completedCards, index]);
+    }
+  };
 
   return (
-    <div className="p-6 lg:p-10">
+    <div className="max-w-4xl mx-auto">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -32,117 +81,142 @@ export default function CabinetCards() {
         transition={{ duration: 0.6 }}
         className="mb-8"
       >
-        <h1 className="text-3xl md:text-4xl font-heading font-light mb-2">
-          Все карточки
+        <h1 className="text-2xl md:text-3xl font-heading font-light text-white mb-2">
+          30 карточек
         </h1>
-        <p className="text-[var(--color-stone)]">
-          30 вопросов для путешествия к себе
+        <p className="text-white/40">
+          Один вопрос — один день — одна честность
         </p>
-      </motion.div>
-
-      {/* Categories */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.1 }}
-        className="flex flex-wrap gap-3 mb-8"
-      >
-        {allCategories.map((category) => (
-          <button
-            key={category}
-            onClick={() => setActiveCategory(category)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              activeCategory === category
-                ? "bg-[var(--color-primary)] text-white"
-                : "bg-[var(--color-cream)] text-[var(--color-charcoal)] hover:bg-[var(--color-muted)]"
-            }`}
-          >
-            {category === "all" ? "Все" : categoryNames[category]}
-          </button>
-        ))}
+        <div className="mt-4 flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-[#8fb583]" />
+            <span className="text-sm text-white/50">{completedCards.length} пройдено</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-white/10" />
+            <span className="text-sm text-white/50">{30 - completedCards.length} осталось</span>
+          </div>
+        </div>
       </motion.div>
 
       {/* Cards Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-        {filteredCards.map((card, index) => (
-          <motion.div
-            key={card.id}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, delay: index * 0.05 }}
-            onClick={() => setSelectedCard(card)}
-            className="aspect-[3/4] bg-[var(--color-primary)] rounded-xl cursor-pointer overflow-hidden group hover:scale-105 transition-transform shadow-md"
-          >
-            <div className="h-full flex flex-col items-center justify-center p-4 text-white">
-              <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">
-                🌿
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
+        {allCards.map((card, index) => {
+          const isCompleted = completedCards.includes(index);
+          return (
+            <motion.button
+              key={index}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: index * 0.02 }}
+              onClick={() => setSelectedCard(index)}
+              className={`relative aspect-[3/4] rounded-xl p-4 transition-all duration-300 ${
+                isCompleted
+                  ? 'bg-[#8fb583]/10 border border-[#8fb583]/30'
+                  : 'bg-white/[0.02] border border-white/[0.08] hover:border-white/20'
+              }`}
+            >
+              {isCompleted && (
+                <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#8fb583] flex items-center justify-center">
+                  <div className="w-3 h-3 text-white">
+                    <CheckIcon />
+                  </div>
+                </div>
+              )}
+              <div className="h-full flex flex-col items-center justify-center">
+                <span className={`text-2xl font-heading ${isCompleted ? 'text-[#8fb583]' : 'text-white/60'}`}>
+                  {index + 1}
+                </span>
               </div>
-              <p className="text-lg font-heading">День {card.id}</p>
-              <p className="text-xs opacity-70 mt-1">
-                {categoryNames[card.category]}
-              </p>
-            </div>
-          </motion.div>
-        ))}
+            </motion.button>
+          );
+        })}
       </div>
 
-      {/* Card Modal */}
+      {/* Selected Card Modal */}
       <AnimatePresence>
-        {selectedCard && (
+        {selectedCard !== null && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80"
             onClick={() => setSelectedCard(null)}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, rotateY: -90 }}
-              animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.4 }}
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", duration: 0.5 }}
+              className="relative bg-gradient-to-br from-[#1a1d1a] to-[#0f120e] rounded-3xl p-8 md:p-12 max-w-lg w-full border border-white/[0.08]"
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-md"
             >
-              <div className="aspect-[3/4] bg-white rounded-2xl shadow-2xl overflow-hidden">
-                <div className="absolute inset-0 flex flex-col">
-                  <div className="flex-1 flex items-center justify-center p-8">
-                    <p className="text-2xl md:text-3xl font-heading font-light text-center text-[var(--color-charcoal)] leading-relaxed">
-                      {selectedCard.question}
-                    </p>
-                  </div>
-                  <div
-                    className="p-6 border-t border-[var(--color-muted)]"
-                    style={{
-                      backgroundColor: `${categoryColors[selectedCard.category]}10`,
-                    }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span
-                        className="text-sm font-medium"
-                        style={{ color: categoryColors[selectedCard.category] }}
-                      >
-                        {categoryNames[selectedCard.category]}
-                      </span>
-                      <span className="text-sm text-[var(--color-stone)]">
-                        День {selectedCard.id}/30
-                      </span>
-                    </div>
-                  </div>
-                </div>
+              {/* Corner decorations */}
+              <div className="absolute top-4 left-4 w-8 h-8">
+                <svg viewBox="0 0 32 32" fill="none">
+                  <path d="M0 12 L0 0 L12 0" stroke="rgba(143,181,131,0.3)" strokeWidth="1" />
+                </svg>
+              </div>
+              <div className="absolute top-4 right-4 w-8 h-8">
+                <svg viewBox="0 0 32 32" fill="none">
+                  <path d="M20 0 L32 0 L32 12" stroke="rgba(143,181,131,0.3)" strokeWidth="1" />
+                </svg>
+              </div>
+              <div className="absolute bottom-4 left-4 w-8 h-8">
+                <svg viewBox="0 0 32 32" fill="none">
+                  <path d="M0 20 L0 32 L12 32" stroke="rgba(143,181,131,0.3)" strokeWidth="1" />
+                </svg>
+              </div>
+              <div className="absolute bottom-4 right-4 w-8 h-8">
+                <svg viewBox="0 0 32 32" fill="none">
+                  <path d="M20 32 L32 32 L32 20" stroke="rgba(143,181,131,0.3)" strokeWidth="1" />
+                </svg>
               </div>
 
-              {/* Close button */}
-              <button
-                onClick={() => setSelectedCard(null)}
-                className="absolute -top-12 right-0 text-white hover:text-white/70 transition-colors"
-              >
-                <X className="w-8 h-8" />
-              </button>
+              {/* Quote icon */}
+              <div className="w-8 h-8 mx-auto mb-6 text-[#8fb583]/40">
+                <QuoteIcon />
+              </div>
 
-              {/* Navigation hint */}
-              <div className="mt-4 text-center text-white/70 text-sm">
-                Нажмите за пределами карточки, чтобы закрыть
+              {/* Card number */}
+              <div className="text-center mb-4">
+                <span className="text-xs uppercase tracking-wider text-white/30">
+                  Карточка {selectedCard + 1} из 30
+                </span>
+              </div>
+
+              {/* Question */}
+              <p className="text-2xl md:text-3xl font-heading font-light text-white text-center leading-relaxed mb-8">
+                {allCards[selectedCard]}
+              </p>
+
+              {/* Actions */}
+              <div className="flex items-center justify-center gap-4">
+                <button
+                  onClick={() => toggleComplete(selectedCard)}
+                  className={`flex items-center gap-2 px-6 py-3 rounded-full transition-all duration-300 ${
+                    completedCards.includes(selectedCard)
+                      ? 'bg-[#8fb583] text-white'
+                      : 'bg-white/[0.05] border border-white/20 text-white/70 hover:text-white'
+                  }`}
+                >
+                  <div className="w-5 h-5">
+                    <CheckIcon />
+                  </div>
+                  <span className="text-sm font-medium">
+                    {completedCards.includes(selectedCard) ? 'Выполнено' : 'Отметить'}
+                  </span>
+                </button>
+                
+                <button
+                  onClick={() => setSelectedCard((selectedCard + 1) % allCards.length)}
+                  className="flex items-center gap-2 px-6 py-3 rounded-full border border-white/20 text-white/70 hover:bg-white/5 hover:text-white transition-all duration-300"
+                >
+                  <div className="w-5 h-5">
+                    <RefreshIcon />
+                  </div>
+                  <span className="text-sm">Следующая</span>
+                </button>
               </div>
             </motion.div>
           </motion.div>
@@ -151,7 +225,3 @@ export default function CabinetCards() {
     </div>
   );
 }
-
-
-
-

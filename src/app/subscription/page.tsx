@@ -13,9 +13,9 @@ export default function Subscription() {
   return (
     <>
       <Header />
-      <main className="pt-20">
+      <div className="pt-20">
         <SubscriptionPage />
-      </main>
+      </div>
       <Footer />
     </>
   );

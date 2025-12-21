@@ -13,9 +13,9 @@ export default function Product() {
   return (
     <>
       <Header />
-      <main className="pt-20">
+      <div className="pt-20">
         <ProductPage />
-      </main>
+      </div>
       <Footer />
     </>
   );

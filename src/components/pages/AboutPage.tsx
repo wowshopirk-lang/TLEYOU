@@ -1,121 +1,148 @@
 "use client";
 
-import Container from "@/components/ui/Container";
 import { motion } from "framer-motion";
-import { Heart, Leaf, Sparkles } from "lucide-react";
+import Link from "next/link";
+
+// Icons
+const LeafIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+    <path d="M12 22 C12 22, 4 16, 4 10 C4 4, 12 2, 12 2 C12 2, 20 4, 20 10 C20 16, 12 22, 12 22" stroke="currentColor" strokeWidth="1.5" fill="none" />
+    <path d="M12 22 L12 10" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+  </svg>
+);
+
+const HeartIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+    <path d="M12 20 C9 17, 4 13, 4 9 C4 6, 6 4, 9 4 C10.5 4, 11.5 5, 12 6 C12.5 5, 13.5 4, 15 4 C18 4, 20 6, 20 9 C20 13, 15 17, 12 20" stroke="currentColor" strokeWidth="1.5" fill="none" />
+  </svg>
+);
+
+const SparkleIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+    <path d="M12 3 L13 8 L18 9 L13 10 L12 15 L11 10 L6 9 L11 8 Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+  </svg>
+);
+
+const ArrowIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+    <path d="M5 12 L19 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M14 7 L19 12 L14 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 
 const values = [
   {
-    icon: Heart,
+    icon: LeafIcon,
+    title: "Простота",
+    description: "Убираем лишнее, оставляем суть. Никаких сложных практик — только то, что работает.",
+  },
+  {
+    icon: HeartIcon,
     title: "Забота",
-    description:
-      "Мы верим, что забота о себе — это не эгоизм, а необходимость. Только наполнив себя, ты сможешь дарить другим.",
+    description: "Каждый элемент создан с любовью к тебе и твоему времени тишины.",
   },
   {
-    icon: Leaf,
-    title: "Естественность",
-    description:
-      "Натуральные материалы, простые ритуалы, честные вопросы. Ничего искусственного — только то, что работает.",
+    icon: SparkleIcon,
+    title: "Честность",
+    description: "Мы не обещаем чудес. Мы предлагаем ежедневный ритуал возвращения к себе.",
   },
-  {
-    icon: Sparkles,
-    title: "Осознанность",
-    description:
-      "Каждый момент с собой — это инвестиция. Мы создаём пространство для этих моментов.",
-  },
+];
+
+const story = [
+  "TLEYOU родился из личной потребности в тишине.",
+  "В мире, где телефон звонит каждые 5 минут, найти 10 минут для себя — уже победа.",
+  "Мы создали набор, который помогает начать. Без приложений, без экранов, без сложных техник.",
+  "Просто ты, карточка с вопросом, и тлеющая скрутка.",
+  "Название TLEYOU — это игра слов: «тлеет» (горит тихо, без пламени) + «you» (ты).",
+  "Тлеющий огонь — метафора внимания к себе. Не яркий, не громкий, но тёплый и настоящий.",
 ];
 
 export default function AboutPage() {
   return (
-    <>
+    <main className="bg-[#0a0c0a] min-h-screen">
       {/* Hero */}
-      <section className="section bg-[var(--color-cream)]">
-        <Container>
+      <section className="relative py-20 md:py-32 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0c0a] via-[#0f120e] to-[#0a0c0a]" />
+          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#4a6741]/[0.08] rounded-full blur-[150px]" />
+        </div>
+
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="max-w-3xl mx-auto text-center"
           >
-            <span className="inline-block text-sm uppercase tracking-[0.3em] text-[var(--color-primary)] mb-4">
-              О бренде
-            </span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-light mb-8">
-              TLEYOU — пауза для тех, кто забыл себя
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="w-8 h-px bg-[#8fb583]/50" />
+              <span className="text-xs uppercase tracking-[0.3em] text-[#8fb583]">О нас</span>
+              <div className="w-8 h-px bg-[#8fb583]/50" />
+            </div>
+            
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-light text-white mb-6">
+              Ритуал возвращения к себе
             </h1>
-            <p className="text-xl text-[var(--color-stone)] leading-relaxed">
-              Мы создаём пространство для возвращения к себе. Не терапию, не
-              медитации, не курсы. Просто 10 минут тишины каждый день.
+            
+            <p className="text-lg text-white/50 max-w-2xl mx-auto leading-relaxed">
+              TLEYOU — это набор для ежедневной практики тишины. 10 минут в день, чтобы услышать себя.
             </p>
           </motion.div>
-        </Container>
+        </div>
       </section>
 
       {/* Story */}
-      <section className="section bg-[var(--color-background)]">
-        <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <h2 className="text-4xl md:text-5xl font-heading font-light mb-8">
-                Как всё началось
-              </h2>
-              <div className="space-y-6 text-[var(--color-stone)] text-lg leading-relaxed">
-                <p>
-                  TLEYOU родился из личного опыта выгорания. Бесконечная гонка,
-                  попытки успеть всё, потеря связи с собой — всё это привело к
-                  точке, когда единственным выходом стала пауза.
-                </p>
-                <p>
-                  Но как остановиться, если ты разучилась это делать? Как услышать
-                  себя, если внутри — только тишина усталости?
-                </p>
-                <p>
-                  Так появился ритуал: зажечь скрутку, достать карточку, задать себе
-                  один честный вопрос. 10 минут, которые изменили всё.
-                </p>
-                <p className="font-medium text-[var(--color-charcoal)]">
-                  Теперь мы хотим подарить эту практику тебе.
-                </p>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="aspect-[4/5] bg-[var(--color-cream)] rounded-2xl flex items-center justify-center"
-            >
-              <div className="text-center p-8">
-                <div className="text-8xl mb-4 opacity-30">🌿</div>
-                <p className="text-[var(--color-stone)]">Фото создателя бренда</p>
-              </div>
-            </motion.div>
-          </div>
-        </Container>
-      </section>
-
-      {/* Values */}
-      <section className="section bg-[var(--color-charcoal)] text-white">
-        <Container>
+      <section className="relative py-16 md:py-24 overflow-hidden">
+        <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-16"
+            className="mb-12"
           >
-            <h2 className="text-4xl md:text-5xl font-heading font-light mb-6 text-white">
+            <div className="w-12 h-px bg-gradient-to-r from-transparent via-[#8fb583]/50 to-transparent mx-auto mb-8" />
+            <h2 className="text-2xl md:text-3xl font-heading font-light text-white text-center">
+              История
+            </h2>
+          </motion.div>
+
+          <div className="space-y-6">
+            {story.map((paragraph, index) => (
+              <motion.p
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className={`text-lg leading-relaxed ${
+                  index === 4 || index === 5 ? 'text-[#8fb583]/80 italic' : 'text-white/60'
+                }`}
+              >
+                {paragraph}
+              </motion.p>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Values */}
+      <section className="relative py-16 md:py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0f120e]/50 to-transparent" />
+        
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-2xl md:text-3xl font-heading font-light text-white">
               Наши ценности
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {values.map((value, index) => {
               const Icon = value.icon;
               return (
@@ -124,52 +151,75 @@ export default function AboutPage() {
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: index * 0.2 }}
-                  className="text-center p-8"
+                  transition={{ duration: 0.6, delay: index * 0.15 }}
+                  className="bg-white/[0.02] border border-white/[0.08] rounded-2xl p-8 text-center"
                 >
-                  <div className="w-16 h-16 mx-auto rounded-full bg-[var(--color-moss)] flex items-center justify-center mb-6">
-                    <Icon className="w-8 h-8 text-white" />
+                  <div className="w-12 h-12 mx-auto mb-6 text-[#8fb583]">
+                    <Icon />
                   </div>
-                  <h3 className="text-2xl font-heading font-medium mb-4 text-white">
+                  <h3 className="text-xl font-heading font-light text-white mb-3">
                     {value.title}
                   </h3>
-                  <p className="text-white/70">{value.description}</p>
+                  <p className="text-white/50 text-sm leading-relaxed">
+                    {value.description}
+                  </p>
                 </motion.div>
               );
             })}
           </div>
-        </Container>
+        </div>
       </section>
 
-      {/* Mission */}
-      <section className="section bg-[var(--color-cream)]">
-        <Container>
+      {/* Quote */}
+      <section className="relative py-16 md:py-24 overflow-hidden">
+        <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="w-8 h-8 mx-auto mb-8 text-[#8fb583]/40">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M10 8 C10 8, 6 8, 6 12 C6 16, 10 16, 10 16 L10 12 L6 12" stroke="currentColor" strokeWidth="1" />
+                <path d="M18 8 C18 8, 14 8, 14 12 C14 16, 18 16, 18 16 L18 12 L14 12" stroke="currentColor" strokeWidth="1" />
+              </svg>
+            </div>
+            <p className="text-2xl md:text-3xl font-heading font-light text-white leading-relaxed mb-6">
+              Тишина — это не отсутствие звука. Это присутствие покоя.
+            </p>
+            <span className="text-white/40 text-sm">— TLEYOU</span>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="relative py-16 md:py-24 overflow-hidden">
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[250px] bg-[#4a6741]/[0.1] rounded-full blur-[100px]" />
+        
+        <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="max-w-3xl mx-auto text-center"
           >
-            <h2 className="text-4xl md:text-5xl font-heading font-light mb-8">
-              Наша миссия
+            <h2 className="text-2xl md:text-3xl font-heading font-light text-white mb-6">
+              Готовы начать свой ритуал?
             </h2>
-            <p className="text-2xl font-heading font-light text-[var(--color-charcoal)] italic leading-relaxed">
-              "Помочь каждой женщине найти 10 минут для себя. Не для работы, не
-              для семьи, не для достижений — просто для себя. Потому что ты
-              заслуживаешь эту паузу."
-            </p>
-            <div className="divider" />
-            <p className="text-[var(--color-primary)] font-medium">
-              Команда TLEYOU
-            </p>
+            
+            <Link
+              href="/product"
+              className="group inline-flex items-center justify-center gap-3 px-10 py-4 rounded-full bg-[#4a6741] text-white hover:bg-[#5a7a51] transition-all duration-300"
+            >
+              <span className="font-medium">Узнать о наборе</span>
+              <div className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300">
+                <ArrowIcon />
+              </div>
+            </Link>
           </motion.div>
-        </Container>
+        </div>
       </section>
-    </>
+    </main>
   );
 }
-
-
-
-

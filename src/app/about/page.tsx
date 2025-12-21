@@ -13,9 +13,9 @@ export default function About() {
   return (
     <>
       <Header />
-      <main className="pt-20">
+      <div className="pt-20">
         <AboutPage />
-      </main>
+      </div>
       <Footer />
     </>
   );

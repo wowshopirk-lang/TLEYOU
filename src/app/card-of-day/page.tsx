@@ -13,9 +13,9 @@ export default function CardOfDay() {
   return (
     <>
       <Header />
-      <main className="pt-20">
+      <div className="pt-20">
         <CardOfDayPage />
-      </main>
+      </div>
       <Footer />
     </>
   );

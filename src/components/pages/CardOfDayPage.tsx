@@ -1,233 +1,275 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Container from "@/components/ui/Container";
-import Button from "@/components/ui/Button";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { cards, categoryNames } from "@/data/cards";
-import { Sparkles, RotateCcw, Lock, Crown } from "lucide-react";
 
-function getStoredCardData(): { date: string; cardId: number } | null {
-  if (typeof window === "undefined") return null;
-  const stored = localStorage.getItem("tleyou_card_of_day");
-  if (!stored) return null;
-  try {
-    return JSON.parse(stored);
-  } catch {
-    return null;
-  }
-}
+// Card questions
+const cards = [
+  "Что сегодня заставило тебя улыбнуться?",
+  "За что ты благодарна прямо сейчас?",
+  "Какая мысль не даёт тебе покоя?",
+  "Что бы ты сделала, если бы не боялась?",
+  "Какое чувство ты сейчас испытываешь?",
+  "Что ты откладываешь на потом?",
+  "Кого бы ты хотела поблагодарить?",
+  "Что для тебя значит быть собой?",
+  "Какой урок преподнёс тебе сегодняшний день?",
+  "Что ты можешь отпустить прямо сейчас?",
+  "Какая твоя самая смелая мечта?",
+  "Что приносит тебе настоящую радость?",
+  "О чём ты давно хотела поговорить?",
+  "Что ты можешь простить себе?",
+  "Какой момент сегодня был особенным?",
+  "Что ты ценишь в себе больше всего?",
+  "Куда зовёт тебя твоё сердце?",
+  "Что ты хотела бы изменить?",
+  "Какая мелочь сделала бы твой день лучше?",
+  "С кем ты чувствуешь себя настоящей?",
+  "Что ты делаешь только для себя?",
+  "Какой совет ты бы дала себе год назад?",
+  "Что помогает тебе чувствовать покой?",
+  "Какую привычку ты хотела бы сформировать?",
+  "Что делает тебя уникальной?",
+  "За что ты можешь похвалить себя сегодня?",
+  "Какое решение ты откладываешь?",
+  "Что ты узнала о себе недавно?",
+  "Какой страх держит тебя на месте?",
+  "Что значит для тебя любовь к себе?",
+];
 
-function getTodayDateString(): string {
-  return new Date().toISOString().split("T")[0];
-}
+// Icons
+const RefreshIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+    <path d="M4 12 C4 7.58, 7.58 4, 12 4 C15.35 4, 18.19 6.04, 19.43 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M20 12 C20 16.42, 16.42 20, 12 20 C8.65 20, 5.81 17.96, 4.57 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M16 9 L20 9 L20 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M8 15 L4 15 L4 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 
-function getCardForToday(): number {
-  const today = getTodayDateString();
-  const stored = getStoredCardData();
+const ShareIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+    <circle cx="18" cy="5" r="3" stroke="currentColor" strokeWidth="1.5" />
+    <circle cx="6" cy="12" r="3" stroke="currentColor" strokeWidth="1.5" />
+    <circle cx="18" cy="19" r="3" stroke="currentColor" strokeWidth="1.5" />
+    <path d="M8.5 10.5 L15.5 6.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M8.5 13.5 L15.5 17.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+  </svg>
+);
 
-  if (stored && stored.date === today) {
-    return stored.cardId;
-  }
+const ArrowIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+    <path d="M5 12 L19 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M14 7 L19 12 L14 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 
-  // Generate a "random" card based on date
-  const dateNum = parseInt(today.replace(/-/g, ""), 10);
-  const cardId = (dateNum % 30) + 1;
-
-  if (typeof window !== "undefined") {
-    localStorage.setItem(
-      "tleyou_card_of_day",
-      JSON.stringify({ date: today, cardId })
-    );
-  }
-
-  return cardId;
-}
+const QuoteIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+    <path d="M10 8 C10 8, 6 8, 6 12 C6 16, 10 16, 10 16 L10 12 L6 12" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M18 8 C18 8, 14 8, 14 12 C14 16, 18 16, 18 16 L18 12 L14 12" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 
 export default function CardOfDayPage() {
-  const [isRevealed, setIsRevealed] = useState(false);
-  const [cardId, setCardId] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [cardIndex, setCardIndex] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
-    const id = getCardForToday();
-    setCardId(id);
-    setIsLoading(false);
+    // Get today's card based on date
+    const today = new Date();
+    const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
+    setCardIndex(dayOfYear % cards.length);
   }, []);
 
-  const card = cardId ? cards.find((c) => c.id === cardId) : null;
-
-  if (isLoading) {
-    return (
-      <section className="min-h-[80vh] flex items-center justify-center bg-[var(--color-cream)]">
-        <div className="text-center">
-          <div className="animate-pulse text-4xl mb-4">🌿</div>
-          <p className="text-[var(--color-stone)]">Загрузка...</p>
-        </div>
-      </section>
-    );
-  }
+  const getNewCard = () => {
+    setIsFlipped(true);
+    setTimeout(() => {
+      setCardIndex((prev) => (prev + 1) % cards.length);
+      setIsFlipped(false);
+    }, 300);
+  };
 
   return (
-    <>
+    <main className="bg-[#0a0c0a] min-h-screen">
       {/* Hero */}
-      <section className="min-h-[80vh] flex items-center bg-gradient-to-b from-[var(--color-cream)] to-[var(--color-background)]">
-        <Container>
-          <div className="max-w-2xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <span className="inline-flex items-center gap-2 text-sm uppercase tracking-[0.3em] text-[var(--color-primary)] mb-4">
-                <Sparkles className="w-4 h-4" />
-                Карточка дня
-              </span>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-light mb-6">
-                Твой вопрос на сегодня
-              </h1>
-              <p className="text-lg text-[var(--color-stone)] mb-12">
-                Одна карточка в день. Один честный ответ. Один шаг к себе.
-              </p>
-            </motion.div>
+      <section className="relative min-h-[90vh] flex items-center justify-center py-20 overflow-hidden">
+        {/* Background */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0c0a] via-[#0f120e] to-[#0a0c0a]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#4a6741]/[0.06] rounded-full blur-[150px]" />
+          
+          {/* Decorative circles */}
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 border border-white/[0.03] rounded-full" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 border border-[#8fb583]/[0.05] rounded-full" />
+        </div>
 
-            {/* Card */}
-            <div className="relative perspective-1000">
-              <AnimatePresence mode="wait">
-                {!isRevealed ? (
-                  <motion.div
-                    key="back"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, rotateY: 90 }}
-                    transition={{ duration: 0.4 }}
-                    className="relative"
-                  >
-                    <div
-                      className="aspect-[3/4] max-w-sm mx-auto bg-[var(--color-primary)] rounded-2xl shadow-2xl cursor-pointer overflow-hidden group"
-                      onClick={() => setIsRevealed(true)}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
-                      <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-white">
-                        <div className="text-6xl mb-6 group-hover:scale-110 transition-transform">
-                          🌿
-                        </div>
-                        <p className="text-xl font-heading mb-2">TLEYOU</p>
-                        <p className="text-sm opacity-70">Нажми, чтобы открыть</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="front"
-                    initial={{ opacity: 0, rotateY: -90 }}
-                    animate={{ opacity: 1, rotateY: 0 }}
-                    transition={{ duration: 0.4 }}
-                    className="relative"
-                  >
-                    <div className="aspect-[3/4] max-w-sm mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
-                      <div className="absolute inset-0 flex flex-col">
-                        <div className="flex-1 flex items-center justify-center p-8">
-                          <p className="text-2xl md:text-3xl font-heading font-light text-center text-[var(--color-charcoal)] leading-relaxed">
-                            {card?.question}
-                          </p>
-                        </div>
-                        <div className="p-6 bg-[var(--color-cream)] border-t border-[var(--color-muted)]">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-[var(--color-stone)]">
-                              {card && categoryNames[card.category]}
-                            </span>
-                            <span className="text-sm text-[var(--color-primary)]">
-                              День {card?.id}/30
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-8 flex justify-center">
-                      <button
-                        onClick={() => setIsRevealed(false)}
-                        className="inline-flex items-center gap-2 text-[var(--color-stone)] hover:text-[var(--color-primary)] transition-colors"
-                      >
-                        <RotateCcw className="w-4 h-4" />
-                        Перевернуть
-                      </button>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+        <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 text-center">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="mb-12"
+          >
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="w-8 h-px bg-[#8fb583]/50" />
+              <span className="text-xs uppercase tracking-[0.3em] text-[#8fb583]">Карточка дня</span>
+              <div className="w-8 h-px bg-[#8fb583]/50" />
             </div>
+            <p className="text-white/40 text-sm">
+              {new Date().toLocaleDateString("ru-RU", { 
+                weekday: "long", 
+                day: "numeric", 
+                month: "long" 
+              })}
+            </p>
+          </motion.div>
 
-            {/* Timer / Hint */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="mt-12 text-center"
+          {/* Card */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="relative mb-12"
+          >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={cardIndex}
+                initial={{ opacity: 0, rotateY: -90 }}
+                animate={{ opacity: 1, rotateY: 0 }}
+                exit={{ opacity: 0, rotateY: 90 }}
+                transition={{ duration: 0.3 }}
+                className="relative"
+              >
+                {/* Card container */}
+                <div className="relative bg-gradient-to-br from-[#1a1d1a] to-[#0f120e] rounded-3xl p-10 md:p-14 border border-white/[0.08] shadow-2xl">
+                  {/* Corner decorations */}
+                  <div className="absolute top-6 left-6 w-10 h-10">
+                    <svg viewBox="0 0 40 40" fill="none">
+                      <path d="M0 16 L0 0 L16 0" stroke="rgba(143,181,131,0.3)" strokeWidth="1" />
+                    </svg>
+                  </div>
+                  <div className="absolute top-6 right-6 w-10 h-10">
+                    <svg viewBox="0 0 40 40" fill="none">
+                      <path d="M24 0 L40 0 L40 16" stroke="rgba(143,181,131,0.3)" strokeWidth="1" />
+                    </svg>
+                  </div>
+                  <div className="absolute bottom-6 left-6 w-10 h-10">
+                    <svg viewBox="0 0 40 40" fill="none">
+                      <path d="M0 24 L0 40 L16 40" stroke="rgba(143,181,131,0.3)" strokeWidth="1" />
+                    </svg>
+                  </div>
+                  <div className="absolute bottom-6 right-6 w-10 h-10">
+                    <svg viewBox="0 0 40 40" fill="none">
+                      <path d="M24 40 L40 40 L40 24" stroke="rgba(143,181,131,0.3)" strokeWidth="1" />
+                    </svg>
+                  </div>
+
+                  {/* Quote icon */}
+                  <div className="w-8 h-8 mx-auto mb-8 text-[#8fb583]/40">
+                    <QuoteIcon />
+                  </div>
+
+                  {/* Question */}
+                  <p className="text-2xl md:text-3xl lg:text-4xl font-heading font-light text-white leading-relaxed">
+                    {cards[cardIndex]}
+                  </p>
+
+                  {/* Card number */}
+                  <div className="mt-10 flex items-center justify-center gap-2">
+                    <div className="w-6 h-px bg-white/10" />
+                    <span className="text-xs text-white/30 uppercase tracking-wider">
+                      {cardIndex + 1} / {cards.length}
+                    </span>
+                    <div className="w-6 h-px bg-white/10" />
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </motion.div>
+
+          {/* Actions */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="flex items-center justify-center gap-4"
+          >
+            <button
+              onClick={getNewCard}
+              className="flex items-center gap-2 px-6 py-3 rounded-full border border-white/15 text-white/70 hover:bg-white/5 hover:text-white transition-all duration-300"
             >
-              <p className="text-sm text-[var(--color-stone)] mb-2">
-                Следующая карточка будет доступна завтра
-              </p>
-              <div className="inline-flex items-center gap-2 text-[var(--color-stone)]/50">
-                <Lock className="w-4 h-4" />
-                <span className="text-xs">29 карточек заблокировано</span>
+              <div className="w-5 h-5">
+                <RefreshIcon />
               </div>
-            </motion.div>
-          </div>
-        </Container>
+              <span className="text-sm">Другая карточка</span>
+            </button>
+            
+            <button
+              className="flex items-center gap-2 px-6 py-3 rounded-full border border-white/15 text-white/70 hover:bg-white/5 hover:text-white transition-all duration-300"
+            >
+              <div className="w-5 h-5">
+                <ShareIcon />
+              </div>
+              <span className="text-sm">Поделиться</span>
+            </button>
+          </motion.div>
+
+          {/* Hint */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="mt-8 text-sm text-white/30 italic"
+          >
+            Закрой глаза. Сделай глубокий вдох. Ответь честно.
+          </motion.p>
+        </div>
       </section>
 
       {/* CTA */}
-      <section className="section bg-[var(--color-charcoal)] text-white">
-        <Container>
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0f120e] to-transparent" />
+        
+        <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="max-w-2xl mx-auto text-center"
           >
-            <div className="inline-flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full mb-6">
-              <Crown className="w-4 h-4" />
-              <span className="text-sm">Хочешь больше?</span>
-            </div>
-            <h2 className="text-3xl md:text-4xl font-heading font-light mb-6 text-white">
-              Получи доступ ко всем 30 карточкам
+            <div className="w-12 h-px bg-gradient-to-r from-transparent via-[#8fb583]/50 to-transparent mx-auto mb-8" />
+            
+            <h2 className="text-2xl md:text-3xl font-heading font-light text-white mb-4">
+              Хочешь больше?
             </h2>
-            <p className="text-lg text-white/70 mb-10">
-              Оформи подписку и открой все карточки, медитации, дыхательные
-              техники и ежедневные практики.
+            <p className="text-white/50 mb-8">
+              В наборе TLEYOU — 30 физических карточек для ежедневной практики
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/subscription">
-                <Button
-                  variant="primary"
-                  size="lg"
-                  className="bg-white text-[var(--color-charcoal)] hover:bg-white/90"
-                >
-                  Оформить подписку — 500 ₽/мес
-                </Button>
+              <Link
+                href="/product"
+                className="group inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-[#4a6741] text-white hover:bg-[#5a7a51] transition-all duration-300"
+              >
+                <span className="font-medium">Узнать о наборе</span>
+                <div className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300">
+                  <ArrowIcon />
+                </div>
               </Link>
-              <Link href="/product">
-                <Button
-                  variant="secondary"
-                  size="lg"
-                  className="border-white/30 text-white hover:bg-white/10"
-                >
-                  Или купить набор
-                </Button>
+              
+              <Link
+                href="/subscription"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border border-white/15 text-white/70 hover:bg-white/5 hover:text-white transition-all duration-300"
+              >
+                <span>Подписка с практиками</span>
               </Link>
             </div>
           </motion.div>
-        </Container>
+        </div>
       </section>
-    </>
+    </main>
   );
 }
-
-
-
-

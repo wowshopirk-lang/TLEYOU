@@ -13,9 +13,9 @@ export default function Contacts() {
   return (
     <>
       <Header />
-      <main className="pt-20">
+      <div className="pt-20">
         <ContactsPage />
-      </main>
+      </div>
       <Footer />
     </>
   );
