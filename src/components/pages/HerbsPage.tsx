@@ -33,21 +33,67 @@ const TelegramIcon = () => (
   </svg>
 );
 
-const herbs = [
+// Разные варианты скруток
+const herbRolls = [
   {
-    name: "Лаванда",
-    description: "Успокаивает нервную систему, помогает расслабиться и уснуть",
-    benefits: ["Снятие стресса", "Улучшение сна", "Антибактериальный эффект"],
+    id: "classic",
+    name: "Классическая",
+    description: "Баланс успокоения и ясности",
+    composition: ["Лаванда", "Шалфей", "Полынь"],
+    effect: "Универсальная смесь для ежедневного ритуала",
+    duration: "10-15 сеансов",
+    bestFor: ["Вечерний ритуал", "Снятие стресса", "Подготовка ко сну"],
+    color: "from-[#4a6741]/20 to-[#3a5232]/10",
   },
   {
-    name: "Шалфей",
-    description: "Очищает пространство, способствует ясности мыслей",
-    benefits: ["Очищение воздуха", "Улучшение концентрации", "Антисептик"],
+    id: "calm",
+    name: "Спокойствие",
+    description: "Для глубокого расслабления",
+    composition: ["Лаванда", "Ромашка", "Мята"],
+    effect: "Мягкий успокаивающий аромат",
+    duration: "12-18 сеансов",
+    bestFor: ["Бессонница", "Тревожность", "Восстановление"],
+    color: "from-blue-500/20 to-indigo-500/10",
   },
   {
-    name: "Полынь",
-    description: "Традиционная трава для ритуалов, создаёт особую атмосферу",
-    benefits: ["Духовная практика", "Защита пространства", "Ароматерапия"],
+    id: "focus",
+    name: "Концентрация",
+    description: "Для ясности мыслей",
+    composition: ["Шалфей", "Розмарин", "Эвкалипт"],
+    effect: "Очищает пространство и ум",
+    duration: "10-15 сеансов",
+    bestFor: ["Утренний ритуал", "Медитация", "Работа"],
+    color: "from-amber-500/20 to-orange-500/10",
+  },
+  {
+    id: "ritual",
+    name: "Ритуал",
+    description: "Традиционная смесь",
+    composition: ["Полынь", "Шалфей", "Кедр"],
+    effect: "Особая атмосфера для практик",
+    duration: "8-12 сеансов",
+    bestFor: ["Духовные практики", "Очищение пространства", "Особые моменты"],
+    color: "from-purple-500/20 to-pink-500/10",
+  },
+  {
+    id: "balance",
+    name: "Баланс",
+    description: "Гармония и равновесие",
+    composition: ["Лаванда", "Розмарин", "Мелисса"],
+    effect: "Восстанавливает внутренний баланс",
+    duration: "12-16 сеансов",
+    bestFor: ["Дневной ритуал", "Перезагрузка", "Баланс эмоций"],
+    color: "from-green-500/20 to-emerald-500/10",
+  },
+  {
+    id: "sleep",
+    name: "Сон",
+    description: "Для глубокого отдыха",
+    composition: ["Лаванда", "Ромашка", "Валериана"],
+    effect: "Подготовка к качественному сну",
+    duration: "15-20 сеансов",
+    bestFor: ["Перед сном", "Бессонница", "Релаксация"],
+    color: "from-indigo-500/20 to-purple-500/10",
   },
 ];
 
@@ -97,19 +143,19 @@ export default function HerbsPage() {
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-light text-white mb-6">
-              Натуральные травы для ритуала
+              Выбери свою скрутку
             </h1>
             
             <p className="text-lg text-white/50 max-w-2xl mx-auto mb-8">
-              Смесь лаванды, шалфея и полыни. Каждая скрутка создана вручную для вашего ритуала тишины.
+              Шесть вариантов с разным наполнением. Каждая скрутка создана для определённого настроения и цели.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Herbs Info */}
+      {/* Herb Rolls */}
       <section className="relative py-16 md:py-24 overflow-hidden">
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -119,37 +165,73 @@ export default function HerbsPage() {
           >
             <div className="w-12 h-px bg-gradient-to-r from-transparent via-[#8fb583]/50 to-transparent mx-auto mb-6" />
             <h2 className="text-3xl md:text-4xl font-heading font-light text-white">
-              Что внутри
+              Варианты скруток
             </h2>
+            <p className="text-white/40 mt-4">Выбери состав под своё настроение</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {herbs.map((herb, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {herbRolls.map((roll, index) => (
               <motion.div
-                key={herb.name}
+                key={roll.id}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.15 }}
-                className="bg-white/[0.02] border border-white/[0.08] rounded-2xl p-8 hover:bg-white/[0.04] hover:border-[#8fb583]/20 transition-all duration-500"
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className={`relative bg-gradient-to-br ${roll.color} border border-white/[0.08] rounded-2xl p-6 hover:bg-white/[0.04] hover:border-[#8fb583]/20 transition-all duration-500`}
               >
-                <div className="w-12 h-12 text-[#8fb583] mb-6">
+                {/* Corner decoration */}
+                <div className="absolute top-0 right-0 w-8 h-8">
+                  <svg viewBox="0 0 32 32" fill="none">
+                    <path d="M16 0 L32 0 L32 16" stroke="rgba(143,181,131,0.15)" strokeWidth="1" />
+                  </svg>
+                </div>
+
+                <div className="w-10 h-10 text-[#8fb583] mb-4">
                   <LeafIcon />
                 </div>
                 
-                <h3 className="text-xl font-heading font-light text-white mb-3">{herb.name}</h3>
-                <p className="text-white/50 text-sm mb-6 leading-relaxed">{herb.description}</p>
+                <h3 className="text-xl font-heading font-light text-white mb-2">{roll.name}</h3>
+                <p className="text-white/60 text-sm mb-4">{roll.description}</p>
                 
-                <ul className="space-y-2">
-                  {herb.benefits.map((benefit) => (
-                    <li key={benefit} className="flex items-center gap-2 text-sm text-white/40">
-                      <div className="w-4 h-4 text-[#8fb583]">
-                        <CheckIcon />
-                      </div>
-                      {benefit}
-                    </li>
-                  ))}
-                </ul>
+                {/* Composition */}
+                <div className="mb-4">
+                  <p className="text-xs uppercase tracking-wider text-white/40 mb-2">Состав</p>
+                  <div className="flex flex-wrap gap-2">
+                    {roll.composition.map((herb) => (
+                      <span
+                        key={herb}
+                        className="px-2 py-1 rounded-full bg-white/[0.05] border border-white/[0.08] text-xs text-white/60"
+                      >
+                        {herb}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Effect */}
+                <p className="text-sm text-white/50 mb-4 italic">{roll.effect}</p>
+
+                {/* Duration */}
+                <div className="flex items-center gap-2 text-xs text-white/40 mb-4">
+                  <span>⏱</span>
+                  <span>{roll.duration}</span>
+                </div>
+
+                {/* Best for */}
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-white/40 mb-2">Подходит для</p>
+                  <ul className="space-y-1">
+                    {roll.bestFor.map((item) => (
+                      <li key={item} className="flex items-center gap-2 text-xs text-white/50">
+                        <div className="w-3 h-3 text-[#8fb583]">
+                          <CheckIcon />
+                        </div>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -254,7 +336,7 @@ export default function HerbsPage() {
               Хотите попробовать?
             </h2>
             <p className="text-white/50 mb-8">
-              Травяные скрутки входят в набор TLEYOU вместе с керамической подставкой и карточками
+              Выберите свою скрутку или закажите набор TLEYOU с классической смесью
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -277,7 +359,7 @@ export default function HerbsPage() {
                 <div className="w-5 h-5">
                   <TelegramIcon />
                 </div>
-                <span>Задать вопрос</span>
+                <span>Выбрать скрутку</span>
               </a>
             </div>
           </motion.div>
@@ -286,4 +368,3 @@ export default function HerbsPage() {
     </main>
   );
 }
-
