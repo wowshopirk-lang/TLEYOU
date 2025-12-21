@@ -55,13 +55,13 @@ const CircularDiagram = () => {
         <span className="block text-sm md:text-base uppercase tracking-widest text-white/60 mb-1">{items[3].label}</span>
         <span className="block text-xs md:text-sm uppercase tracking-wide text-white/40">{items[3].sublabel}</span>
       </div>
-      {/* Left */}
-      <div className="absolute top-1/2 left-0 -translate-x-full -translate-y-1/2 text-right pr-5 md:pr-6 max-w-[140px]">
+      {/* Left - aligned to left edge */}
+      <div className="absolute top-1/2 -translate-y-1/2 text-left max-w-[140px]" style={{ right: 'calc(100% + 1.25rem)' }}>
         <span className="block text-sm md:text-base uppercase tracking-widest text-white/60 mb-1">{items[1].label}</span>
         <span className="block text-xs md:text-sm uppercase tracking-wide text-white/40">{items[1].sublabel}</span>
       </div>
-      {/* Right */}
-      <div className="absolute top-1/2 right-0 translate-x-full -translate-y-1/2 text-left pl-5 md:pl-6 max-w-[140px]">
+      {/* Right - aligned to right edge */}
+      <div className="absolute top-1/2 -translate-y-1/2 text-right max-w-[140px]" style={{ left: 'calc(100% + 1.25rem)' }}>
         <span className="block text-sm md:text-base uppercase tracking-widest text-white/60 mb-1">{items[2].label}</span>
         <span className="block text-xs md:text-sm uppercase tracking-wide text-white/40">{items[2].sublabel}</span>
       </div>
@@ -140,12 +140,10 @@ const ProductBubbles = () => {
           
           {/* Annotation */}
           {item.annotation && (
-            <div className={`absolute top-1/2 -translate-y-1/2 flex items-center gap-3 ${index === 0 ? 'right-full mr-4' : 'left-full ml-4'}`}>
-              {index !== 0 && <div className="w-1.5 h-1.5 rounded-full bg-white/30" />}
-              {index !== 0 && <svg width="20" height="2"><line x1="0" y1="1" x2="20" y2="1" stroke="rgba(255,255,255,0.2)" strokeWidth="1" /></svg>}
-              <span className="text-sm md:text-base text-white/40 italic whitespace-nowrap">{item.annotation}</span>
-              {index === 0 && <svg width="20" height="2"><line x1="0" y1="1" x2="20" y2="1" stroke="rgba(255,255,255,0.2)" strokeWidth="1" /></svg>}
-              {index === 0 && <div className="w-1.5 h-1.5 rounded-full bg-white/30" />}
+            <div className={`absolute top-1/2 -translate-y-1/2 flex items-center ${index === 0 ? 'gap-3' : 'gap-3 flex-row-reverse'}`} style={index === 0 ? { right: 'calc(100% + 1rem)' } : { left: 'calc(100% + 1rem)' }}>
+              <div className="w-1.5 h-1.5 rounded-full bg-white/30" />
+              <svg width="20" height="2"><line x1="0" y1="1" x2="20" y2="1" stroke="rgba(255,255,255,0.2)" strokeWidth="1" /></svg>
+              <span className={`text-sm md:text-base text-white/40 italic whitespace-nowrap ${index === 0 ? 'text-left' : 'text-right'}`}>{item.annotation}</span>
             </div>
           )}
           
@@ -290,6 +288,7 @@ export default function BentoFeatures() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
+            className="overflow-visible"
           >
             <ProductBubbles />
           </motion.div>
@@ -300,7 +299,7 @@ export default function BentoFeatures() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative"
+            className="relative overflow-visible"
           >
             <div className="text-center mb-6">
               <span className="text-xs md:text-sm uppercase tracking-[0.3em] text-white/40">Баланс жизни</span>
