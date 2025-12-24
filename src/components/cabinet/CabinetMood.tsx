@@ -135,7 +135,7 @@ const MoodCircleChart = ({ data }: { data: MoodEntry[] }) => {
   const avgMoodInfo = moods[avgMoodIndex];
 
   return (
-    <div className="relative w-64 h-64 mx-auto">
+    <div className="relative w-full h-full mx-auto">
       {/* Outer rings */}
       <svg className="absolute inset-0 w-full h-full" viewBox="0 0 256 256">
         {/* Background circles */}
@@ -179,11 +179,11 @@ const MoodCircleChart = ({ data }: { data: MoodEntry[] }) => {
 
       {/* Center content */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className="w-12 h-12 mb-2">
+        <div className="w-8 h-8 mb-1">
           {avgMoodInfo.icon(avgMoodInfo.color, "w-full h-full")}
         </div>
-        <span className="text-2xl font-heading text-white/90">{avgMood.toFixed(1)}</span>
-        <span className="text-[10px] uppercase tracking-wider text-white/40 mt-1">средний балл</span>
+        <span className="text-xl font-heading text-white/90">{avgMood.toFixed(1)}</span>
+        <span className="text-[9px] uppercase tracking-wider text-white/40 mt-0.5">средний балл</span>
       </div>
     </div>
   );
@@ -194,7 +194,7 @@ const WeekMoodChart = ({ data }: { data: MoodEntry[] }) => {
   const lastWeek = data.slice(-7);
 
   return (
-    <div className="flex items-end justify-between h-32 gap-2">
+    <div className="flex items-end justify-between h-24 gap-1.5">
       {lastWeek.map((day, index) => {
         const moodInfo = moods[day.mood - 1];
         const height = (day.mood / 5) * 100;
@@ -270,7 +270,7 @@ const StatCard = ({ icon: Icon, label, value, sublabel, color }: {
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
-    className="relative p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] overflow-hidden"
+    className="relative p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] overflow-hidden flex-shrink-0"
   >
     <div 
       className="absolute top-0 right-0 w-20 h-20 opacity-10 blur-xl"
@@ -328,29 +328,29 @@ export default function CabinetMood() {
   const trend = avgMood > 3 ? "+0.3" : "-0.2";
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-5xl mx-auto h-full flex flex-col overflow-hidden">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="mb-8"
+        className="mb-4 flex-shrink-0"
       >
         <div className="flex items-center gap-3 mb-2">
           <div className="w-1 h-1 rounded-full bg-[#7a9ebb]/50" />
           <span className="text-[10px] uppercase tracking-[0.2em] text-white/30">Благополучие</span>
           <div className="h-px flex-1 bg-gradient-to-r from-white/[0.06] to-transparent" />
         </div>
-        <h1 className="text-2xl md:text-3xl font-heading font-light text-white mb-2">
+        <h1 className="text-xl md:text-2xl font-heading font-light text-white mb-1">
           Трекер настроения
         </h1>
-        <p className="text-white/40 text-sm">
+        <p className="text-white/40 text-xs">
           Отслеживай своё эмоциональное состояние
         </p>
       </motion.div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 overflow-y-auto pb-4">
         {/* Left - Main Chart */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -358,7 +358,7 @@ export default function CabinetMood() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="lg:col-span-2"
         >
-          <div className="relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] overflow-hidden">
+          <div className="relative p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] overflow-hidden">
             {/* Decorative elements */}
             <div className="absolute -right-20 -bottom-20 w-60 h-60 opacity-20">
               <svg viewBox="0 0 200 200" fill="none" className="w-full h-full">
@@ -369,8 +369,8 @@ export default function CabinetMood() {
 
             <div className="relative z-10">
               {/* View Toggle */}
-              <div className="flex items-center justify-between mb-6">
-                <span className="text-xs uppercase tracking-[0.15em] text-white/40">Последние 30 дней</span>
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-[10px] uppercase tracking-[0.15em] text-white/40">Последние 30 дней</span>
                 <div className="flex rounded-lg bg-white/[0.03] p-1">
                   <button
                     onClick={() => setView("chart")}
@@ -393,23 +393,25 @@ export default function CabinetMood() {
 
               {/* Chart/Heatmap */}
               {view === "chart" ? (
-                <div className="flex flex-col md:flex-row items-center gap-8">
-                  <MoodCircleChart data={moodData} />
+                <div className="flex flex-col md:flex-row items-center gap-4">
+                  <div className="w-48 h-48 flex-shrink-0">
+                    <MoodCircleChart data={moodData} />
+                  </div>
                   <div className="flex-1 w-full">
-                    <p className="text-xs text-white/40 mb-4">Эта неделя</p>
+                    <p className="text-[10px] text-white/40 mb-2">Эта неделя</p>
                     <WeekMoodChart data={moodData} />
                   </div>
                 </div>
               ) : (
                 <div>
-                  <p className="text-xs text-white/40 mb-4">Карта настроения за месяц</p>
+                  <p className="text-[10px] text-white/40 mb-2">Карта настроения за месяц</p>
                   <MoodHeatmap data={moodData} />
                 </div>
               )}
 
               {/* Mood Legend */}
-              <div className="mt-6 pt-6 border-t border-white/[0.06]">
-                <div className="flex flex-wrap items-center justify-center gap-6">
+              <div className="mt-4 pt-4 border-t border-white/[0.06]">
+                <div className="flex flex-wrap items-center justify-center gap-4">
                   {moods.map((mood) => (
                     <div key={mood.level} className="flex items-center gap-2">
                       <div className="w-5 h-5">
@@ -429,7 +431,7 @@ export default function CabinetMood() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="space-y-4"
+          className="space-y-3 flex flex-col"
         >
           <StatCard
             icon={TrendUpIcon}
@@ -461,13 +463,13 @@ export default function CabinetMood() {
           />
 
           {/* Quick Mood Entry */}
-          <div className="p-4 rounded-xl bg-gradient-to-br from-[#7a9ebb]/10 to-transparent border border-[#7a9ebb]/20">
-            <p className="text-xs text-white/50 mb-3">Как ты сейчас?</p>
-            <div className="flex justify-between">
+          <div className="p-3 rounded-xl bg-gradient-to-br from-[#7a9ebb]/10 to-transparent border border-[#7a9ebb]/20 flex-shrink-0">
+            <p className="text-[10px] text-white/50 mb-2">Как ты сейчас?</p>
+            <div className="flex justify-between gap-1">
               {moods.map((mood) => (
                 <button
                   key={mood.level}
-                  className="w-10 h-10 rounded-full flex items-center justify-center hover:scale-110 transition-transform p-2"
+                  className="w-8 h-8 rounded-full flex items-center justify-center hover:scale-110 transition-transform p-1.5 flex-1"
                   style={{ backgroundColor: `${mood.color}20` }}
                 >
                   {mood.icon(mood.color, "w-full h-full")}
@@ -478,12 +480,12 @@ export default function CabinetMood() {
         </motion.div>
       </div>
 
-      {/* Insights Section */}
-      <motion.div
+      {/* Insights Section - Hidden for compact view */}
+      {/* <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.3 }}
-        className="mt-8"
+        className="mt-4 flex-shrink-0"
       >
         <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
           <div className="flex items-center gap-2 mb-4">
@@ -528,7 +530,7 @@ export default function CabinetMood() {
             </div>
           </div>
         </div>
-      </motion.div>
+      </motion.div> */}
     </div>
   );
 }
