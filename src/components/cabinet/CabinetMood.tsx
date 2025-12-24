@@ -463,22 +463,6 @@ export default function CabinetMood() {
             sublabel="всего отслежено"
             color="#9a8fb5"
           />
-
-          {/* Quick Mood Entry */}
-          <div className="p-3 rounded-xl bg-gradient-to-br from-[#7a9ebb]/10 to-transparent border border-[#7a9ebb]/20 flex-shrink-0">
-            <p className="text-[10px] text-white/50 mb-2">Как ты сейчас?</p>
-            <div className="flex justify-between gap-1">
-              {moods.map((mood) => (
-                <button
-                  key={mood.level}
-                  className="w-8 h-8 rounded-full flex items-center justify-center hover:scale-110 transition-transform p-1.5 flex-1"
-                  style={{ backgroundColor: `${mood.color}20` }}
-                >
-                  {mood.icon(mood.color, "w-full h-full")}
-                </button>
-              ))}
-            </div>
-          </div>
         </motion.div>
       </div>
 
