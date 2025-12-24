@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "Отслеживай свой прогресс и активность",
 };
 
-export default function CalendarPage() {
+export default function CalendarPage(_props: Record<string, never>) {
   return <CabinetCalendar />;
 }
 

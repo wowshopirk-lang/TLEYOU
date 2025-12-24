@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     "Травяные скрутки из лаванды, шалфея и полыни для ритуала тишины. Натуральные травы, безопасное тление.",
 };
 
-export default function Herbs() {
+export default function Herbs(_props: Record<string, never>) {
   return (
     <>
       <Header />

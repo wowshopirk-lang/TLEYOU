@@ -3,17 +3,106 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 
+// Premium botanical mood icons
+const MoodIcons = {
+  // Withering - feeling terrible
+  withering: (color: string, size: string = "w-full h-full") => (
+    <svg viewBox="0 0 32 32" fill="none" className={size}>
+      {/* Fallen, wilted leaf */}
+      <path 
+        d="M8 10 Q16 8, 24 14 Q26 20, 22 24 Q18 26, 12 24 Q8 22, 8 16 Q8 12, 8 10" 
+        stroke={color} 
+        strokeWidth="1" 
+        fill={`${color}15`}
+        opacity="0.7"
+      />
+      {/* Broken stem */}
+      <path d="M8 10 L6 6" stroke={color} strokeWidth="1" strokeLinecap="round" opacity="0.5" />
+      {/* Decay marks */}
+      <circle cx="14" cy="16" r="1" fill={color} opacity="0.3" />
+      <circle cx="18" cy="20" r="0.75" fill={color} opacity="0.25" />
+    </svg>
+  ),
+  // Tender/drooping - feeling low
+  tender: (color: string, size: string = "w-full h-full") => (
+    <svg viewBox="0 0 32 32" fill="none" className={size}>
+      {/* Delicate drooping leaf */}
+      <path 
+        d="M16 6 Q22 10, 22 16 Q22 22, 16 26 Q10 22, 10 16 Q10 10, 16 6" 
+        stroke={color} 
+        strokeWidth="1" 
+        fill={`${color}15`}
+        opacity="0.8"
+      />
+      {/* Leaf vein */}
+      <path d="M16 8 L16 24" stroke={color} strokeWidth="0.75" opacity="0.5" />
+      <path d="M16 12 Q12 14, 11 16" stroke={color} strokeWidth="0.5" strokeLinecap="round" opacity="0.4" />
+      <path d="M16 12 Q20 14, 21 16" stroke={color} strokeWidth="0.5" strokeLinecap="round" opacity="0.4" />
+      {/* Dew drop - tear */}
+      <circle cx="13" cy="19" r="1.25" fill={color} opacity="0.5" />
+    </svg>
+  ),
+  // Balanced - feeling neutral
+  balanced: (color: string, size: string = "w-full h-full") => (
+    <svg viewBox="0 0 32 32" fill="none" className={size}>
+      {/* Outer circle */}
+      <circle cx="16" cy="16" r="11" stroke={color} strokeWidth="0.5" opacity="0.3" />
+      {/* Horizontal balance line */}
+      <line x1="6" y1="16" x2="26" y2="16" stroke={color} strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
+      {/* Vertical support */}
+      <line x1="16" y1="10" x2="16" y2="22" stroke={color} strokeWidth="1" strokeLinecap="round" opacity="0.5" />
+      {/* Balance points */}
+      <circle cx="9" cy="16" r="2.5" stroke={color} strokeWidth="1" fill={`${color}20`} opacity="0.7" />
+      <circle cx="23" cy="16" r="2.5" stroke={color} strokeWidth="1" fill={`${color}20`} opacity="0.7" />
+      {/* Center diamond */}
+      <path d="M16 12 L18 16 L16 20 L14 16 Z" stroke={color} strokeWidth="0.75" fill={`${color}25`} opacity="0.7" />
+    </svg>
+  ),
+  // Calm wave - feeling peaceful
+  calm: (color: string, size: string = "w-full h-full") => (
+    <svg viewBox="0 0 32 32" fill="none" className={size}>
+      <circle cx="16" cy="16" r="12" stroke={color} strokeWidth="0.5" opacity="0.3" />
+      {/* Flowing water curves */}
+      <path d="M8 14 Q12 11, 16 14 Q20 17, 24 14" stroke={color} strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
+      <path d="M10 18 Q14 15, 18 18 Q22 21, 26 18" stroke={color} strokeWidth="1" strokeLinecap="round" opacity="0.5" />
+      <path d="M6 22 Q10 19, 14 22" stroke={color} strokeWidth="0.75" strokeLinecap="round" opacity="0.35" />
+      {/* Moon accent */}
+      <circle cx="22" cy="10" r="2" stroke={color} strokeWidth="0.75" fill={`${color}20`} opacity="0.6" />
+    </svg>
+  ),
+  // Radiant bloom - feeling great
+  radiant: (color: string, size: string = "w-full h-full") => (
+    <svg viewBox="0 0 32 32" fill="none" className={size}>
+      <circle cx="16" cy="16" r="10" stroke={color} strokeWidth="1" opacity="0.8" />
+      <circle cx="16" cy="16" r="6" stroke={color} strokeWidth="0.5" strokeDasharray="2 2" opacity="0.4" />
+      {/* Petals */}
+      {[0, 60, 120, 180, 240, 300].map((angle, i) => (
+        <path
+          key={i}
+          d={`M16 6 Q18 3, 16 1 Q14 3, 16 6`}
+          stroke={color}
+          strokeWidth="1"
+          fill={`${color}30`}
+          transform={`rotate(${angle} 16 16)`}
+          opacity="0.7"
+        />
+      ))}
+      <circle cx="16" cy="16" r="2" fill={color} opacity="0.7" />
+    </svg>
+  ),
+};
+
 // Mood data types
 interface MoodEntry {
   date: string;
   dayOfWeek: string;
   mood: number; // 1-5
-  emoji: string;
+  iconKey: keyof typeof MoodIcons;
 }
 
 // Last 30 days mood data (sample)
 const generateMoodData = (): MoodEntry[] => {
-  const emojis = ["😤", "😔", "😐", "😌", "😊"];
+  const iconKeys: (keyof typeof MoodIcons)[] = ["withering", "tender", "balanced", "calm", "radiant"];
   const dayNames = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
   const data: MoodEntry[] = [];
   
@@ -25,18 +114,18 @@ const generateMoodData = (): MoodEntry[] => {
       date: date.toLocaleDateString("ru-RU", { day: "numeric", month: "short" }),
       dayOfWeek: dayNames[date.getDay()],
       mood,
-      emoji: emojis[mood - 1],
+      iconKey: iconKeys[mood - 1],
     });
   }
   return data;
 };
 
 const moods = [
-  { level: 1, emoji: "😤", label: "Плохо", color: "#b58f8f" },
-  { level: 2, emoji: "😔", label: "Грустно", color: "#9a8fb5" },
-  { level: 3, emoji: "😐", label: "Нормально", color: "#b49b78" },
-  { level: 4, emoji: "😌", label: "Хорошо", color: "#7a9ebb" },
-  { level: 5, emoji: "😊", label: "Отлично", color: "#8fb583" },
+  { level: 1, icon: MoodIcons.withering, label: "Плохо", color: "#b58f8f" },
+  { level: 2, icon: MoodIcons.tender, label: "Грустно", color: "#9a8fb5" },
+  { level: 3, icon: MoodIcons.balanced, label: "Нормально", color: "#b49b78" },
+  { level: 4, icon: MoodIcons.calm, label: "Хорошо", color: "#7a9ebb" },
+  { level: 5, icon: MoodIcons.radiant, label: "Отлично", color: "#8fb583" },
 ];
 
 // Circular Mood Chart Component
@@ -90,7 +179,9 @@ const MoodCircleChart = ({ data }: { data: MoodEntry[] }) => {
 
       {/* Center content */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-4xl mb-2">{avgMoodInfo.emoji}</span>
+        <div className="w-12 h-12 mb-2">
+          {avgMoodInfo.icon(avgMoodInfo.color, "w-full h-full")}
+        </div>
         <span className="text-2xl font-heading text-white/90">{avgMood.toFixed(1)}</span>
         <span className="text-[10px] uppercase tracking-wider text-white/40 mt-1">средний балл</span>
       </div>
@@ -152,10 +243,10 @@ const MoodHeatmap = ({ data }: { data: MoodEntry[] }) => {
             className="relative group"
           >
             <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer hover:scale-110 transition-transform"
+              className="w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer hover:scale-110 transition-transform p-1.5"
               style={{ backgroundColor: `${moodInfo.color}40` }}
             >
-              <span className="text-xs">{day.emoji}</span>
+              {moodInfo.icon(moodInfo.color, "w-full h-full")}
             </div>
             {/* Tooltip */}
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 rounded bg-[#1a1d1a] border border-white/10 text-[10px] text-white/70 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
@@ -318,14 +409,13 @@ export default function CabinetMood() {
 
               {/* Mood Legend */}
               <div className="mt-6 pt-6 border-t border-white/[0.06]">
-                <div className="flex flex-wrap items-center justify-center gap-4">
+                <div className="flex flex-wrap items-center justify-center gap-6">
                   {moods.map((mood) => (
                     <div key={mood.level} className="flex items-center gap-2">
-                      <div
-                        className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: mood.color }}
-                      />
-                      <span className="text-[10px] text-white/40">{mood.label}</span>
+                      <div className="w-5 h-5">
+                        {mood.icon(mood.color, "w-full h-full")}
+                      </div>
+                      <span className="text-[10px] text-white/40 whitespace-nowrap">{mood.label}</span>
                     </div>
                   ))}
                 </div>
@@ -352,7 +442,7 @@ export default function CabinetMood() {
             icon={StarIcon}
             label="Лучший день"
             value={bestDay.date}
-            sublabel={`${bestDay.emoji} ${moods[bestDay.mood - 1].label}`}
+            sublabel={moods[bestDay.mood - 1].label}
             color="#b49b78"
           />
           <StatCard
@@ -377,10 +467,10 @@ export default function CabinetMood() {
               {moods.map((mood) => (
                 <button
                   key={mood.level}
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-lg hover:scale-110 transition-transform"
+                  className="w-10 h-10 rounded-full flex items-center justify-center hover:scale-110 transition-transform p-2"
                   style={{ backgroundColor: `${mood.color}20` }}
                 >
-                  {mood.emoji}
+                  {mood.icon(mood.color, "w-full h-full")}
                 </button>
               ))}
             </div>
@@ -406,15 +496,34 @@ export default function CabinetMood() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-4 rounded-xl bg-white/[0.02]">
-              <p className="text-sm text-white/70 mb-2">🌅 Лучшее время</p>
+              <div className="flex items-center gap-2 mb-2">
+                <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4 text-[#b49b78]">
+                  <circle cx="10" cy="14" r="5" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M10 9 L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <path d="M7 6 L10 4 L13 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <span className="text-sm text-white/70">Лучшее время</span>
+              </div>
               <p className="text-xs text-white/40">Твоё настроение обычно лучше всего утром</p>
             </div>
             <div className="p-4 rounded-xl bg-white/[0.02]">
-              <p className="text-sm text-white/70 mb-2">📈 Положительный тренд</p>
+              <div className="flex items-center gap-2 mb-2">
+                <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4 text-[#8fb583]">
+                  <path d="M4 16 L8 10 L12 12 L16 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <circle cx="16" cy="4" r="2" fill="currentColor" opacity="0.3" stroke="currentColor" strokeWidth="1" />
+                </svg>
+                <span className="text-sm text-white/70">Положительный тренд</span>
+              </div>
               <p className="text-xs text-white/40">Твоё среднее настроение растёт последние 2 недели</p>
             </div>
             <div className="p-4 rounded-xl bg-white/[0.02]">
-              <p className="text-sm text-white/70 mb-2">💪 Рекомендация</p>
+              <div className="flex items-center gap-2 mb-2">
+                <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4 text-[#7a9ebb]">
+                  <path d="M10 3 Q14 6, 14 10 Q14 14, 10 17 Q6 14, 6 10 Q6 6, 10 3" stroke="currentColor" strokeWidth="1.5" fill="none" />
+                  <path d="M10 5 L10 15" stroke="currentColor" strokeWidth="0.75" opacity="0.5" />
+                </svg>
+                <span className="text-sm text-white/70">Рекомендация</span>
+              </div>
               <p className="text-xs text-white/40">Практика дыхания помогает в дни тревоги</p>
             </div>
           </div>

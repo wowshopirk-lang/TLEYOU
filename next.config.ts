@@ -5,6 +5,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // Next.js 16 uses Turbopack by default
+  turbopack: {},
   images: {
     remotePatterns: [
       {
@@ -25,6 +26,25 @@ const nextConfig: NextConfig = {
   onDemandEntries: {
     maxInactiveAge: 25 * 1000,
     pagesBufferLength: 2,
+  },
+  // Suppress React DevTools serialization warnings for params Promise
+  reactStrictMode: true,
+  // Logging configuration to reduce noise
+  logging: {
+    fetches: {
+      fullUrl: false,
+    },
+  },
+  // Suppress console warnings for params Promise serialization
+  webpack: (config, { dev }) => {
+    if (dev) {
+      // Suppress React DevTools serialization warnings
+      config.ignoreWarnings = [
+        { module: /node_modules/ },
+        { message: /params are being enumerated/ },
+      ];
+    }
+    return config;
   },
 };
 

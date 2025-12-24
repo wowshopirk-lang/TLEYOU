@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "Ежедневные практики для расслабления и самопознания",
 };
 
-export default function Practices() {
+export default function Practices(_props: Record<string, never>) {
   return <CabinetPractices />;
 }
 

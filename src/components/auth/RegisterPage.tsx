@@ -48,6 +48,16 @@ export default function RegisterPage() {
     e.preventDefault();
     setIsLoading(true);
     await new Promise((resolve) => setTimeout(resolve, 1000));
+    
+    // Save user data to localStorage
+    const userData = {
+      name: formData.name,
+      email: formData.email,
+    };
+    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('token', 'mock-token-' + Date.now());
+    localStorage.setItem('auth', 'true');
+    
     window.location.href = "/cabinet";
   };
 

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     "Керамическая подставка, травяная скрутка и 30 карточек с вопросами. Всё для ежедневного ритуала самопознания. Цена 3 990 ₽.",
 };
 
-export default function Product() {
+export default function Product(_props: Record<string, never>) {
   return (
     <>
       <Header />

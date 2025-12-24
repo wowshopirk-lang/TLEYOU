@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     "TLEYOU — бренд для женщин, которые устали быть сильными. Мы создаём пространство для возвращения к себе через тишину и заботу.",
 };
 
-export default function About() {
+export default function About(_props: Record<string, never>) {
   return (
     <>
       <Header />

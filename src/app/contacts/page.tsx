@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     "Свяжитесь с нами через Telegram или email. Мы всегда рады ответить на ваши вопросы.",
 };
 
-export default function Contacts() {
+export default function Contacts(_props: Record<string, never>) {
   return (
     <>
       <Header />

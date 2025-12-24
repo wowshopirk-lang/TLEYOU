@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "Условия продажи товаров и оказания услуг TLEYOU",
 };
 
-export default function Terms() {
+export default function Terms(_props: Record<string, never>) {
   return (
     <>
       <Header />

@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "Записывай свои мысли и чувства каждый день",
 };
 
-export default function JournalPage() {
+export default function JournalPage(_props: Record<string, never>) {
   return <CabinetJournal />;
 }
 

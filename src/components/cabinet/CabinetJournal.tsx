@@ -109,8 +109,8 @@ const MoodWheel = ({ selectedMood, onSelect }: { selectedMood: number | null; on
               }`}
               style={{ 
                 backgroundColor: isSelected ? `${mood.color}40` : 'rgba(255,255,255,0.05)',
-                ringColor: isSelected ? mood.color : undefined
-              }}
+                ...(isSelected ? { '--tw-ring-color': mood.color } : {})
+              } as React.CSSProperties}
             >
               {mood.emoji}
             </div>

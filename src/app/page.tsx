@@ -48,7 +48,7 @@ const organizationSchema = {
   ]
 };
 
-export default function Home() {
+export default function Home(_props: Record<string, never>) {
   return (
     <>
       {/* Schema.org JSON-LD */}

@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "Отслеживай своё эмоциональное состояние",
 };
 
-export default function MoodPage() {
+export default function MoodPage(_props: Record<string, never>) {
   return <CabinetMood />;
 }
 

@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "Настройки профиля и подписки",
 };
 
-export default function Profile() {
+export default function Profile(_props: Record<string, never>) {
   return <CabinetProfile />;
 }
 

@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { useMoodStore, MoodKey } from "@/stores/moodStore";
 
 // Icons with brand-consistent design
 const HomeIcon = () => (
@@ -122,11 +123,189 @@ const categories = {
   settings: { label: "Настройки", color: "#a0a0a0" },
 };
 
+const encouragements = [
+  "Ты молодец, что заботишься о себе!",
+  "Каждый день — это новый шаг к гармонии",
+  "Прекрасно, что ты здесь сегодня",
+  "Ты делаешь важную работу над собой",
+];
+
+// Mood Icons
+const MoodIcons = {
+  radiant: (color: string, isActive: boolean) => (
+    <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
+      <circle cx="16" cy="16" r="10" stroke={color} strokeWidth="1.2" opacity={isActive ? 1 : 0.4} />
+      {[0, 60, 120, 180, 240, 300].map((angle, i) => (
+        <path
+          key={i}
+          d={`M16 6 Q18 3, 16 1 Q14 3, 16 6`}
+          stroke={color}
+          strokeWidth="1"
+          fill={isActive ? `${color}30` : "none"}
+          transform={`rotate(${angle} 16 16)`}
+          opacity={isActive ? 0.8 : 0.3}
+        />
+      ))}
+      <circle cx="16" cy="16" r="2.5" fill={color} opacity={isActive ? 0.8 : 0.3} />
+    </svg>
+  ),
+  calm: (color: string, isActive: boolean) => (
+    <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
+      <path d="M6 13 Q11 9, 16 13 Q21 17, 26 13" stroke={color} strokeWidth="1.5" strokeLinecap="round" opacity={isActive ? 0.9 : 0.35} />
+      <path d="M8 18 Q13 14, 18 18 Q23 22, 28 18" stroke={color} strokeWidth="1" strokeLinecap="round" opacity={isActive ? 0.6 : 0.2} />
+      <circle cx="24" cy="8" r="2.5" stroke={color} strokeWidth="1" fill={isActive ? `${color}20` : "none"} opacity={isActive ? 0.7 : 0.25} />
+    </svg>
+  ),
+  balanced: (color: string, isActive: boolean) => (
+    <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
+      <line x1="4" y1="16" x2="28" y2="16" stroke={color} strokeWidth="1.5" strokeLinecap="round" opacity={isActive ? 0.8 : 0.3} />
+      <circle cx="8" cy="16" r="3" stroke={color} strokeWidth="1" fill={isActive ? `${color}25` : "none"} opacity={isActive ? 0.7 : 0.3} />
+      <circle cx="24" cy="16" r="3" stroke={color} strokeWidth="1" fill={isActive ? `${color}25` : "none"} opacity={isActive ? 0.7 : 0.3} />
+      <path d="M16 11 L19 16 L16 21 L13 16 Z" stroke={color} strokeWidth="1" fill={isActive ? `${color}30` : "none"} opacity={isActive ? 0.8 : 0.3} />
+    </svg>
+  ),
+  tender: (color: string, isActive: boolean) => (
+    <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
+      <path 
+        d="M16 4 Q24 9, 24 16 Q24 24, 16 28 Q8 24, 8 16 Q8 9, 16 4" 
+        stroke={color} 
+        strokeWidth="1.2" 
+        fill={isActive ? `${color}15` : "none"} 
+        opacity={isActive ? 0.8 : 0.3} 
+      />
+      <path d="M16 6 L16 26" stroke={color} strokeWidth="0.75" opacity={isActive ? 0.5 : 0.2} />
+      <circle cx="12" cy="18" r="1.5" fill={color} opacity={isActive ? 0.6 : 0.2} />
+    </svg>
+  ),
+  tired: (color: string, isActive: boolean) => (
+    <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
+      <circle cx="16" cy="16" r="10" stroke={color} strokeWidth="1.2" opacity={isActive ? 0.6 : 0.3} />
+      <path d="M10 14 L14 16" stroke={color} strokeWidth="1.5" strokeLinecap="round" opacity={isActive ? 0.8 : 0.3} />
+      <path d="M22 14 L18 16" stroke={color} strokeWidth="1.5" strokeLinecap="round" opacity={isActive ? 0.8 : 0.3} />
+      <path d="M12 20 Q16 18, 20 20" stroke={color} strokeWidth="1.2" strokeLinecap="round" opacity={isActive ? 0.7 : 0.3} />
+    </svg>
+  ),
+  anxious: (color: string, isActive: boolean) => (
+    <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
+      <path d="M8 16 Q12 10, 16 16 Q20 22, 24 16" stroke={color} strokeWidth="1.5" strokeLinecap="round" opacity={isActive ? 0.9 : 0.35} />
+      <path d="M10 12 Q14 8, 18 12 Q22 16, 26 12" stroke={color} strokeWidth="1" strokeLinecap="round" opacity={isActive ? 0.5 : 0.2} />
+      <circle cx="16" cy="24" r="2" stroke={color} strokeWidth="1" fill={isActive ? `${color}30` : "none"} opacity={isActive ? 0.7 : 0.3} />
+    </svg>
+  ),
+  inspired: (color: string, isActive: boolean) => (
+    <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
+      <path d="M16 4 L16 28" stroke={color} strokeWidth="1" opacity={isActive ? 0.5 : 0.2} />
+      <path d="M16 8 Q20 12, 16 16 Q12 20, 16 24" stroke={color} strokeWidth="1.5" strokeLinecap="round" opacity={isActive ? 0.8 : 0.35} />
+      <circle cx="16" cy="6" r="2" fill={color} opacity={isActive ? 0.9 : 0.3} />
+      {[0, 72, 144, 216, 288].map((angle, i) => (
+        <path
+          key={i}
+          d="M16 4 L17 2 L16 0 L15 2 Z"
+          stroke={color}
+          strokeWidth="0.5"
+          fill={isActive ? `${color}40` : "none"}
+          transform={`rotate(${angle} 16 16)`}
+          opacity={isActive ? 0.6 : 0.2}
+        />
+      ))}
+    </svg>
+  ),
+  grateful: (color: string, isActive: boolean) => (
+    <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
+      <path d="M16 8 C12 8, 8 12, 8 16 C8 22, 14 26, 16 28 C18 26, 24 22, 24 16 C24 12, 20 8, 16 8" stroke={color} strokeWidth="1.2" fill={isActive ? `${color}15` : "none"} opacity={isActive ? 0.8 : 0.3} />
+      <path d="M12 14 Q14 12, 16 14 Q18 12, 20 14" stroke={color} strokeWidth="1" strokeLinecap="round" opacity={isActive ? 0.6 : 0.25} />
+      <circle cx="16" cy="18" r="1.5" fill={color} opacity={isActive ? 0.7 : 0.3} />
+    </svg>
+  ),
+  energetic: (color: string, isActive: boolean) => (
+    <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
+      <path d="M16 4 L18 14 L28 14 L20 20 L24 30 L16 23 L8 30 L12 20 L4 14 L14 14 Z" stroke={color} strokeWidth="1.2" fill={isActive ? `${color}20` : "none"} opacity={isActive ? 0.9 : 0.35} />
+      <circle cx="16" cy="16" r="3" stroke={color} strokeWidth="1" fill={isActive ? `${color}30` : "none"} opacity={isActive ? 0.7 : 0.3} />
+    </svg>
+  ),
+  peaceful: (color: string, isActive: boolean) => (
+    <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
+      <circle cx="16" cy="16" r="12" stroke={color} strokeWidth="1" opacity={isActive ? 0.5 : 0.2} />
+      <circle cx="16" cy="16" r="8" stroke={color} strokeWidth="1" opacity={isActive ? 0.7 : 0.3} />
+      <circle cx="16" cy="16" r="4" stroke={color} strokeWidth="1.2" fill={isActive ? `${color}25` : "none"} opacity={isActive ? 0.9 : 0.35} />
+      <circle cx="16" cy="16" r="1.5" fill={color} opacity={isActive ? 0.8 : 0.3} />
+    </svg>
+  ),
+  confused: (color: string, isActive: boolean) => (
+    <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
+      <path d="M10 10 Q16 6, 22 10 Q26 16, 22 22 Q16 26, 10 22 Q6 16, 10 10" stroke={color} strokeWidth="1.2" strokeDasharray="3 2" fill="none" opacity={isActive ? 0.8 : 0.3} />
+      <circle cx="13" cy="14" r="1.5" fill={color} opacity={isActive ? 0.7 : 0.3} />
+      <circle cx="19" cy="14" r="1.5" fill={color} opacity={isActive ? 0.7 : 0.3} />
+      <path d="M12 20 Q16 22, 20 20" stroke={color} strokeWidth="1.2" strokeLinecap="round" opacity={isActive ? 0.6 : 0.25} />
+    </svg>
+  ),
+  hopeful: (color: string, isActive: boolean) => (
+    <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
+      <path d="M16 6 L16 26" stroke={color} strokeWidth="1" opacity={isActive ? 0.4 : 0.2} />
+      <path d="M8 16 L24 16" stroke={color} strokeWidth="1" opacity={isActive ? 0.4 : 0.2} />
+      <circle cx="16" cy="10" r="4" stroke={color} strokeWidth="1.2" fill={isActive ? `${color}20` : "none"} opacity={isActive ? 0.9 : 0.35} />
+      <path d="M12 18 L16 26 L20 18" stroke={color} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" fill={isActive ? `${color}15` : "none"} opacity={isActive ? 0.7 : 0.3} />
+    </svg>
+  ),
+};
+
+const moods: { key: MoodKey; icon: typeof MoodIcons.radiant; label: string; color: string }[] = [
+  { key: "radiant", icon: MoodIcons.radiant, label: "Отлично", color: "#8fb583" },
+  { key: "calm", icon: MoodIcons.calm, label: "Спокойно", color: "#7a9ebb" },
+  { key: "balanced", icon: MoodIcons.balanced, label: "Нормально", color: "#b49b78" },
+  { key: "tender", icon: MoodIcons.tender, label: "Грустно", color: "#9a8fb5" },
+  { key: "tired", icon: MoodIcons.tired, label: "Устала", color: "#a08090" },
+  { key: "anxious", icon: MoodIcons.anxious, label: "Тревожно", color: "#c49b88" },
+  { key: "inspired", icon: MoodIcons.inspired, label: "Вдохновлена", color: "#88b5a0" },
+  { key: "grateful", icon: MoodIcons.grateful, label: "Благодарна", color: "#b5a888" },
+  { key: "energetic", icon: MoodIcons.energetic, label: "Энергичная", color: "#e5a855" },
+  { key: "peaceful", icon: MoodIcons.peaceful, label: "Умиротворена", color: "#6b9b8a" },
+  { key: "confused", icon: MoodIcons.confused, label: "Растеряна", color: "#9b8b7a" },
+];
+
 export default function CabinetLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [greeting, setGreeting] = useState("Добрый день");
+  const [encouragement, setEncouragement] = useState(encouragements[0]);
+  const [userName, setUserName] = useState<string>("");
+  
+  // Zustand store for mood
+  const { currentMood, setMood } = useMoodStore();
+
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour < 6) setGreeting("Доброй ночи");
+    else if (hour < 12) setGreeting("Доброе утро");
+    else if (hour < 18) setGreeting("Добрый день");
+    else setGreeting("Добрый вечер");
+    
+    const dayOfMonth = new Date().getDate();
+    setEncouragement(encouragements[dayOfMonth % encouragements.length]);
+
+    // Get user name from localStorage
+    if (typeof window !== 'undefined') {
+      try {
+        const userData = localStorage.getItem('user');
+        if (userData) {
+          const user = JSON.parse(userData);
+          if (user.name && user.name.trim()) {
+            setUserName(user.name.trim());
+          } else if (user.email) {
+            // Extract name from email if name not available
+            const emailName = user.email.split('@')[0];
+            setUserName(emailName.charAt(0).toUpperCase() + emailName.slice(1));
+          }
+        }
+        // If no user data, userName stays empty and will show nothing
+      } catch (error) {
+        console.error('Error reading user data:', error);
+        // Don't set default name, let it be empty
+      }
+    }
+  }, []);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -439,43 +618,163 @@ export default function CabinetLayout({ children }: { children: React.ReactNode 
       <main className="flex-1 lg:ml-72 pb-6 relative z-10">
         {/* Top bar with organic styling */}
         <header className="sticky top-0 z-40 bg-[#0a0c0a]/90 backdrop-blur-xl border-b border-white/[0.04]">
-          <div className="flex items-center justify-between px-6 lg:px-8 py-4">
-            {/* Left side - empty for mobile (menu button is positioned absolutely) */}
-            <div className="lg:hidden w-10" />
+          <div className="flex flex-col">
+            {/* Stats Row */}
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="relative flex items-center justify-between px-6 lg:px-8 py-3"
+            >
+              {/* Left - Welcome message with user name */}
+              {userName && (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  className="flex items-center gap-4 p-3 rounded-2xl bg-white/[0.02] border border-white/[0.05]"
+                >
+                  <div className="text-left">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] uppercase tracking-[0.15em] text-white/30">
+                        Добро пожаловать
+                      </span>
+                      <div className="w-1 h-1 rounded-full bg-[#8fb583]/50" />
+                    </div>
+                    <h1 className="text-xl lg:text-2xl font-heading font-light text-white/90 leading-tight mt-0.5">
+                      {userName}
+                    </h1>
+                  </div>
+                </motion.div>
+              )}
 
-            {/* Date with decorative elements */}
-            <div className="hidden lg:flex items-center gap-3">
-              <div className="w-1 h-1 rounded-full bg-[#8fb583]/40" />
-              <p className="text-sm text-white/40 tracking-wide">
-                {new Date().toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" })}
-              </p>
-              <div className="w-1 h-1 rounded-full bg-[#8fb583]/40" />
-            </div>
-
-            {/* Right side - user info */}
-            <div className="flex items-center gap-4">
-              {/* Streak indicator */}
-              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#8fb583]/10 border border-[#8fb583]/20">
-                <svg viewBox="0 0 16 16" fill="none" className="w-4 h-4 text-[#8fb583]">
-                  <path d="M8 2 L9 6 L13 6 L10 9 L11 13 L8 10 L5 13 L6 9 L3 6 L7 6 Z" stroke="currentColor" strokeWidth="1" fill="currentColor" opacity="0.3" />
-                </svg>
-                <span className="text-xs text-[#8fb583] font-medium">12 дней</span>
-              </div>
-
-              {/* User avatar */}
-              <div className="relative">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#8fb583]/30 to-[#4a6741]/30 flex items-center justify-center border border-white/[0.08]">
-                  <span className="text-sm text-white/80 font-medium">А</span>
+              {/* Center - Mini stats */}
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="flex-1 flex justify-center items-center"
+              >
+                {/* Mini stats */}
+                <div className="hidden md:flex items-center gap-6 lg:gap-10">
+                  <div className="text-center">
+                    <span className="text-2xl lg:text-3xl font-heading text-[#b49b78] leading-tight">8</span>
+                    <p className="text-xs uppercase tracking-widest text-white/30 leading-tight">карточек</p>
+                  </div>
+                  <div className="text-center">
+                    <span className="text-2xl lg:text-3xl font-heading text-[#7a9ebb] leading-tight">5</span>
+                    <p className="text-xs uppercase tracking-widest text-white/30 leading-tight">практик</p>
+                  </div>
+                  <div className="text-center">
+                    <span className="text-2xl lg:text-3xl font-heading text-[#9a8fb5] leading-tight">3</span>
+                    <p className="text-xs uppercase tracking-widest text-white/30 leading-tight">записей</p>
+                  </div>
                 </div>
-                {/* Online indicator */}
-                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#8fb583] border-2 border-[#0a0c0a]" />
+              </motion.div>
+
+              {/* Right - Stats with encouragement */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="flex items-center gap-4 p-3 rounded-2xl bg-white/[0.02] border border-white/[0.05]"
+              >
+                {/* Progress indicator */}
+                <div className="relative w-12 h-12 lg:w-14 lg:h-14">
+                  <svg className="w-full h-full -rotate-90" viewBox="0 0 56 56">
+                    <circle cx="28" cy="28" r="24" stroke="rgba(255,255,255,0.05)" strokeWidth="2.5" fill="none" />
+                    <motion.circle
+                      cx="28" cy="28" r="24"
+                      stroke="#8fb583"
+                      strokeWidth="2.5"
+                      fill="none"
+                      strokeLinecap="round"
+                      initial={{ strokeDasharray: 150.8, strokeDashoffset: 150.8 }}
+                      animate={{ strokeDashoffset: 60 }}
+                      transition={{ duration: 1.2, delay: 0.3 }}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-base lg:text-lg font-heading text-[#8fb583]">12</span>
+                  </div>
+                </div>
+                
+                {/* Text content */}
+                <div className="text-right">
+                  <p className="text-sm lg:text-base text-white/90 font-light leading-tight">дней подряд</p>
+                  <p className="text-[9px] lg:text-[10px] uppercase tracking-[0.1em] text-white/30 mt-0.5 max-w-[140px]">
+                    {encouragement}
+                  </p>
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* Mood Selector with Date Row */}
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="px-6 lg:px-8 py-3 border-t border-white/[0.02]"
+            >
+              <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] w-full max-w-full">
+                {/* Header with question and date */}
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-px w-6 bg-gradient-to-r from-transparent to-white/10" />
+                    <p className="text-xs uppercase tracking-[0.2em] text-white/40">
+                      Как ты сегодня?
+                    </p>
+                    <div className="h-px w-6 bg-gradient-to-l from-transparent to-white/10" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-1 h-1 rounded-full bg-[#8fb583]/40" />
+                    <p className="text-xs text-white/30 tracking-wide">
+                      {new Date().toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" })}
+                    </p>
+                  </div>
+                </div>
+                
+                {/* Mood options - grid layout */}
+                <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-11 gap-2 lg:gap-3 w-full">
+                  {moods.map((mood) => {
+                    const isActive = currentMood === mood.key;
+                    return (
+                      <motion.button
+                        key={mood.key}
+                        onClick={() => setMood(mood.key)}
+                        whileHover={{ scale: 1.08 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`flex flex-col items-center justify-center gap-2 p-2 lg:p-3 rounded-xl transition-all duration-300 w-full ${
+                          isActive ? 'bg-white/[0.06]' : 'hover:bg-white/[0.03]'
+                        }`}
+                      >
+                        <div 
+                          className={`w-12 h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center transition-all duration-300 border p-2.5 lg:p-3 ${
+                            isActive ? 'scale-110' : ''
+                          }`}
+                          style={{ 
+                            backgroundColor: isActive ? `${mood.color}18` : 'transparent',
+                            borderColor: isActive ? `${mood.color}50` : 'rgba(255,255,255,0.06)'
+                          }}
+                        >
+                          {mood.icon(mood.color, isActive)}
+                        </div>
+                        <span className={`text-[9px] lg:text-[10px] uppercase tracking-wider whitespace-nowrap text-center ${
+                          isActive ? 'text-white/80' : 'text-white/40'
+                        }`}>
+                          {mood.label}
+                        </span>
+                      </motion.button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </header>
 
         {/* Page content with proper padding */}
-        <div className="p-6 lg:p-8">
+        <div className="px-6 lg:px-8 py-4">
           {children}
         </div>
       </main>

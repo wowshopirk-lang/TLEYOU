@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "Узнай себя лучше и получи персональные рекомендации",
 };
 
-export default function TestsPage() {
+export default function TestsPage(_props: Record<string, never>) {
   return <CabinetTests />;
 }
 

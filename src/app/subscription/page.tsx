@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     "500 ₽/месяц за доступ к ежедневным практикам, медитациям, дыхательным техникам и всем 30 карточкам. Начни путь к себе.",
 };
 
-export default function Subscription() {
+export default function Subscription(_props: Record<string, never>) {
   return (
     <>
       <Header />

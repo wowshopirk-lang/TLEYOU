@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "Ваш личный кабинет TLEYOU",
 };
 
-export default function Cabinet() {
+export default function Cabinet(_props: Record<string, never>) {
   return <CabinetDashboard />;
 }
 

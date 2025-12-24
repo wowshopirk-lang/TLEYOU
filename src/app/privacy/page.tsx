@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "Политика обработки персональных данных TLEYOU",
 };
 
-export default function Privacy() {
+export default function Privacy(_props: Record<string, never>) {
   return (
     <>
       <Header />

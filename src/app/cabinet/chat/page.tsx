@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "Твой заботливый AI-компаньон всегда рядом",
 };
 
-export default function ChatPage() {
+export default function ChatPage(_props: Record<string, never>) {
   return <CabinetChat />;
 }
 

@@ -35,6 +35,23 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
     await new Promise((resolve) => setTimeout(resolve, 1000));
+    
+    // Get or create user data from localStorage
+    // In real app, this would come from API
+    let userData = localStorage.getItem('user');
+    if (!userData) {
+      // If no user data exists, create from email
+      const name = formData.email.split('@')[0];
+      userData = JSON.stringify({
+        name: name.charAt(0).toUpperCase() + name.slice(1),
+        email: formData.email,
+      });
+      localStorage.setItem('user', userData);
+    }
+    
+    localStorage.setItem('token', 'mock-token-' + Date.now());
+    localStorage.setItem('auth', 'true');
+    
     window.location.href = "/cabinet";
   };
 

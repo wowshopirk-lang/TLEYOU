@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "Все 30 карточек с вопросами для самопознания",
 };
 
-export default function Cards() {
+export default function Cards(_props: Record<string, never>) {
   return <CabinetCards />;
 }
 

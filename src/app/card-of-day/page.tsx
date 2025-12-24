@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     "Получи бесплатную карточку с вопросом для самопознания. Одна карточка в день — начни путь к себе.",
 };
 
-export default function CardOfDay() {
+export default function CardOfDay(_props: Record<string, never>) {
   return (
     <>
       <Header />

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "Войдите в личный кабинет TLEYOU",
 };
 
-export default function Login() {
+export default function Login(_props: Record<string, never>) {
   return (
     <>
       <Header />
