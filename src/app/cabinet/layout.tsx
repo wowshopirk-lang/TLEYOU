@@ -615,166 +615,170 @@ export default function CabinetLayout({ children }: { children: React.ReactNode 
       </AnimatePresence>
 
       {/* Main content */}
-      <main className="flex-1 lg:ml-72 pb-6 relative z-10">
-        {/* Top bar with organic styling */}
-        <header className="sticky top-0 z-40 bg-[#0a0c0a]/90 backdrop-blur-xl border-b border-white/[0.04]">
-          <div className="flex flex-col">
-            {/* Stats Row */}
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="relative flex items-center justify-between px-6 lg:px-8 py-3"
-            >
-              {/* Left - Welcome message with user name */}
-              {userName && (
+      <main className={`flex-1 lg:ml-72 relative z-10 ${pathname === '/cabinet/chat' ? 'pb-0' : 'pb-6'}`}>
+        {/* Top bar with organic styling - hidden on chat page for full screen */}
+        {pathname !== '/cabinet/chat' && (
+          <header className="sticky top-0 z-40 bg-[#0a0c0a]/90 backdrop-blur-xl border-b border-white/[0.04]">
+            <div className="flex flex-col">
+              {/* Stats Row */}
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="relative flex items-center justify-between px-6 lg:px-8 py-3"
+              >
+                {/* Left - Welcome message with user name */}
+                {userName && (
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                    className="flex items-center gap-4 p-3 rounded-2xl bg-white/[0.02] border border-white/[0.05]"
+                  >
+                    <div className="text-left">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] uppercase tracking-[0.15em] text-white/30">
+                          Добро пожаловать
+                        </span>
+                        <div className="w-1 h-1 rounded-full bg-[#8fb583]/50" />
+                      </div>
+                      <h1 className="text-xl lg:text-2xl font-heading font-light text-white/90 leading-tight mt-0.5">
+                        {userName}
+                      </h1>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Center - Mini stats */}
                 <motion.div
-                  initial={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  className="flex-1 flex justify-center items-center"
+                >
+                  {/* Mini stats */}
+                  <div className="hidden md:flex items-center gap-6 lg:gap-10">
+                    <div className="text-center">
+                      <span className="text-2xl lg:text-3xl font-heading text-[#b49b78] leading-tight">8</span>
+                      <p className="text-xs uppercase tracking-widest text-white/30 leading-tight">карточек</p>
+                    </div>
+                    <div className="text-center">
+                      <span className="text-2xl lg:text-3xl font-heading text-[#7a9ebb] leading-tight">5</span>
+                      <p className="text-xs uppercase tracking-widest text-white/30 leading-tight">практик</p>
+                    </div>
+                    <div className="text-center">
+                      <span className="text-2xl lg:text-3xl font-heading text-[#9a8fb5] leading-tight">3</span>
+                      <p className="text-xs uppercase tracking-widest text-white/30 leading-tight">записей</p>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Right - Stats with encouragement */}
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
                   className="flex items-center gap-4 p-3 rounded-2xl bg-white/[0.02] border border-white/[0.05]"
                 >
-                  <div className="text-left">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] uppercase tracking-[0.15em] text-white/30">
-                        Добро пожаловать
-                      </span>
-                      <div className="w-1 h-1 rounded-full bg-[#8fb583]/50" />
+                  {/* Progress indicator */}
+                  <div className="relative w-12 h-12 lg:w-14 lg:h-14">
+                    <svg className="w-full h-full -rotate-90" viewBox="0 0 56 56">
+                      <circle cx="28" cy="28" r="24" stroke="rgba(255,255,255,0.05)" strokeWidth="2.5" fill="none" />
+                      <motion.circle
+                        cx="28" cy="28" r="24"
+                        stroke="#8fb583"
+                        strokeWidth="2.5"
+                        fill="none"
+                        strokeLinecap="round"
+                        initial={{ strokeDasharray: 150.8, strokeDashoffset: 150.8 }}
+                        animate={{ strokeDashoffset: 60 }}
+                        transition={{ duration: 1.2, delay: 0.3 }}
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-base lg:text-lg font-heading text-[#8fb583]">12</span>
                     </div>
-                    <h1 className="text-xl lg:text-2xl font-heading font-light text-white/90 leading-tight mt-0.5">
-                      {userName}
-                    </h1>
+                  </div>
+                  
+                  {/* Text content */}
+                  <div className="text-right">
+                    <p className="text-sm lg:text-base text-white/90 font-light leading-tight">дней подряд</p>
+                    <p className="text-[9px] lg:text-[10px] uppercase tracking-[0.1em] text-white/30 mt-0.5 max-w-[140px]">
+                      {encouragement}
+                    </p>
                   </div>
                 </motion.div>
-              )}
+              </motion.div>
 
-              {/* Center - Mini stats */}
+            {/* Mood Selector with Date Row - hidden on chat page */}
+            {pathname !== '/cabinet/chat' && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="flex-1 flex justify-center items-center"
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="px-6 lg:px-8 py-3 border-t border-white/[0.02]"
               >
-                {/* Mini stats */}
-                <div className="hidden md:flex items-center gap-6 lg:gap-10">
-                  <div className="text-center">
-                    <span className="text-2xl lg:text-3xl font-heading text-[#b49b78] leading-tight">8</span>
-                    <p className="text-xs uppercase tracking-widest text-white/30 leading-tight">карточек</p>
+                <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] w-full max-w-full">
+                  {/* Header with question and date */}
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-px w-6 bg-gradient-to-r from-transparent to-white/10" />
+                      <p className="text-xs uppercase tracking-[0.2em] text-white/40">
+                        Как ты сегодня?
+                      </p>
+                      <div className="h-px w-6 bg-gradient-to-l from-transparent to-white/10" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-1 h-1 rounded-full bg-[#8fb583]/40" />
+                      <p className="text-xs text-white/30 tracking-wide">
+                        {new Date().toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" })}
+                      </p>
+                    </div>
                   </div>
-                  <div className="text-center">
-                    <span className="text-2xl lg:text-3xl font-heading text-[#7a9ebb] leading-tight">5</span>
-                    <p className="text-xs uppercase tracking-widest text-white/30 leading-tight">практик</p>
-                  </div>
-                  <div className="text-center">
-                    <span className="text-2xl lg:text-3xl font-heading text-[#9a8fb5] leading-tight">3</span>
-                    <p className="text-xs uppercase tracking-widest text-white/30 leading-tight">записей</p>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Right - Stats with encouragement */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="flex items-center gap-4 p-3 rounded-2xl bg-white/[0.02] border border-white/[0.05]"
-              >
-                {/* Progress indicator */}
-                <div className="relative w-12 h-12 lg:w-14 lg:h-14">
-                  <svg className="w-full h-full -rotate-90" viewBox="0 0 56 56">
-                    <circle cx="28" cy="28" r="24" stroke="rgba(255,255,255,0.05)" strokeWidth="2.5" fill="none" />
-                    <motion.circle
-                      cx="28" cy="28" r="24"
-                      stroke="#8fb583"
-                      strokeWidth="2.5"
-                      fill="none"
-                      strokeLinecap="round"
-                      initial={{ strokeDasharray: 150.8, strokeDashoffset: 150.8 }}
-                      animate={{ strokeDashoffset: 60 }}
-                      transition={{ duration: 1.2, delay: 0.3 }}
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-base lg:text-lg font-heading text-[#8fb583]">12</span>
-                  </div>
-                </div>
-                
-                {/* Text content */}
-                <div className="text-right">
-                  <p className="text-sm lg:text-base text-white/90 font-light leading-tight">дней подряд</p>
-                  <p className="text-[9px] lg:text-[10px] uppercase tracking-[0.1em] text-white/30 mt-0.5 max-w-[140px]">
-                    {encouragement}
-                  </p>
-                </div>
-              </motion.div>
-            </motion.div>
-
-            {/* Mood Selector with Date Row */}
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="px-6 lg:px-8 py-3 border-t border-white/[0.02]"
-            >
-              <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] w-full max-w-full">
-                {/* Header with question and date */}
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="h-px w-6 bg-gradient-to-r from-transparent to-white/10" />
-                    <p className="text-xs uppercase tracking-[0.2em] text-white/40">
-                      Как ты сегодня?
-                    </p>
-                    <div className="h-px w-6 bg-gradient-to-l from-transparent to-white/10" />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-1 h-1 rounded-full bg-[#8fb583]/40" />
-                    <p className="text-xs text-white/30 tracking-wide">
-                      {new Date().toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" })}
-                    </p>
-                  </div>
-                </div>
-                
-                {/* Mood options - grid layout */}
-                <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-11 gap-2 lg:gap-3 w-full">
-                  {moods.map((mood) => {
-                    const isActive = currentMood === mood.key;
-                    return (
-                      <motion.button
-                        key={mood.key}
-                        onClick={() => setMood(mood.key)}
-                        whileHover={{ scale: 1.08 }}
-                        whileTap={{ scale: 0.95 }}
-                        className={`flex flex-col items-center justify-center gap-2 p-2 lg:p-3 rounded-xl transition-all duration-300 w-full ${
-                          isActive ? 'bg-white/[0.06]' : 'hover:bg-white/[0.03]'
-                        }`}
-                      >
-                        <div 
-                          className={`w-12 h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center transition-all duration-300 border p-2.5 lg:p-3 ${
-                            isActive ? 'scale-110' : ''
+                  
+                  {/* Mood options - grid layout */}
+                  <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-11 gap-2 lg:gap-3 w-full">
+                    {moods.map((mood) => {
+                      const isActive = currentMood === mood.key;
+                      return (
+                        <motion.button
+                          key={mood.key}
+                          onClick={() => setMood(mood.key)}
+                          whileHover={{ scale: 1.08 }}
+                          whileTap={{ scale: 0.95 }}
+                          className={`flex flex-col items-center justify-center gap-2 p-2 lg:p-3 rounded-xl transition-all duration-300 w-full ${
+                            isActive ? 'bg-white/[0.06]' : 'hover:bg-white/[0.03]'
                           }`}
-                          style={{ 
-                            backgroundColor: isActive ? `${mood.color}18` : 'transparent',
-                            borderColor: isActive ? `${mood.color}50` : 'rgba(255,255,255,0.06)'
-                          }}
                         >
-                          {mood.icon(mood.color, isActive)}
-                        </div>
-                        <span className={`text-[9px] lg:text-[10px] uppercase tracking-wider whitespace-nowrap text-center ${
-                          isActive ? 'text-white/80' : 'text-white/40'
-                        }`}>
-                          {mood.label}
-                        </span>
-                      </motion.button>
-                    );
-                  })}
+                          <div 
+                            className={`w-12 h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center transition-all duration-300 border p-2.5 lg:p-3 ${
+                              isActive ? 'scale-110' : ''
+                            }`}
+                            style={{ 
+                              backgroundColor: isActive ? `${mood.color}18` : 'transparent',
+                              borderColor: isActive ? `${mood.color}50` : 'rgba(255,255,255,0.06)'
+                            }}
+                          >
+                            {mood.icon(mood.color, isActive)}
+                          </div>
+                          <span className={`text-[9px] lg:text-[10px] uppercase tracking-wider whitespace-nowrap text-center ${
+                            isActive ? 'text-white/80' : 'text-white/40'
+                          }`}>
+                            {mood.label}
+                          </span>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            )}
           </div>
         </header>
+        )}
 
         {/* Page content with proper padding */}
-        <div className="px-6 lg:px-8 py-4">
+        <div className={`${pathname === '/cabinet/chat' ? 'h-screen pt-4 px-4 lg:px-6' : 'px-6 lg:px-8 py-4'}`}>
           {children}
         </div>
       </main>
