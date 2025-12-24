@@ -660,13 +660,37 @@ export default function CabinetLayout({ children }: { children: React.ReactNode 
                   </motion.div>
                 )}
 
-                {/* Center - Mini stats */}
+                {/* Center - Mini stats and current mood indicator */}
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
-                  className="flex-1 flex justify-center items-center"
+                  className="flex-1 flex justify-center items-center gap-6"
                 >
+                  {/* Current mood indicator - shown on non-home pages when mood is selected */}
+                  {pathname !== '/cabinet' && currentMood && (
+                    <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                      {(() => {
+                        const activeMood = moods.find(m => m.key === currentMood);
+                        if (!activeMood) return null;
+                        return (
+                          <>
+                            <div 
+                              className="w-8 h-8 rounded-full flex items-center justify-center p-1.5"
+                              style={{ backgroundColor: `${activeMood.color}20`, borderColor: `${activeMood.color}40` }}
+                            >
+                              {activeMood.icon(activeMood.color, true)}
+                            </div>
+                            <div>
+                              <p className="text-[9px] uppercase tracking-wider text-white/30">Настроение</p>
+                              <p className="text-sm text-white/80">{activeMood.label}</p>
+                            </div>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  )}
+                  
                   {/* Mini stats */}
                   <div className="hidden md:flex items-center gap-6 lg:gap-10">
                     <div className="text-center">
@@ -722,7 +746,7 @@ export default function CabinetLayout({ children }: { children: React.ReactNode 
               </motion.div>
 
             {/* Mood Selector with Date Row - hidden on chat page */}
-            {pathname !== '/cabinet/chat' && pathname !== '/cabinet/cards' && (
+            {pathname === '/cabinet' && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
