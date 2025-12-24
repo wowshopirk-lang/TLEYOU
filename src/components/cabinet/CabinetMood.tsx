@@ -350,15 +350,15 @@ export default function CabinetMood() {
       </motion.div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 overflow-y-auto pb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 min-h-0">
         {/* Left - Main Chart */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="lg:col-span-2"
+          className="lg:col-span-2 flex flex-col"
         >
-          <div className="relative p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] overflow-hidden">
+          <div className="relative p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] overflow-hidden flex-1 flex flex-col">
             {/* Decorative elements */}
             <div className="absolute -right-20 -bottom-20 w-60 h-60 opacity-20">
               <svg viewBox="0 0 200 200" fill="none" className="w-full h-full">
@@ -367,14 +367,14 @@ export default function CabinetMood() {
               </svg>
             </div>
 
-            <div className="relative z-10">
+            <div className="relative z-10 flex-1 flex flex-col">
               {/* View Toggle */}
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-3 flex-shrink-0">
                 <span className="text-[10px] uppercase tracking-[0.15em] text-white/40">Последние 30 дней</span>
                 <div className="flex rounded-lg bg-white/[0.03] p-1">
                   <button
                     onClick={() => setView("chart")}
-                    className={`px-3 py-1.5 rounded-md text-xs transition-all ${
+                    className={`px-2.5 py-1 rounded-md text-[10px] transition-all ${
                       view === "chart" ? "bg-white/[0.08] text-white" : "text-white/40 hover:text-white/60"
                     }`}
                   >
@@ -382,7 +382,7 @@ export default function CabinetMood() {
                   </button>
                   <button
                     onClick={() => setView("heatmap")}
-                    className={`px-3 py-1.5 rounded-md text-xs transition-all ${
+                    className={`px-2.5 py-1 rounded-md text-[10px] transition-all ${
                       view === "heatmap" ? "bg-white/[0.08] text-white" : "text-white/40 hover:text-white/60"
                     }`}
                   >
@@ -392,32 +392,34 @@ export default function CabinetMood() {
               </div>
 
               {/* Chart/Heatmap */}
-              {view === "chart" ? (
-                <div className="flex flex-col md:flex-row items-center gap-4">
-                  <div className="w-48 h-48 flex-shrink-0">
-                    <MoodCircleChart data={moodData} />
+              <div className="flex-1 flex items-center justify-center min-h-0">
+                {view === "chart" ? (
+                  <div className="flex flex-col md:flex-row items-center gap-3 w-full">
+                    <div className="w-40 h-40 flex-shrink-0">
+                      <MoodCircleChart data={moodData} />
+                    </div>
+                    <div className="flex-1 w-full">
+                      <p className="text-[10px] text-white/40 mb-2">Эта неделя</p>
+                      <WeekMoodChart data={moodData} />
+                    </div>
                   </div>
-                  <div className="flex-1 w-full">
-                    <p className="text-[10px] text-white/40 mb-2">Эта неделя</p>
-                    <WeekMoodChart data={moodData} />
+                ) : (
+                  <div className="w-full">
+                    <p className="text-[10px] text-white/40 mb-2">Карта настроения за месяц</p>
+                    <MoodHeatmap data={moodData} />
                   </div>
-                </div>
-              ) : (
-                <div>
-                  <p className="text-[10px] text-white/40 mb-2">Карта настроения за месяц</p>
-                  <MoodHeatmap data={moodData} />
-                </div>
-              )}
+                )}
+              </div>
 
               {/* Mood Legend */}
-              <div className="mt-4 pt-4 border-t border-white/[0.06]">
-                <div className="flex flex-wrap items-center justify-center gap-4">
+              <div className="mt-3 pt-3 border-t border-white/[0.06] flex-shrink-0">
+                <div className="flex flex-wrap items-center justify-center gap-3">
                   {moods.map((mood) => (
-                    <div key={mood.level} className="flex items-center gap-2">
-                      <div className="w-5 h-5">
+                    <div key={mood.level} className="flex items-center gap-1.5">
+                      <div className="w-4 h-4">
                         {mood.icon(mood.color, "w-full h-full")}
                       </div>
-                      <span className="text-[10px] text-white/40 whitespace-nowrap">{mood.label}</span>
+                      <span className="text-[9px] text-white/40 whitespace-nowrap">{mood.label}</span>
                     </div>
                   ))}
                 </div>
@@ -431,7 +433,7 @@ export default function CabinetMood() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="space-y-3 flex flex-col"
+          className="flex flex-col gap-3 h-full"
         >
           <StatCard
             icon={TrendUpIcon}
