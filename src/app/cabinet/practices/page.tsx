@@ -1,23 +1,18 @@
-import { Metadata } from "next";
+"use client";
+
+import { useSearchParams } from "next/navigation";
 import CabinetPractices from "@/components/cabinet/CabinetPractices";
+import PracticeDetail from "@/components/cabinet/PracticeDetail";
 
-export const metadata: Metadata = {
-  title: "Практики — TLEYOU",
-  description: "Ежедневные практики для расслабления и самопознания",
-};
+export default function Practices() {
+  const searchParams = useSearchParams();
+  const practiceId = searchParams.get("practice");
 
-export default function Practices(_props: Record<string, never>) {
+  // If practice ID is provided, show detail view
+  if (practiceId) {
+    return <PracticeDetail practiceId={practiceId} />;
+  }
+
+  // Otherwise show list view
   return <CabinetPractices />;
 }
-
-
-
-
-
-
-
-
-
-
-
-

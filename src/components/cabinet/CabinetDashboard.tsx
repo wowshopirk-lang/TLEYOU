@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useMoodStore, MoodKey } from "@/stores/moodStore";
 import { useCardsStore, formatCardDate } from "@/stores/cardsStore";
 import { cards as allCards } from "@/data/cards";
+import { getPracticeByMoodAndIndex } from "@/data/practices";
 
 // Персонализированный контент для каждого настроения
 const moodContent: Record<MoodKey, { 
@@ -428,26 +429,30 @@ export default function CabinetDashboard() {
           )}
 
           {/* Рекомендованные практики */}
-          {content && (
+          {content && currentMood && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.3 }}
               className="grid grid-cols-2 gap-3"
             >
-              {content.practices.map((practice, i) => (
-                <Link key={i} href="/cabinet/practices">
-                  <div className="group flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] transition-all duration-300 hover:bg-[#8fb583]/5 hover:border-[#8fb583]/20">
-                    <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-[#8fb583]/10 border border-[#8fb583]/20 flex-shrink-0">
-                      <ActionIcon icon="practice" color="#8fb583" />
+              {content.practices.map((practice, i) => {
+                const practiceData = getPracticeByMoodAndIndex(currentMood, i);
+                const practiceId = practiceData?.id || "";
+                return (
+                  <Link key={i} href={`/cabinet/practices?practice=${practiceId}`}>
+                    <div className="group flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] transition-all duration-300 hover:bg-[#8fb583]/5 hover:border-[#8fb583]/20">
+                      <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-[#8fb583]/10 border border-[#8fb583]/20 flex-shrink-0">
+                        <ActionIcon icon="practice" color="#8fb583" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm text-white/85 font-light truncate">{practice.label}</p>
+                        <p className="text-[9px] text-white/30 uppercase tracking-wider">{practice.sub}</p>
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <p className="text-sm text-white/85 font-light truncate">{practice.label}</p>
-                      <p className="text-[9px] text-white/30 uppercase tracking-wider">{practice.sub}</p>
-                    </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </motion.div>
           )}
 
