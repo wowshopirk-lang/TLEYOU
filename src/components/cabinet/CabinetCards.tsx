@@ -173,52 +173,52 @@ export default function CabinetCards() {
   return (
     <div className="h-full flex flex-col overflow-hidden">
       {/* Compact Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-3 flex-shrink-0">
         <div>
-          <h1 className="text-xl font-heading font-light text-white">
+          <h1 className="text-lg font-heading font-light text-white">
             Календарь карточек
           </h1>
-          <p className="text-xs text-white/40">
+          <p className="text-[10px] text-white/40">
             Открыто {openedCount} из 30 • День {today.getDate()} = Карточка {getCardIdForDay(today.getDate())}
           </p>
         </div>
         
         {/* Legend */}
-        <div className="hidden md:flex items-center gap-3 text-[9px] uppercase tracking-wider text-white/40">
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded bg-[#8fb583]/30 border border-[#8fb583]/50" />
+        <div className="hidden md:flex items-center gap-2 text-[8px] uppercase tracking-wider text-white/40">
+          <div className="flex items-center gap-1">
+            <div className="w-2.5 h-2.5 rounded bg-[#8fb583]/30 border border-[#8fb583]/50" />
             <span>Открыта</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded bg-[#b49b78]/30 border border-[#b49b78]/50 animate-pulse" />
+          <div className="flex items-center gap-1">
+            <div className="w-2.5 h-2.5 rounded bg-[#b49b78]/30 border border-[#b49b78]/50 animate-pulse" />
             <span>Сегодня</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded bg-red-900/20 border border-red-900/30" />
+          <div className="flex items-center gap-1">
+            <div className="w-2.5 h-2.5 rounded bg-red-900/20 border border-red-900/30" />
             <span>Пропущена</span>
           </div>
         </div>
       </div>
 
       {/* Calendar */}
-      <div className="flex-1 flex flex-col bg-white/[0.02] border border-white/[0.06] rounded-2xl p-4 overflow-hidden">
+      <div className="flex-1 flex flex-col bg-white/[0.02] border border-white/[0.06] rounded-2xl p-3 overflow-hidden min-h-0">
         {/* Month Navigation */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-2 flex-shrink-0">
           <button 
             onClick={prevMonth}
-            className="w-8 h-8 rounded-lg bg-white/[0.03] border border-white/[0.08] flex items-center justify-center text-white/40 hover:text-white/70 hover:border-white/[0.15] transition-all"
+            className="w-7 h-7 rounded-lg bg-white/[0.03] border border-white/[0.08] flex items-center justify-center text-white/40 hover:text-white/70 hover:border-white/[0.15] transition-all"
           >
-            <div className="w-4 h-4"><ChevronLeftIcon /></div>
+            <div className="w-3.5 h-3.5"><ChevronLeftIcon /></div>
           </button>
           
           <div className="text-center">
-            <h2 className="text-lg font-heading text-white/90">
+            <h2 className="text-base font-heading text-white/90">
               {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
             </h2>
             {!isCurrentMonth() && (
               <button 
                 onClick={() => setCurrentMonth(new Date())}
-                className="text-[10px] text-[#8fb583] hover:underline"
+                className="text-[9px] text-[#8fb583] hover:underline"
               >
                 Вернуться к сегодня
               </button>
@@ -227,29 +227,29 @@ export default function CabinetCards() {
           
           <button 
             onClick={nextMonth}
-            className="w-8 h-8 rounded-lg bg-white/[0.03] border border-white/[0.08] flex items-center justify-center text-white/40 hover:text-white/70 hover:border-white/[0.15] transition-all"
+            className="w-7 h-7 rounded-lg bg-white/[0.03] border border-white/[0.08] flex items-center justify-center text-white/40 hover:text-white/70 hover:border-white/[0.15] transition-all"
           >
-            <div className="w-4 h-4"><ChevronRightIcon /></div>
+            <div className="w-3.5 h-3.5"><ChevronRightIcon /></div>
           </button>
         </div>
 
         {/* Week Days Header */}
-        <div className="grid grid-cols-7 gap-1 mb-2">
+        <div className="grid grid-cols-7 gap-0.5 mb-1.5 flex-shrink-0">
           {weekDays.map((day, i) => (
-            <div key={i} className="text-center text-[10px] uppercase tracking-wider text-white/30 py-2">
+            <div key={i} className="text-center text-[9px] uppercase tracking-wider text-white/30 py-1">
               {day}
             </div>
           ))}
         </div>
 
         {/* Calendar Grid */}
-        <div className="grid grid-cols-7 gap-1 flex-1">
+        <div className="grid grid-cols-7 gap-0.5 flex-1 min-h-0 auto-rows-fr">
           {calendarDays.map((day, index) => {
             const status = getDayStatus(day.date, day.dayNum);
             const cardId = day.dayNum > 0 ? getCardIdForDay(day.dayNum) : 0;
             
             if (status === 'empty') {
-              return <div key={index} className="aspect-square" />;
+              return <div key={index} className="min-h-0" />;
             }
             
             return (
@@ -260,7 +260,7 @@ export default function CabinetCards() {
                 transition={{ duration: 0.2, delay: index * 0.01 }}
                 onClick={() => handleDayClick(day.date, day.dayNum)}
                 disabled={status === 'future' || status === 'missed'}
-                className={`relative aspect-square rounded-xl transition-all duration-200 flex flex-col items-center justify-center gap-0.5 group ${
+                className={`relative rounded-lg transition-all duration-200 flex flex-col items-center justify-center gap-0.5 group min-h-0 ${
                   status === 'opened'
                     ? 'bg-[#8fb583]/20 border border-[#8fb583]/40 cursor-pointer hover:bg-[#8fb583]/30'
                     : status === 'today'
@@ -271,7 +271,7 @@ export default function CabinetCards() {
                 }`}
               >
                 {/* Day number */}
-                <span className={`text-sm font-medium ${
+                <span className={`text-xs font-medium ${
                   status === 'opened' ? 'text-[#8fb583]' 
                     : status === 'today' ? 'text-[#b49b78]' 
                     : status === 'missed' ? 'text-red-400/60'
@@ -281,7 +281,7 @@ export default function CabinetCards() {
                 </span>
                 
                 {/* Card number (small) */}
-                <span className={`text-[8px] ${
+                <span className={`text-[7px] ${
                   status === 'opened' ? 'text-[#8fb583]/60' 
                     : status === 'today' ? 'text-[#b49b78]/60' 
                     : 'text-white/20'
@@ -321,19 +321,19 @@ export default function CabinetCards() {
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-4 p-3 rounded-xl bg-[#b49b78]/10 border border-[#b49b78]/30"
+            className="mt-2 p-2 rounded-xl bg-[#b49b78]/10 border border-[#b49b78]/30 flex-shrink-0"
           >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-[#b49b78]">Сегодняшняя карточка доступна!</p>
-                <p className="text-xs text-white/40">Карточка #{todayCardData.cardId}</p>
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <p className="text-xs text-[#b49b78]">Сегодняшняя карточка доступна!</p>
+                <p className="text-[10px] text-white/40">Карточка #{todayCardData.cardId}</p>
               </div>
               <button
                 onClick={() => {
                   openTodayCard();
                   setSelectedCard(todayCardData.cardId);
                 }}
-                className="px-4 py-2 rounded-lg bg-[#b49b78] text-white text-sm font-medium hover:bg-[#b49b78]/80 transition-colors"
+                className="px-3 py-1.5 rounded-lg bg-[#b49b78] text-white text-xs font-medium hover:bg-[#b49b78]/80 transition-colors flex-shrink-0"
               >
                 Открыть
               </button>
