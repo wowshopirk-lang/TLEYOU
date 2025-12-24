@@ -4,20 +4,8 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useMoodStore, MoodKey } from "@/stores/moodStore";
-
-// Карточки дня - одна на каждый день (не зависит от настроения)
-const cardQuestions = [
-  "Что сегодня заставило тебя улыбнуться?",
-  "За что ты благодарна прямо сейчас?",
-  "Какая мысль не даёт тебе покоя?",
-  "Что бы ты сделала, если бы не боялась?",
-  "Какое чувство ты сейчас испытываешь?",
-  "Что делает тебя по-настоящему счастливой?",
-  "Какой урок ты извлекла из последних дней?",
-  "Что бы ты хотела отпустить сегодня?",
-  "Что наполняет тебя энергией?",
-  "О чём ты мечтаешь прямо сейчас?",
-];
+import { useCardsStore, formatCardDate } from "@/stores/cardsStore";
+import { cards as allCards } from "@/data/cards";
 
 // Персонализированный контент для каждого настроения
 const moodContent: Record<MoodKey, { 
@@ -166,11 +154,16 @@ const ActionIcon = ({ icon, color }: { icon: string; color: string }) => {
 
 export default function CabinetDashboard() {
   const [isMounted, setIsMounted] = useState(false);
-  const { currentMood, getTodayCardIndex } = useMoodStore();
+  const [showCardModal, setShowCardModal] = useState(false);
+  const [isFlipping, setIsFlipping] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(false);
   
-  // Получаем индекс карточки дня (сохраняется на весь день)
-  const todayCardIndex = getTodayCardIndex(cardQuestions.length);
-  const todayCard = cardQuestions[todayCardIndex];
+  const { currentMood } = useMoodStore();
+  const { getTodayCard, openTodayCard, isCardOpened } = useCardsStore();
+  
+  // Получаем данные о сегодняшней карточке
+  const todayCardData = getTodayCard();
+  const todayCard = allCards.find(c => c.id === todayCardData.cardId);
   
   // Персонализированный контент на основе настроения
   const content = currentMood ? moodContent[currentMood] : null;
@@ -178,6 +171,30 @@ export default function CabinetDashboard() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Открыть карточку дня
+  const handleOpenCard = () => {
+    if (todayCardData.canOpen) {
+      setIsFlipping(true);
+      
+      // Анимация переворота
+      setTimeout(() => {
+        openTodayCard();
+        setIsFlipped(true);
+        setIsFlipping(false);
+      }, 600);
+    } else if (todayCardData.isOpened) {
+      // Уже открыта - просто показываем
+      setIsFlipped(true);
+      setShowCardModal(true);
+    }
+  };
+
+  // Закрыть модалку
+  const handleCloseModal = () => {
+    setShowCardModal(false);
+    setIsFlipped(false);
+  };
 
   if (!isMounted) {
     return (
@@ -250,82 +267,151 @@ export default function CabinetDashboard() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="flex justify-center flex-shrink-0 w-full lg:w-auto"
         >
-          <Link href="/cabinet/cards" className="block">
-            <div className="group relative cursor-pointer">
+          <div 
+            className="block cursor-pointer"
+            onClick={handleOpenCard}
+          >
+            <div className="group relative">
               {/* Ambient glow */}
               <div className="absolute -inset-12 bg-gradient-radial from-[#b49b78]/15 via-transparent to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-700 rounded-full blur-2xl" />
               
-              {/* Card - БОЛЬШАЯ как было */}
-              <div className="relative w-64 lg:w-80 aspect-[3/4.2] rounded-3xl bg-gradient-to-b from-[#1c1915] via-[#14120f] to-[#0b0a09] border border-[#b49b78]/25 overflow-hidden transition-all duration-500 group-hover:border-[#b49b78]/50 group-hover:shadow-2xl group-hover:shadow-[#b49b78]/15">
-                
-                {/* Inner frame */}
-                <div className="absolute inset-4 border border-[#b49b78]/10 rounded-2xl pointer-events-none" />
-                
-                {/* Corner accents */}
-                {[
-                  { pos: "top-4 left-4", path: "M0 12 L0 0 L12 0" },
-                  { pos: "top-4 right-4", path: "M12 0 L24 0 L24 12" },
-                  { pos: "bottom-4 left-4", path: "M0 12 L0 24 L12 24" },
-                  { pos: "bottom-4 right-4", path: "M12 24 L24 24 L24 12" },
-                ].map((corner, i) => (
-                  <div key={i} className={`absolute ${corner.pos} w-6 h-6`}>
-                    <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-                      <path d={corner.path} stroke="#b49b78" strokeWidth="1" opacity="0.5" />
+              {/* Card with flip animation */}
+              <motion.div 
+                className="relative w-64 lg:w-80 aspect-[3/4.2]"
+                animate={{ rotateY: isFlipping ? 180 : 0 }}
+                transition={{ duration: 0.6, ease: "easeInOut" }}
+                style={{ transformStyle: "preserve-3d" }}
+              >
+                {/* Card Front (not opened) */}
+                <div 
+                  className={`absolute inset-0 rounded-3xl bg-gradient-to-b from-[#1c1915] via-[#14120f] to-[#0b0a09] border overflow-hidden transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-[#b49b78]/15 ${
+                    todayCardData.isOpened 
+                      ? 'border-[#8fb583]/40' 
+                      : 'border-[#b49b78]/25 group-hover:border-[#b49b78]/50'
+                  }`}
+                  style={{ backfaceVisibility: "hidden" }}
+                >
+                  {/* Inner frame */}
+                  <div className="absolute inset-4 border border-[#b49b78]/10 rounded-2xl pointer-events-none" />
+                  
+                  {/* Corner accents */}
+                  {[
+                    { pos: "top-4 left-4", path: "M0 12 L0 0 L12 0" },
+                    { pos: "top-4 right-4", path: "M12 0 L24 0 L24 12" },
+                    { pos: "bottom-4 left-4", path: "M0 12 L0 24 L12 24" },
+                    { pos: "bottom-4 right-4", path: "M12 24 L24 24 L24 12" },
+                  ].map((corner, i) => (
+                    <div key={i} className={`absolute ${corner.pos} w-6 h-6`}>
+                      <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+                        <path d={corner.path} stroke="#b49b78" strokeWidth="1" opacity="0.5" />
+                      </svg>
+                    </div>
+                  ))}
+
+                  {/* Center mandala decoration */}
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.08]">
+                    <svg viewBox="0 0 80 80" fill="none" className="w-48 h-48">
+                      <circle cx="40" cy="40" r="30" stroke="#b49b78" strokeWidth="0.5" />
+                      <circle cx="40" cy="40" r="18" stroke="#b49b78" strokeWidth="0.5" strokeDasharray="3 3" />
+                      {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => (
+                        <path
+                          key={i}
+                          d="M40 10 Q43 5, 40 2 Q37 5, 40 10"
+                          stroke="#b49b78"
+                          strokeWidth="0.5"
+                          transform={`rotate(${angle} 40 40)`}
+                        />
+                      ))}
                     </svg>
                   </div>
-                ))}
 
-                {/* Center mandala decoration */}
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.08]">
-                  <svg viewBox="0 0 80 80" fill="none" className="w-48 h-48">
-                    <circle cx="40" cy="40" r="30" stroke="#b49b78" strokeWidth="0.5" />
-                    <circle cx="40" cy="40" r="18" stroke="#b49b78" strokeWidth="0.5" strokeDasharray="3 3" />
-                    {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => (
-                      <path
-                        key={i}
-                        d="M40 10 Q43 5, 40 2 Q37 5, 40 10"
-                        stroke="#b49b78"
-                        strokeWidth="0.5"
-                        transform={`rotate(${angle} 40 40)`}
-                      />
-                    ))}
-                  </svg>
-                </div>
-
-                {/* Content */}
-                <div className="relative z-10 h-full flex flex-col items-center justify-center p-8 text-center">
-                  <div className="w-8 h-8 mb-4 opacity-50">
-                    <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
-                      <path d="M16 4 L18 12 L26 12 L20 17 L22 25 L16 20 L10 25 L12 17 L6 12 L14 12 Z" stroke="#b49b78" strokeWidth="1" fill="none" />
-                    </svg>
-                  </div>
-                  <p className="text-xs uppercase tracking-[0.25em] text-[#b49b78]/70 mb-6">
-                    Карточка дня
-                  </p>
-                  <p className="text-lg lg:text-2xl text-white/90 leading-relaxed font-light px-2">
-                    {todayCard}
-                  </p>
-                  <div className="absolute bottom-8 left-0 right-0 flex justify-center">
-                    <div className="flex items-center gap-2 opacity-30 group-hover:opacity-80 transition-opacity">
-                      <div className="w-6 h-px bg-[#b49b78]" />
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#b49b78]" />
-                      <div className="w-6 h-px bg-[#b49b78]" />
+                  {/* Content */}
+                  <div className="relative z-10 h-full flex flex-col items-center justify-center p-8 text-center">
+                    {todayCardData.isOpened ? (
+                      <>
+                        {/* Opened card - show question */}
+                        <div className="w-6 h-6 mb-3 text-[#8fb583]">
+                          <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+                            <path d="M5 12 L10 17 L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </div>
+                        <p className="text-[10px] uppercase tracking-[0.25em] text-[#8fb583]/70 mb-4">
+                          Открыта сегодня
+                        </p>
+                        <p className="text-lg lg:text-xl text-white/90 leading-relaxed font-light px-2">
+                          {todayCard?.question}
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        {/* Not opened - show invitation to open */}
+                        <div className="w-12 h-12 mb-4 opacity-60">
+                          <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
+                            <rect x="8" y="8" width="28" height="36" rx="3" stroke="#b49b78" strokeWidth="1.5" fill="none" />
+                            <rect x="12" y="4" width="28" height="36" rx="3" stroke="#b49b78" strokeWidth="1" opacity="0.3" fill="none" />
+                            <path d="M16 20 L28 20" stroke="#b49b78" strokeWidth="1" opacity="0.4" />
+                            <path d="M16 26 L24 26" stroke="#b49b78" strokeWidth="1" opacity="0.3" />
+                          </svg>
+                        </div>
+                        <p className="text-xs uppercase tracking-[0.25em] text-[#b49b78]/70 mb-3">
+                          Карточка дня
+                        </p>
+                        <p className="text-sm text-white/50 mb-4">
+                          Нажми, чтобы открыть
+                        </p>
+                        <div className="text-[10px] text-white/30">
+                          Карточка #{todayCard?.id} из 30
+                        </div>
+                      </>
+                    )}
+                    
+                    <div className="absolute bottom-8 left-0 right-0 flex justify-center">
+                      <div className="flex items-center gap-2 opacity-30 group-hover:opacity-80 transition-opacity">
+                        <div className="w-6 h-px bg-[#b49b78]" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#b49b78]" />
+                        <div className="w-6 h-px bg-[#b49b78]" />
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Hover overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#b49b78]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              </div>
+                  {/* Hover overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#b49b78]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                </div>
+              </motion.div>
 
               {/* Floating shadow */}
               <div className="absolute -bottom-4 left-6 right-6 h-4 bg-black/40 blur-xl rounded-full" />
             </div>
-          </Link>
+          </div>
         </motion.div>
 
         {/* Right - Personalized Content */}
         <div className="flex-1 flex flex-col gap-4 w-full">
+          {/* Статистика открытых карточек */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.15 }}
+          >
+            <Link href="/cabinet/cards">
+              <div className="group p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] hover:border-[#b49b78]/20 transition-all cursor-pointer">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-widest text-white/30 mb-1">Коллекция</p>
+                    <p className="text-lg text-white/80 font-light">
+                      {useCardsStore.getState().openedCards.length} из 30 карточек
+                    </p>
+                  </div>
+                  <div className="text-white/30 group-hover:text-[#b49b78] transition-colors">
+                    <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
+                      <path d="M9 6 L15 12 L9 18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          </motion.div>
+
           {/* Персональное приветствие */}
           {content && (
             <motion.div
@@ -396,6 +482,88 @@ export default function CabinetDashboard() {
           </motion.div>
         </div>
       </motion.div>
+
+      {/* Card Detail Modal */}
+      <AnimatePresence>
+        {showCardModal && todayCard && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0a0c0a]/95 backdrop-blur-md"
+            onClick={handleCloseModal}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", duration: 0.5 }}
+              className="relative bg-gradient-to-br from-[#1a1d1a] to-[#0f120e] rounded-3xl p-8 md:p-12 max-w-lg w-full border border-[#8fb583]/30"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Corner decorations */}
+              <div className="absolute top-4 left-4 w-8 h-8">
+                <svg viewBox="0 0 32 32" fill="none">
+                  <path d="M0 12 L0 0 L12 0" stroke="rgba(143,181,131,0.4)" strokeWidth="1" />
+                </svg>
+              </div>
+              <div className="absolute top-4 right-4 w-8 h-8">
+                <svg viewBox="0 0 32 32" fill="none">
+                  <path d="M20 0 L32 0 L32 12" stroke="rgba(143,181,131,0.4)" strokeWidth="1" />
+                </svg>
+              </div>
+              <div className="absolute bottom-4 left-4 w-8 h-8">
+                <svg viewBox="0 0 32 32" fill="none">
+                  <path d="M0 20 L0 32 L12 32" stroke="rgba(143,181,131,0.4)" strokeWidth="1" />
+                </svg>
+              </div>
+              <div className="absolute bottom-4 right-4 w-8 h-8">
+                <svg viewBox="0 0 32 32" fill="none">
+                  <path d="M20 32 L32 32 L32 20" stroke="rgba(143,181,131,0.4)" strokeWidth="1" />
+                </svg>
+              </div>
+
+              {/* Card number */}
+              <div className="text-center mb-6">
+                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[#8fb583]/20 flex items-center justify-center">
+                  <span className="text-lg font-heading text-[#8fb583]">{todayCard.id}</span>
+                </div>
+                <span className="text-[10px] uppercase tracking-[0.2em] text-white/30">
+                  Карточка дня • {formatCardDate(new Date().toISOString().split('T')[0])}
+                </span>
+              </div>
+
+              {/* Question */}
+              <p className="text-xl md:text-2xl font-heading font-light text-white/90 text-center leading-relaxed mb-8">
+                {todayCard.question}
+              </p>
+
+              {/* Actions */}
+              <div className="flex justify-center">
+                <Link href="/cabinet/cards">
+                  <button className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/[0.05] border border-white/20 text-white/70 hover:text-white hover:bg-white/[0.08] transition-all duration-300">
+                    <span className="text-sm font-medium">Все карточки</span>
+                    <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4">
+                      <path d="M7 4 L13 10 L7 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                </Link>
+              </div>
+
+              {/* Close button */}
+              <button
+                onClick={handleCloseModal}
+                className="absolute top-4 right-12 text-white/30 hover:text-white/60 transition-colors"
+              >
+                <svg viewBox="0 0 20 20" fill="none" className="w-5 h-5">
+                  <path d="M5 5 L15 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <path d="M15 5 L5 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </AnimatePresence>
   );
 }
