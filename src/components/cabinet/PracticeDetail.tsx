@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getPracticeById } from "@/data/practices";
+import { usePracticesStore } from "@/stores/practicesStore";
 
 const BackIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
@@ -56,7 +57,8 @@ export default function PracticeDetail({ practiceId }: { practiceId: string }) {
     if (currentStep < practice.steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Practice completed
+      // Practice completed - mark as completed
+      completePractice(practiceId);
       setIsPlaying(false);
     }
   };

@@ -5,6 +5,9 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMoodStore, MoodKey } from "@/stores/moodStore";
+import { useCardsStore } from "@/stores/cardsStore";
+import { usePracticesStore } from "@/stores/practicesStore";
+import { useJournalStore } from "@/stores/journalStore";
 
 // Icons with brand-consistent design
 const HomeIcon = () => (
@@ -272,8 +275,16 @@ export default function CabinetLayout({ children }: { children: React.ReactNode 
   const [encouragement, setEncouragement] = useState(encouragements[0]);
   const [userName, setUserName] = useState<string>("");
   
-  // Zustand store for mood
+  // Zustand stores
   const { currentMood, setMood } = useMoodStore();
+  const { openedCards } = useCardsStore();
+  const { getCompletedCount } = usePracticesStore();
+  const { getEntriesCount } = useJournalStore();
+  
+  // Real stats
+  const cardsCount = openedCards.length;
+  const practicesCount = getCompletedCount();
+  const journalCount = getEntriesCount();
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -659,15 +670,15 @@ export default function CabinetLayout({ children }: { children: React.ReactNode 
                   {/* Mini stats */}
                   <div className="hidden md:flex items-center gap-6 lg:gap-10">
                     <div className="text-center">
-                      <span className="text-2xl lg:text-3xl font-heading text-[#b49b78] leading-tight">8</span>
+                      <span className="text-2xl lg:text-3xl font-heading text-[#b49b78] leading-tight">{cardsCount}</span>
                       <p className="text-xs uppercase tracking-widest text-white/30 leading-tight">карточек</p>
                     </div>
                     <div className="text-center">
-                      <span className="text-2xl lg:text-3xl font-heading text-[#7a9ebb] leading-tight">5</span>
+                      <span className="text-2xl lg:text-3xl font-heading text-[#7a9ebb] leading-tight">{practicesCount}</span>
                       <p className="text-xs uppercase tracking-widest text-white/30 leading-tight">практик</p>
                     </div>
                     <div className="text-center">
-                      <span className="text-2xl lg:text-3xl font-heading text-[#9a8fb5] leading-tight">3</span>
+                      <span className="text-2xl lg:text-3xl font-heading text-[#9a8fb5] leading-tight">{journalCount}</span>
                       <p className="text-xs uppercase tracking-widest text-white/30 leading-tight">записей</p>
                     </div>
                   </div>

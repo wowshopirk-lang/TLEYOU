@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useJournalStore } from "@/stores/journalStore";
 
 // Types
 interface JournalEntry {
@@ -135,6 +136,17 @@ const MoodWheel = ({ selectedMood, onSelect }: { selectedMood: number | null; on
   );
 };
 
+// Format date from YYYY-MM-DD to readable format
+const formatJournalDate = (dateString: string): string => {
+  try {
+    const [year, month, day] = dateString.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+  } catch {
+    return dateString;
+  }
+};
+
 // Entry Card Component
 const EntryCard = ({ entry, delay }: { entry: JournalEntry; delay: number }) => (
   <motion.div
@@ -165,7 +177,7 @@ const EntryCard = ({ entry, delay }: { entry: JournalEntry; delay: number }) => 
           <div className="w-4 h-4">
             <CalendarIcon />
           </div>
-          <span className="text-xs">{entry.date}</span>
+          <span className="text-xs">{formatJournalDate(entry.date)}</span>
         </div>
       </div>
 
@@ -194,7 +206,7 @@ export default function CabinetJournal() {
   const [selectedMood, setSelectedMood] = useState<number | null>(null);
   const [entryText, setEntryText] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [entries, setEntries] = useState<JournalEntry[]>(sampleEntries);
+  const { entries, addEntry, deleteEntry } = useJournalStore();
 
   const toggleTag = (tag: string) => {
     if (selectedTags.includes(tag)) {
@@ -207,15 +219,15 @@ export default function CabinetJournal() {
   const saveEntry = () => {
     if (selectedMood === null || entryText.trim() === "") return;
 
-    const newEntry: JournalEntry = {
-      id: Date.now(),
-      date: new Date().toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" }),
+    const dateKey = new Date().toISOString().split('T')[0];
+
+    addEntry({
+      date: dateKey,
       mood: moods[selectedMood],
       text: entryText,
       tags: selectedTags,
-    };
+    });
 
-    setEntries([newEntry, ...entries]);
     setIsWriting(false);
     setSelectedMood(null);
     setEntryText("");
