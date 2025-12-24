@@ -270,7 +270,7 @@ const StatCard = ({ icon: Icon, label, value, sublabel, color }: {
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
-    className="relative p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] overflow-hidden flex-shrink-0"
+    className="relative p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] overflow-hidden"
   >
     <div 
       className="absolute top-0 right-0 w-20 h-20 opacity-10 blur-xl"
@@ -350,13 +350,13 @@ export default function CabinetMood() {
       </motion.div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 min-h-0">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 overflow-y-auto pb-4">
         {/* Left - Main Chart */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="lg:col-span-2 flex flex-col"
+          className="lg:col-span-2"
         >
           <div className="relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] overflow-hidden">
             {/* Decorative elements */}
@@ -429,7 +429,7 @@ export default function CabinetMood() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-col gap-3 h-full"
+          className="space-y-3"
         >
           <StatCard
             icon={TrendUpIcon}
