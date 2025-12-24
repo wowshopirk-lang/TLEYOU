@@ -80,7 +80,7 @@ export default function Privacy() {
                   <br />
                   Email: privacy@tleyou.ru
                   <br />
-                  Telegram: @tleyou
+                  Telegram: @tleyouself
                 </p>
               </div>
             </div>
@@ -91,6 +91,14 @@ export default function Privacy() {
     </>
   );
 }
+
+
+
+
+
+
+
+
 
 
 

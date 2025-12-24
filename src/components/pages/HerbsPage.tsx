@@ -1,37 +1,29 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
+import { 
+  LeafIcon, 
+  CheckIcon, 
+  ArrowRightIcon, 
+  TelegramIcon,
+  BalanceIcon,
+  RelaxIcon,
+  EyeIcon,
+  FlameIcon,
+  LotusIcon
+} from "@/components/ui/Icons";
 
-// Custom SVG Icons
-const LeafIcon = () => (
-  <svg viewBox="0 0 64 64" fill="none" className="w-full h-full">
-    <path d="M32 56 C32 56, 24 48, 24 40 C24 32, 28 28, 32 28 C36 28, 40 32, 40 40 C40 48, 32 56, 32 56" stroke="currentColor" strokeWidth="1.5" fill="none" />
-    <path d="M32 56 L32 24" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-    <path d="M32 40 C28 40, 24 36, 24 32" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.5" />
-    <path d="M32 40 C36 40, 40 36, 40 32" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.5" />
-  </svg>
-);
-
-const CheckIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-    <path d="M5 12 L10 17 L19 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const ArrowIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-    <path d="M5 12 L19 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    <path d="M14 7 L19 12 L14 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const TelegramIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-    <path d="M21 5 L2 11 L9 13 L11 20 L14 15 L19 19 Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" fill="none" />
-    <path d="M9 13 L19 6" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-  </svg>
-);
+// Иконки для разных скруток
+const rollIcons: Record<string, React.FC<{ className?: string }>> = {
+  classic: LeafIcon,
+  calm: RelaxIcon,
+  focus: EyeIcon,
+  ritual: FlameIcon,
+  balance: BalanceIcon,
+  sleep: LotusIcon,
+};
 
 // Разные варианты скруток
 const herbRolls = [
@@ -43,7 +35,6 @@ const herbRolls = [
     effect: "Универсальная смесь для ежедневного ритуала",
     duration: "10-15 сеансов",
     bestFor: ["Вечерний ритуал", "Снятие стресса", "Подготовка ко сну"],
-    color: "from-[#4a6741]/20 to-[#3a5232]/10",
   },
   {
     id: "calm",
@@ -53,7 +44,6 @@ const herbRolls = [
     effect: "Мягкий успокаивающий аромат",
     duration: "12-18 сеансов",
     bestFor: ["Бессонница", "Тревожность", "Восстановление"],
-    color: "from-blue-500/20 to-indigo-500/10",
   },
   {
     id: "focus",
@@ -63,7 +53,6 @@ const herbRolls = [
     effect: "Очищает пространство и ум",
     duration: "10-15 сеансов",
     bestFor: ["Утренний ритуал", "Медитация", "Работа"],
-    color: "from-amber-500/20 to-orange-500/10",
   },
   {
     id: "ritual",
@@ -73,7 +62,6 @@ const herbRolls = [
     effect: "Особая атмосфера для практик",
     duration: "8-12 сеансов",
     bestFor: ["Духовные практики", "Очищение пространства", "Особые моменты"],
-    color: "from-purple-500/20 to-pink-500/10",
   },
   {
     id: "balance",
@@ -83,7 +71,6 @@ const herbRolls = [
     effect: "Восстанавливает внутренний баланс",
     duration: "12-16 сеансов",
     bestFor: ["Дневной ритуал", "Перезагрузка", "Баланс эмоций"],
-    color: "from-green-500/20 to-emerald-500/10",
   },
   {
     id: "sleep",
@@ -93,7 +80,6 @@ const herbRolls = [
     effect: "Подготовка к качественному сну",
     duration: "15-20 сеансов",
     bestFor: ["Перед сном", "Бессонница", "Релаксация"],
-    color: "from-indigo-500/20 to-purple-500/10",
   },
 ];
 
@@ -120,14 +106,28 @@ const usageSteps = [
   },
 ];
 
+const safetyItems = [
+  "Используйте только в хорошо проветриваемом помещении",
+  "Не оставляйте тлеющую скрутку без присмотра",
+  "Храните в сухом месте, вдали от источников тепла",
+  "Не используйте при беременности и аллергии на травы",
+];
+
 export default function HerbsPage() {
   return (
     <main className="bg-[#0a0c0a] min-h-screen">
-      {/* Hero */}
-      <section className="relative py-20 md:py-28 overflow-hidden">
+      {/* Hero - with background image */}
+      <section className="relative h-screen flex items-center overflow-hidden">
+        {/* Background Image */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0c0a] via-[#0f120e] to-[#0a0c0a]" />
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#4a6741]/[0.08] rounded-full blur-[150px]" />
+          <Image
+            src="/images/backgrounds/Без названия - 2025-12-24T131827.583.jfif"
+            alt=""
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0c0e0c]/88 via-[#0a0c0a]/80 to-[#0c0e0c]/90" />
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -137,9 +137,9 @@ export default function HerbsPage() {
             transition={{ duration: 0.8 }}
           >
             <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="w-8 h-px bg-[#8fb583]/50" />
-              <span className="text-xs uppercase tracking-[0.3em] text-[#8fb583]">Травяные скрутки</span>
-              <div className="w-8 h-px bg-[#8fb583]/50" />
+              <div className="h-px w-8 bg-gradient-to-r from-transparent to-[#b49b78]/40" />
+              <span className="text-[10px] uppercase tracking-[0.3em] text-[#b49b78]/60">Травяные скрутки</span>
+              <div className="h-px w-8 bg-gradient-to-l from-transparent to-[#b49b78]/40" />
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-light text-white mb-6">
@@ -149,88 +149,89 @@ export default function HerbsPage() {
             <p className="text-lg text-white/50 max-w-2xl mx-auto mb-8">
               Шесть вариантов с разным наполнением. Каждая скрутка создана для определённого настроения и цели.
             </p>
+
+            <motion.a
+              href="#rolls"
+              className="group inline-flex items-center gap-2 text-[#8fb583]/70 hover:text-[#8fb583] transition-colors"
+              animate={{ y: [0, 5, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <span className="text-sm">Смотреть варианты</span>
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
+                <path d="M12 5 L12 19 M5 12 L12 19 L19 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </motion.a>
           </motion.div>
         </div>
       </section>
 
-      {/* Herb Rolls */}
-      <section className="relative py-16 md:py-24 overflow-hidden">
-        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Herb Rolls - solid gradient */}
+      <section id="rolls" className="relative h-screen flex items-center">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0c0e0c] via-[#0a0c0a] to-[#0c0e0c]" />
+        </div>
+
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-12"
+            className="text-center mb-8"
           >
-            <div className="w-12 h-px bg-gradient-to-r from-transparent via-[#8fb583]/50 to-transparent mx-auto mb-6" />
-            <h2 className="text-3xl md:text-4xl font-heading font-light text-white">
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <div className="h-px w-8 bg-gradient-to-r from-transparent to-[#b49b78]/40" />
+              <span className="text-[10px] uppercase tracking-[0.3em] text-[#b49b78]/60">Варианты</span>
+              <div className="h-px w-8 bg-gradient-to-l from-transparent to-[#b49b78]/40" />
+            </div>
+            <h2 className="text-2xl md:text-3xl font-heading font-light text-white">
               Варианты скруток
             </h2>
-            <p className="text-white/40 mt-4">Выбери состав под своё настроение</p>
+            <p className="text-white/40 mt-2 text-sm">Выбери состав под своё настроение</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {herbRolls.map((roll, index) => (
               <motion.div
                 key={roll.id}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className={`relative bg-gradient-to-br ${roll.color} border border-white/[0.08] rounded-2xl p-6 hover:bg-white/[0.04] hover:border-[#8fb583]/20 transition-all duration-500`}
+                transition={{ duration: 0.5, delay: index * 0.05 }}
+                className="group relative bg-white/[0.02] border border-white/[0.05] rounded-xl p-4 hover:bg-white/[0.04] hover:border-[#8fb583]/20 transition-all duration-300"
               >
-                {/* Corner decoration */}
-                <div className="absolute top-0 right-0 w-8 h-8">
-                  <svg viewBox="0 0 32 32" fill="none">
-                    <path d="M16 0 L32 0 L32 16" stroke="rgba(143,181,131,0.15)" strokeWidth="1" />
-                  </svg>
+                <div className="flex items-start gap-3">
+                <div className="w-8 h-8 text-[#8fb583] flex-shrink-0">
+                  {(() => {
+                    const IconComponent = rollIcons[roll.id] || LeafIcon;
+                    return <IconComponent />;
+                  })()}
                 </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg font-heading font-light text-white mb-1">{roll.name}</h3>
+                    <p className="text-white/50 text-sm mb-2">{roll.description}</p>
+                    
+                    {/* Composition */}
+                    <div className="flex flex-wrap gap-1.5 mb-2">
+                      {roll.composition.map((herb) => (
+                        <span
+                          key={herb}
+                          className="px-2 py-0.5 rounded-full bg-white/[0.03] border border-white/[0.05] text-xs text-white/50"
+                        >
+                          {herb}
+                        </span>
+                      ))}
+                    </div>
 
-                <div className="w-10 h-10 text-[#8fb583] mb-4">
-                  <LeafIcon />
-                </div>
-                
-                <h3 className="text-xl font-heading font-light text-white mb-2">{roll.name}</h3>
-                <p className="text-white/60 text-sm mb-4">{roll.description}</p>
-                
-                {/* Composition */}
-                <div className="mb-4">
-                  <p className="text-xs uppercase tracking-wider text-white/40 mb-2">Состав</p>
-                  <div className="flex flex-wrap gap-2">
-                    {roll.composition.map((herb) => (
-                      <span
-                        key={herb}
-                        className="px-2 py-1 rounded-full bg-white/[0.05] border border-white/[0.08] text-xs text-white/60"
-                      >
-                        {herb}
-                      </span>
-                    ))}
+                    {/* Duration */}
+                    <div className="flex items-center gap-1.5 text-xs text-white/30">
+                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1" />
+                        <path d="M12 7 L12 12 L15 14" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                      </svg>
+                      <span>{roll.duration}</span>
+                    </div>
                   </div>
-                </div>
-
-                {/* Effect */}
-                <p className="text-sm text-white/50 mb-4 italic">{roll.effect}</p>
-
-                {/* Duration */}
-                <div className="flex items-center gap-2 text-xs text-white/40 mb-4">
-                  <span>⏱</span>
-                  <span>{roll.duration}</span>
-                </div>
-
-                {/* Best for */}
-                <div>
-                  <p className="text-xs uppercase tracking-wider text-white/40 mb-2">Подходит для</p>
-                  <ul className="space-y-1">
-                    {roll.bestFor.map((item) => (
-                      <li key={item} className="flex items-center gap-2 text-xs text-white/50">
-                        <div className="w-3 h-3 text-[#8fb583]">
-                          <CheckIcon />
-                        </div>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
                 </div>
               </motion.div>
             ))}
@@ -238,9 +239,18 @@ export default function HerbsPage() {
         </div>
       </section>
 
-      {/* How to Use */}
+      {/* How to Use - with background image (grounding, connection with nature) */}
       <section className="relative py-16 md:py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0f120e]/30 to-transparent" />
+        {/* Background Image - barefoot on moss */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/images/backgrounds/barefoot-moss.jpg"
+            alt=""
+            fill
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0c0e0c]/90 via-[#0a0c0a]/85 to-[#0c0e0c]/90" />
+        </div>
         
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -250,6 +260,11 @@ export default function HerbsPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-12"
           >
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="h-px w-8 bg-gradient-to-r from-transparent to-[#b49b78]/40" />
+              <span className="text-[10px] uppercase tracking-[0.3em] text-[#b49b78]/60">Инструкция</span>
+              <div className="h-px w-8 bg-gradient-to-l from-transparent to-[#b49b78]/40" />
+            </div>
             <h2 className="text-3xl md:text-4xl font-heading font-light text-white">
               Как использовать
             </h2>
@@ -263,7 +278,7 @@ export default function HerbsPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="flex gap-4 p-6 bg-white/[0.02] border border-white/[0.08] rounded-xl"
+                className="flex gap-4 p-6 bg-white/[0.02] border border-white/[0.05] rounded-xl backdrop-blur-sm"
               >
                 <div className="w-10 h-10 rounded-full bg-[#8fb583]/20 flex items-center justify-center flex-shrink-0">
                   <span className="text-[#8fb583] font-medium">{step.step}</span>
@@ -278,52 +293,49 @@ export default function HerbsPage() {
         </div>
       </section>
 
-      {/* Safety */}
+      {/* Safety - solid gradient */}
       <section className="relative py-16 md:py-24 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0c0e0c] via-[#0a0c0a] to-[#0c0e0c]" />
+        </div>
+
         <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="bg-white/[0.02] border border-white/[0.08] rounded-2xl p-8"
+            className="bg-white/[0.02] border border-white/[0.05] rounded-2xl p-8"
           >
             <h3 className="text-xl font-heading font-light text-white mb-4">
               Меры предосторожности
             </h3>
             <ul className="space-y-3 text-white/50 text-sm">
-              <li className="flex items-start gap-3">
-                <div className="w-5 h-5 text-[#8fb583] mt-0.5 flex-shrink-0">
-                  <CheckIcon />
-                </div>
-                <span>Используйте только в хорошо проветриваемом помещении</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="w-5 h-5 text-[#8fb583] mt-0.5 flex-shrink-0">
-                  <CheckIcon />
-                </div>
-                <span>Не оставляйте тлеющую скрутку без присмотра</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="w-5 h-5 text-[#8fb583] mt-0.5 flex-shrink-0">
-                  <CheckIcon />
-                </div>
-                <span>Храните в сухом месте, вдали от источников тепла</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="w-5 h-5 text-[#8fb583] mt-0.5 flex-shrink-0">
-                  <CheckIcon />
-                </div>
-                <span>Не используйте при беременности и аллергии на травы</span>
-              </li>
+              {safetyItems.map((item, index) => (
+                <li key={index} className="flex items-start gap-3">
+                  <div className="w-5 h-5 text-[#8fb583] mt-0.5 flex-shrink-0">
+                    <CheckIcon />
+                  </div>
+                  <span>{item}</span>
+                </li>
+              ))}
             </ul>
           </motion.div>
         </div>
       </section>
 
-      {/* CTA */}
+      {/* CTA - with background image */}
       <section className="relative py-16 md:py-24 overflow-hidden">
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[250px] bg-[#4a6741]/[0.1] rounded-full blur-[100px]" />
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/images/backgrounds/Без названия - 2025-12-24T131838.142.jfif"
+            alt=""
+            fill
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0c0e0c]/90 via-[#0a0c0a]/85 to-[#0c0e0c]/95" />
+        </div>
         
         <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
@@ -342,19 +354,20 @@ export default function HerbsPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 href="/product"
-                className="group inline-flex items-center justify-center gap-3 px-10 py-4 rounded-full bg-[#4a6741] text-white hover:bg-[#5a7a51] transition-all duration-300"
+                className="group relative inline-flex items-center justify-center gap-3 px-10 py-4 bg-[#4a6741]/30 hover:bg-[#4a6741]/50 border border-[#4a6741]/40 hover:border-[#4a6741]/60 rounded-full text-white transition-all duration-300"
               >
-                <span className="font-medium">Узнать о наборе</span>
-                <div className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300">
-                  <ArrowIcon />
+                <div className="absolute inset-0 rounded-full bg-[#4a6741]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <span className="relative z-10 font-medium">Узнать о наборе</span>
+                <div className="relative z-10 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300">
+                  <ArrowRightIcon />
                 </div>
               </Link>
               
               <a
-                href="https://t.me/tleyou"
+                href="https://t.me/tleyouself"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border border-white/15 text-white/70 hover:bg-white/5 hover:text-white transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border border-white/10 text-white/60 hover:bg-white/[0.03] hover:text-white hover:border-white/20 transition-all duration-300"
               >
                 <div className="w-5 h-5">
                   <TelegramIcon />

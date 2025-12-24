@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
+import { QuoteIcon, ArrowRightIcon } from "@/components/ui/Icons";
 
 // Card questions
 const cards = [
@@ -38,7 +40,7 @@ const cards = [
   "Что значит для тебя любовь к себе?",
 ];
 
-// Icons
+// Custom icons for this page
 const RefreshIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
     <path d="M4 12 C4 7.58, 7.58 4, 12 4 C15.35 4, 18.19 6.04, 19.43 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -58,51 +60,86 @@ const ShareIcon = () => (
   </svg>
 );
 
-const ArrowIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-    <path d="M5 12 L19 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    <path d="M14 7 L19 12 L14 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
+// Get today's date string for storage key
+const getTodayKey = () => {
+  const today = new Date();
+  return `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+};
 
-const QuoteIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-    <path d="M10 8 C10 8, 6 8, 6 12 C6 16, 10 16, 10 16 L10 12 L6 12" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M18 8 C18 8, 14 8, 14 12 C14 16, 18 16, 18 16 L18 12 L14 12" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
+// Generate unique card indices for today based on date seed
+const generateTodayCards = (seed: number): [number, number] => {
+  const firstCard = seed % cards.length;
+  // Second card is different from first
+  let secondCard = (seed * 7 + 13) % cards.length;
+  if (secondCard === firstCard) {
+    secondCard = (firstCard + 1) % cards.length;
+  }
+  return [firstCard, secondCard];
+};
 
 export default function CardOfDayPage() {
   const [cardIndex, setCardIndex] = useState(0);
-  const [isFlipped, setIsFlipped] = useState(false);
+  const [canChange, setCanChange] = useState(true);
+  const [todayCards, setTodayCards] = useState<[number, number]>([0, 1]);
+  const [isSecondCard, setIsSecondCard] = useState(false);
 
   useEffect(() => {
-    // Get today's card based on date
+    // Get today's seed based on date
     const today = new Date();
     const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
-    setCardIndex(dayOfYear % cards.length);
+    const yearSeed = today.getFullYear() * 1000 + dayOfYear;
+    
+    // Generate today's unique cards
+    const [first, second] = generateTodayCards(yearSeed);
+    setTodayCards([first, second]);
+    
+    // Check localStorage for today's state
+    const todayKey = getTodayKey();
+    const savedState = localStorage.getItem(`tleyou_card_${todayKey}`);
+    
+    if (savedState) {
+      const { usedSecond } = JSON.parse(savedState);
+      if (usedSecond) {
+        setCardIndex(second);
+        setIsSecondCard(true);
+        setCanChange(false);
+      } else {
+        setCardIndex(first);
+        setCanChange(true);
+      }
+    } else {
+      setCardIndex(first);
+      setCanChange(true);
+    }
   }, []);
 
   const getNewCard = () => {
-    setIsFlipped(true);
-    setTimeout(() => {
-      setCardIndex((prev) => (prev + 1) % cards.length);
-      setIsFlipped(false);
-    }, 300);
+    if (!canChange) return;
+    
+    // Switch to second card
+    setCardIndex(todayCards[1]);
+    setIsSecondCard(true);
+    setCanChange(false);
+    
+    // Save state to localStorage
+    const todayKey = getTodayKey();
+    localStorage.setItem(`tleyou_card_${todayKey}`, JSON.stringify({ usedSecond: true }));
   };
 
   return (
     <main className="bg-[#0a0c0a] min-h-screen">
-      {/* Hero */}
-      <section className="relative min-h-[90vh] flex items-center justify-center py-20 overflow-hidden">
-        {/* Background */}
+      {/* Hero - with background image */}
+      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+        {/* Background Image */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0c0a] via-[#0f120e] to-[#0a0c0a]" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#4a6741]/[0.06] rounded-full blur-[150px]" />
-          
-          {/* Decorative circles */}
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 border border-white/[0.03] rounded-full" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 border border-[#8fb583]/[0.05] rounded-full" />
+          <Image
+            src="/images/backgrounds/Без названия - 2025-12-24T131957.477.jfif"
+            alt=""
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0c0e0c]/88 via-[#0a0c0a]/80 to-[#0c0e0c]/90" />
         </div>
 
         <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 text-center">
@@ -114,9 +151,9 @@ export default function CardOfDayPage() {
             className="mb-12"
           >
             <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="w-8 h-px bg-[#8fb583]/50" />
-              <span className="text-xs uppercase tracking-[0.3em] text-[#8fb583]">Карточка дня</span>
-              <div className="w-8 h-px bg-[#8fb583]/50" />
+              <div className="h-px w-8 bg-gradient-to-r from-transparent to-[#b49b78]/40" />
+              <span className="text-[10px] uppercase tracking-[0.3em] text-[#b49b78]/60">Карточка дня</span>
+              <div className="h-px w-8 bg-gradient-to-l from-transparent to-[#b49b78]/40" />
             </div>
             <p className="text-white/40 text-sm">
               {new Date().toLocaleDateString("ru-RU", { 
@@ -144,7 +181,7 @@ export default function CardOfDayPage() {
                 className="relative"
               >
                 {/* Card container */}
-                <div className="relative bg-gradient-to-br from-[#1a1d1a] to-[#0f120e] rounded-3xl p-10 md:p-14 border border-white/[0.08] shadow-2xl">
+                <div className="relative bg-white/[0.03] backdrop-blur-sm rounded-3xl p-10 md:p-14 border border-white/[0.08] shadow-2xl">
                   {/* Corner decorations */}
                   <div className="absolute top-6 left-6 w-10 h-10">
                     <svg viewBox="0 0 40 40" fill="none">
@@ -199,16 +236,23 @@ export default function CardOfDayPage() {
           >
             <button
               onClick={getNewCard}
-              className="flex items-center gap-2 px-6 py-3 rounded-full border border-white/15 text-white/70 hover:bg-white/5 hover:text-white transition-all duration-300"
+              disabled={!canChange}
+              className={`flex items-center gap-2 px-6 py-3 rounded-full border transition-all duration-300 ${
+                canChange 
+                  ? "border-white/10 text-white/60 hover:bg-white/[0.03] hover:text-white hover:border-white/20 cursor-pointer" 
+                  : "border-white/5 text-white/20 cursor-not-allowed"
+              }`}
             >
               <div className="w-5 h-5">
                 <RefreshIcon />
               </div>
-              <span className="text-sm">Другая карточка</span>
+              <span className="text-sm">
+                {canChange ? "Ещё одна карточка" : "Завтра будет новая"}
+              </span>
             </button>
             
             <button
-              className="flex items-center gap-2 px-6 py-3 rounded-full border border-white/15 text-white/70 hover:bg-white/5 hover:text-white transition-all duration-300"
+              className="flex items-center gap-2 px-6 py-3 rounded-full border border-white/10 text-white/60 hover:bg-white/[0.03] hover:text-white hover:border-white/20 transition-all duration-300"
             >
               <div className="w-5 h-5">
                 <ShareIcon />
@@ -217,21 +261,64 @@ export default function CardOfDayPage() {
             </button>
           </motion.div>
 
-          {/* Hint */}
-          <motion.p
+          {/* Card counter */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="mt-4 flex items-center justify-center gap-2"
+          >
+            <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${isSecondCard ? "bg-[#8fb583]/30" : "bg-[#8fb583]/60"}`} />
+            <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${isSecondCard ? "bg-[#8fb583]/60" : "bg-white/10"}`} />
+            <span className="ml-2 text-xs text-white/25">
+              {isSecondCard ? "2 из 2 на сегодня" : "1 из 2 на сегодня"}
+            </span>
+          </motion.div>
+
+          {/* Practice Guide */}
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="mt-8 text-sm text-white/30 italic"
+            className="mt-10 max-w-lg mx-auto px-4"
           >
-            Закрой глаза. Сделай глубокий вдох. Ответь честно.
-          </motion.p>
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="h-px w-8 bg-gradient-to-r from-transparent to-[#8fb583]/30" />
+              <span className="text-[9px] uppercase tracking-[0.25em] text-[#8fb583]/40">Как практиковать</span>
+              <div className="h-px w-8 bg-gradient-to-l from-transparent to-[#8fb583]/30" />
+            </div>
+            
+            <div className="space-y-4 text-sm text-white/40 leading-relaxed text-left">
+              <div className="flex items-start gap-1.5">
+                <span className="text-white/50 font-medium">1.</span>
+                <p>Найди тихое место, где тебя никто не побеспокоит</p>
+              </div>
+              <div className="flex items-start gap-1.5">
+                <span className="text-white/50 font-medium">2.</span>
+                <p>Сделай 3 глубоких вдоха, закрой глаза на мгновение</p>
+              </div>
+              <div className="flex items-start gap-1.5">
+                <span className="text-white/50 font-medium">3.</span>
+                <p>Прочитай вопрос и позволь ответу прийти — без спешки</p>
+              </div>
+              <div className="flex items-start gap-1.5">
+                <span className="text-white/50 font-medium">4.</span>
+                <p>Запиши свои мысли или просто побудь с ними</p>
+              </div>
+            </div>
+            
+            <p className="mt-8 text-xs text-white/25 italic text-center leading-relaxed">
+              Каждый день — две уникальные карточки. Не торопись. Честность — ключ к себе.
+            </p>
+          </motion.div>
         </div>
       </section>
 
-      {/* CTA */}
+      {/* CTA - solid gradient */}
       <section className="relative py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0f120e] to-transparent" />
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0c0e0c] via-[#0a0c0a] to-[#0c0e0c]" />
+        </div>
         
         <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <motion.div
@@ -240,7 +327,11 @@ export default function CardOfDayPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <div className="w-12 h-px bg-gradient-to-r from-transparent via-[#8fb583]/50 to-transparent mx-auto mb-8" />
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="h-px w-8 bg-gradient-to-r from-transparent to-[#b49b78]/40" />
+              <span className="text-[10px] uppercase tracking-[0.3em] text-[#b49b78]/60">Больше</span>
+              <div className="h-px w-8 bg-gradient-to-l from-transparent to-[#b49b78]/40" />
+            </div>
             
             <h2 className="text-2xl md:text-3xl font-heading font-light text-white mb-4">
               Хочешь больше?
@@ -252,17 +343,18 @@ export default function CardOfDayPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 href="/product"
-                className="group inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-[#4a6741] text-white hover:bg-[#5a7a51] transition-all duration-300"
+                className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#4a6741]/30 hover:bg-[#4a6741]/50 border border-[#4a6741]/40 hover:border-[#4a6741]/60 rounded-full text-white transition-all duration-300"
               >
-                <span className="font-medium">Узнать о наборе</span>
-                <div className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300">
-                  <ArrowIcon />
+                <div className="absolute inset-0 rounded-full bg-[#4a6741]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <span className="relative z-10 font-medium">Узнать о наборе</span>
+                <div className="relative z-10 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300">
+                  <ArrowRightIcon />
                 </div>
               </Link>
               
               <Link
                 href="/subscription"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border border-white/15 text-white/70 hover:bg-white/5 hover:text-white transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border border-white/10 text-white/60 hover:bg-white/[0.03] hover:text-white hover:border-white/20 transition-all duration-300"
               >
                 <span>Подписка с практиками</span>
               </Link>

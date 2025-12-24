@@ -2,63 +2,15 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-
-// Custom SVG Icons - Nature line style
-const SparkleIcon = () => (
-  <svg viewBox="0 0 64 64" fill="none" className="w-full h-full">
-    <path d="M32 8 L35 24 L51 27 L35 30 L32 46 L29 30 L13 27 L29 24 Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" fill="none" />
-    <circle cx="48" cy="14" r="3" stroke="currentColor" strokeWidth="1" fill="none" />
-    <circle cx="16" cy="40" r="2" stroke="currentColor" strokeWidth="0.75" fill="none" />
-    <path d="M32 52 L32 58" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-    <path d="M28 56 L36 56" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-  </svg>
-);
-
-const PackageIcon = () => (
-  <svg viewBox="0 0 64 64" fill="none" className="w-full h-full">
-    <path d="M12 22 L32 12 L52 22 L52 46 L32 56 L12 46 Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" fill="none" />
-    <path d="M32 12 L32 56" stroke="currentColor" strokeWidth="1" />
-    <path d="M12 22 L32 32 L52 22" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
-    <circle cx="32" cy="34" r="3" stroke="currentColor" strokeWidth="0.75" fill="none" />
-    <path d="M22 17 L32 22 L42 17" stroke="currentColor" strokeWidth="0.5" strokeLinejoin="round" opacity="0.5" />
-  </svg>
-);
-
-const HeartIcon = () => (
-  <svg viewBox="0 0 64 64" fill="none" className="w-full h-full">
-    <path 
-      d="M32 54 C22 46, 12 36, 12 26 C12 18, 18 12, 26 12 C29 12, 31 14, 32 17 C33 14, 35 12, 38 12 C46 12, 52 18, 52 26 C52 36, 42 46, 32 54" 
-      stroke="currentColor" 
-      strokeWidth="1.5" 
-      strokeLinecap="round" 
-      strokeLinejoin="round"
-      fill="none"
-    />
-    <path d="M32 48 C24 42, 18 34, 18 27" stroke="currentColor" strokeWidth="0.5" opacity="0.4" />
-    <circle cx="26" cy="24" r="2" stroke="currentColor" strokeWidth="0.5" opacity="0.4" fill="none" />
-  </svg>
-);
-
-const ArrowIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-    <path d="M5 12 L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    <path d="M14 7 L19 12 L14 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const ShieldIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-    <path d="M12 3 L20 7 L20 13 C20 17 16 20 12 22 C8 20 4 17 4 13 L4 7 Z" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" fill="none" />
-    <path d="M9 12 L11 14 L15 10" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const TelegramIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-    <path d="M21 5 L2 11 L9 13 L11 20 L14 15 L19 19 Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" fill="none" />
-    <path d="M9 13 L19 6" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-  </svg>
-);
+import Image from "next/image";
+import { 
+  AwakeningIcon, 
+  GiftPackageIcon, 
+  ContinuityIcon, 
+  ArrowRightIcon, 
+  ShieldIcon, 
+  TelegramIcon 
+} from "@/components/ui/Icons";
 
 // Pill Tag component - consistent with other sections
 const PillTag = ({ children, active = false }: { children: React.ReactNode; active?: boolean }) => (
@@ -76,7 +28,7 @@ const PillTag = ({ children, active = false }: { children: React.ReactNode; acti
 
 const ctaOptions = [
   {
-    icon: PackageIcon,
+    icon: GiftPackageIcon,
     title: "Набор TLEYOU",
     price: "4 490 ₽",
     priceNote: "через сайт",
@@ -87,7 +39,7 @@ const ctaOptions = [
     badge: "Популярный",
   },
   {
-    icon: HeartIcon,
+    icon: ContinuityIcon,
     title: "Подписка",
     price: "500 ₽/мес",
     description: "Ежедневные практики и медитации",
@@ -95,7 +47,7 @@ const ctaOptions = [
     primary: false,
   },
   {
-    icon: SparkleIcon,
+    icon: AwakeningIcon,
     title: "Карточка дня",
     price: "Бесплатно",
     description: "Попробовать прямо сейчас",
@@ -113,18 +65,15 @@ const guarantees = [
 export default function BentoCTA() {
   return (
     <section className="relative py-12 md:py-16 overflow-hidden min-h-screen flex items-center">
-      {/* Background - dark gradient with nature image */}
+      {/* Background - with image */}
       <div className="absolute inset-0 z-0">
-        <div className="section-bg section-bg-cta" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0c0a]/85 via-[#0f120e]/75 to-[#0c0e0c]/90" />
-        
-        {/* Additional glow */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[900px] h-[600px] bg-[#4a6741]/[0.06] rounded-full blur-[200px]" />
-        
-        {/* Noise texture */}
-        <div className="absolute inset-0 opacity-[0.02]" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-        }} />
+        <Image
+          src="/images/backgrounds/barefoot-moss.jpg"
+          alt=""
+          fill
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0c0e0c]/90 via-[#0a0c0a]/85 to-[#0c0e0c]/90" />
       </div>
       
       {/* Decorative elements */}
@@ -341,7 +290,7 @@ export default function BentoCTA() {
                       option.primary ? 'bg-white/20 border border-white/30' : 'bg-white/5 border border-white/10'
                     }`}>
                       <div className="w-4 h-4 text-white">
-                        <ArrowIcon />
+                        <ArrowRightIcon />
                       </div>
                     </div>
                   </div>
@@ -407,7 +356,7 @@ export default function BentoCTA() {
           </p>
           
           <a
-            href="https://t.me/tleyou"
+            href="https://t.me/tleyouself"
             target="_blank"
             rel="noopener noreferrer"
             className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/15 text-white/60 hover:bg-white/5 hover:text-white hover:border-[#8fb583]/30 transition-all duration-300 text-xs md:text-sm"

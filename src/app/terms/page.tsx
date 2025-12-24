@@ -90,7 +90,7 @@ export default function Terms() {
                   <br />
                   Email: hello@tleyou.ru
                   <br />
-                  Telegram: @tleyou
+                  Telegram: @tleyouself
                 </p>
               </div>
             </div>
@@ -101,6 +101,14 @@ export default function Terms() {
     </>
   );
 }
+
+
+
+
+
+
+
+
 
 
 

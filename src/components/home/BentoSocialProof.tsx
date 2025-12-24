@@ -97,9 +97,9 @@ const TransformationTimeline = () => {
                   {milestone.day}
                 </span>
                 {milestone.status === 'result' && (
-                  <svg className="w-4 h-4 text-[#b49b78]/60 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
+                  <div className="w-4 h-4 text-[#b49b78]/60 flex-shrink-0">
+                    <CheckIcon />
+                  </div>
                 )}
               </div>
               <h4 className={`
@@ -122,19 +122,7 @@ const TransformationTimeline = () => {
   );
 };
 
-// Custom SVG Icons
-const QuoteIcon = () => (
-  <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
-    <path d="M12 28 C12 22, 16 18, 20 18 L20 22 C18 22, 16 24, 16 28 L16 32 L12 32 L12 28" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M28 28 C28 22, 32 18, 36 18 L36 22 C34 22, 32 24, 32 28 L32 32 L28 32 L28 28" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const StarIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-    <path d="M12 2 L14 9 L21 9 L15.5 13.5 L17.5 21 L12 16.5 L6.5 21 L8.5 13.5 L3 9 L10 9 Z" stroke="currentColor" strokeWidth="1" fill="currentColor" fillOpacity="0.3" />
-  </svg>
-);
+import { QuoteIcon, StarFilledIcon, CheckIcon } from "@/components/ui/Icons";
 
 // Pill Tag
 const PillTag = ({ children, active = false }: { children: React.ReactNode; active?: boolean }) => (
@@ -153,13 +141,9 @@ const PillTag = ({ children, active = false }: { children: React.ReactNode; acti
 export default function BentoSocialProof() {
   return (
     <section className="relative py-12 md:py-16 overflow-hidden min-h-screen flex items-center">
-      {/* Background */}
+      {/* Background - gradient only */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0c0a] via-[#0f120e] to-[#0c0e0c]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-[#4a6741]/[0.04] rounded-full blur-[150px]" />
-        <div className="absolute inset-0 opacity-[0.02]" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-        }} />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0c0e0c] via-[#0a0c0a] to-[#0c0e0c]" />
       </div>
 
       {/* Large decorative circle */}
@@ -262,7 +246,7 @@ export default function BentoSocialProof() {
               <div className="absolute top-5 right-5 flex gap-1">
                 {[...Array(5)].map((_, i) => (
                   <div key={i} className="w-3.5 h-3.5 text-[#8fb583]">
-                    <StarIcon />
+                    <StarFilledIcon />
                   </div>
                 ))}
               </div>

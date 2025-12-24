@@ -2,51 +2,8 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-
-// Custom SVG Icons - line style
-const SparkleIcon = () => (
-  <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
-    <path d="M24 4 L26 16 L38 18 L26 20 L24 32 L22 20 L10 18 L22 16 Z" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
-    <circle cx="38" cy="10" r="2" stroke="currentColor" strokeWidth="0.75" />
-    <circle cx="10" cy="28" r="1.5" stroke="currentColor" strokeWidth="0.5" />
-  </svg>
-);
-
-const PackageIcon = () => (
-  <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
-    <path d="M8 16 L24 8 L40 16 L40 36 L24 44 L8 36 Z" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
-    <path d="M24 8 L24 44" stroke="currentColor" strokeWidth="1" />
-    <path d="M8 16 L24 24 L40 16" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
-    <circle cx="24" cy="24" r="2" stroke="currentColor" strokeWidth="0.75" />
-  </svg>
-);
-
-const HeartIcon = () => (
-  <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
-    <path 
-      d="M24 40 C16 34, 8 26, 8 18 C8 12, 12 8, 18 8 C21 8, 23 10, 24 12 C25 10, 27 8, 30 8 C36 8, 40 12, 40 18 C40 26, 32 34, 24 40" 
-      stroke="currentColor" 
-      strokeWidth="1" 
-      strokeLinecap="round" 
-      strokeLinejoin="round"
-    />
-    <path d="M24 36 C18 31, 12 25, 12 19" stroke="currentColor" strokeWidth="0.5" opacity="0.4" />
-  </svg>
-);
-
-const CheckIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1" />
-    <path d="M8 12 L11 15 L16 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const ArrowIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-    <path d="M5 12 L19 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    <path d="M14 7 L19 12 L14 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
+import Image from "next/image";
+import { AwakeningIcon, GiftPackageIcon, ContinuityIcon, CheckIcon, ArrowRightIcon } from "@/components/ui/Icons";
 
 const pricingOptions = [
   {
@@ -63,7 +20,7 @@ const pricingOptions = [
     ],
     cta: "Получить",
     ctaLink: "/card-of-day",
-    icon: SparkleIcon,
+    icon: AwakeningIcon,
     highlight: false,
   },
   {
@@ -83,7 +40,7 @@ const pricingOptions = [
     ],
     cta: "Заказать",
     ctaLink: "/product",
-    icon: PackageIcon,
+    icon: GiftPackageIcon,
     highlight: true,
     badge: "Хит продаж",
   },
@@ -102,7 +59,7 @@ const pricingOptions = [
     ],
     cta: "Оформить",
     ctaLink: "/subscription",
-    icon: HeartIcon,
+    icon: ContinuityIcon,
     highlight: false,
   },
 ];
@@ -110,19 +67,15 @@ const pricingOptions = [
 export default function BentoSubscription() {
   return (
     <section className="relative py-12 md:py-16 overflow-hidden min-h-screen flex items-center">
-      {/* Background - dark gradients like other sections */}
+      {/* Background - with image */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0c0a] via-[#0f120e] to-[#0c0e0c]" />
-        
-        {/* Glow effects */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[900px] h-[600px] bg-[#4a6741]/[0.04] rounded-full blur-[180px]" />
-        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-[#3d5a36]/[0.03] rounded-full blur-[120px]" />
-        <div className="absolute top-0 right-1/4 w-[300px] h-[300px] bg-[#4a6741]/[0.02] rounded-full blur-[100px]" />
-        
-        {/* Subtle grain texture */}
-        <div className="absolute inset-0 opacity-[0.02]" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-        }} />
+        <Image
+          src="/images/backgrounds/Без названия - 2025-12-21T185432.544.jfif"
+          alt=""
+          fill
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0c0e0c]/90 via-[#0a0c0a]/85 to-[#0c0e0c]/90" />
       </div>
 
       {/* Decorative circles */}
@@ -306,7 +259,7 @@ export default function BentoSubscription() {
                   >
                     <span>{option.cta}</span>
                     <div className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform duration-300">
-                      <ArrowIcon />
+                      <ArrowRightIcon />
                     </div>
                   </Link>
                 </div>

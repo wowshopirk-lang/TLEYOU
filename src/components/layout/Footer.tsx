@@ -3,23 +3,9 @@
 import Link from "next/link";
 import Logo from "@/components/ui/Logo";
 import { motion } from "framer-motion";
+import { TelegramIcon } from "@/components/ui/Icons";
 
-// Custom line-style icons
-const TelegramIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-    <path d="M21 5 L2 11 L9 13 L11 20 L14 15 L19 19 Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" fill="none" />
-    <path d="M9 13 L19 6" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-  </svg>
-);
-
-const VKIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-    <rect x="3" y="5" width="18" height="14" rx="3" stroke="currentColor" strokeWidth="1.5" fill="none" />
-    <path d="M7 10 L8 14 C8 14, 9 14, 10 12 C11 14, 12 14, 12 14 L13 10" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-    <path d="M14 14 L14 10 L16 13 L18 10 L18 14" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-  </svg>
-);
-
+// Arrow up icon (custom for footer)
 const ArrowUpIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
     <path d="M12 20 L12 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -89,7 +75,7 @@ export default function Footer() {
               {/* Social links */}
               <div className="flex gap-3">
                 <a
-                  href="https://t.me/tleyou"
+                  href="https://t.me/tleyouself"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:border-[#8fb583]/30 hover:text-[#8fb583] transition-all duration-300"
@@ -97,17 +83,6 @@ export default function Footer() {
                 >
                   <div className="w-5 h-5">
                     <TelegramIcon />
-                  </div>
-                </a>
-                <a
-                  href="https://vk.com/tleyou"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:border-[#8fb583]/30 hover:text-[#8fb583] transition-all duration-300"
-                  aria-label="VKontakte"
-                >
-                  <div className="w-5 h-5">
-                    <VKIcon />
                   </div>
                 </a>
               </div>

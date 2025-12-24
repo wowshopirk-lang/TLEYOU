@@ -15,3 +15,11 @@ Save the following images in this folder:
 - Resolution: 1920x1080 or higher
 - File size: < 500KB each (compress if needed)
 
+
+
+
+
+
+
+
+

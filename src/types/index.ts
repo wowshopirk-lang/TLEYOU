@@ -68,6 +68,20 @@ export interface Card {
   category: string;
 }
 
+// Next.js 15+ page props type (params is now a Promise)
+export interface PageProps {
+  params?: Promise<Record<string, string | string[]>>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}
+
+
+
+
+
+
+
+
+
 
 
 

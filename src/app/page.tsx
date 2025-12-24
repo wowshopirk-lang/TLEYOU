@@ -44,8 +44,7 @@ const organizationSchema = {
   "url": "https://tleyou.ru",
   "description": "Ритуал возвращения к себе для женщин",
   "sameAs": [
-    "https://t.me/tleyou",
-    "https://vk.com/tleyou"
+    "https://t.me/tleyouself"
   ]
 };
 

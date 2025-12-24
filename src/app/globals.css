@@ -89,6 +89,11 @@ body {
   background-position: center bottom;
 }
 
+.section-bg-features {
+  background-image: url('/images/backgrounds/Texture Organica - Muschio (1).jfif');
+  background-position: center center;
+}
+
 .section-bg-subscription {
   background-image: url('/images/backgrounds/tree-cross-section.jpg');
   background-position: center center;

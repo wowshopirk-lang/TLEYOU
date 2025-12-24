@@ -1,63 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
-
-// Custom SVG Icons
-const StarIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-    <path d="M12 2 L14 8 L21 9 L16 14 L17 21 L12 18 L7 21 L8 14 L3 9 L10 8 Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" fill="none" />
-  </svg>
-);
-
-const CheckIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-    <path d="M5 12 L10 17 L19 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const ArrowIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-    <path d="M5 12 L19 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    <path d="M14 7 L19 12 L14 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const MeditationIcon = () => (
-  <svg viewBox="0 0 64 64" fill="none" className="w-full h-full">
-    <circle cx="32" cy="20" r="8" stroke="currentColor" strokeWidth="1.5" fill="none" />
-    <path d="M20 56 L20 44 C20 38, 24 34, 32 34 C40 34, 44 38, 44 44 L44 56" stroke="currentColor" strokeWidth="1.5" fill="none" />
-    <path d="M12 56 L52 56" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    <circle cx="32" cy="48" r="4" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.5" />
-  </svg>
-);
-
-const HeartIcon = () => (
-  <svg viewBox="0 0 64 64" fill="none" className="w-full h-full">
-    <path d="M32 54 C22 46, 12 36, 12 26 C12 18, 18 12, 26 12 C29 12, 31 14, 32 17 C33 14, 35 12, 38 12 C46 12, 52 18, 52 26 C52 36, 42 46, 32 54" stroke="currentColor" strokeWidth="1.5" fill="none" />
-    <path d="M32 48 C24 42, 18 34, 18 27" stroke="currentColor" strokeWidth="0.75" opacity="0.4" />
-  </svg>
-);
-
-const InfinityIcon = () => (
-  <svg viewBox="0 0 64 64" fill="none" className="w-full h-full">
-    <path d="M32 32 C32 24, 24 20, 18 20 C12 20, 8 26, 8 32 C8 38, 12 44, 18 44 C24 44, 32 40, 32 32 C32 40, 40 44, 46 44 C52 44, 56 38, 56 32 C56 26, 52 20, 46 20 C40 20, 32 24, 32 32" stroke="currentColor" strokeWidth="1.5" fill="none" />
-  </svg>
-);
-
-// Pill Tag
-const PillTag = ({ children, active = false }: { children: React.ReactNode; active?: boolean }) => (
-  <span className={`
-    inline-flex items-center px-3 py-1 rounded-full text-[10px] uppercase tracking-[0.2em]
-    border transition-all duration-300
-    ${active 
-      ? 'border-[#8fb583]/40 text-[#8fb583] bg-[#8fb583]/5' 
-      : 'border-white/10 text-white/40'
-    }
-  `}>
-    {children}
-  </span>
-);
+import { 
+  StarIcon, 
+  CheckIcon, 
+  ArrowRightIcon, 
+  MeditationIcon, 
+  HeartIcon, 
+  InfinityIcon 
+} from "@/components/ui/Icons";
 
 const plans = [
   {
@@ -107,6 +60,15 @@ const plans = [
   },
 ];
 
+const subscriptionFeatures = [
+  { title: "Ежедневные медитации", desc: "Короткие и длинные сессии на любое настроение" },
+  { title: "Дыхательные практики", desc: "Техники для снятия стресса и концентрации" },
+  { title: "Карточка дня", desc: "Новый вопрос для рефлексии каждый день" },
+  { title: "Сообщество", desc: "Общение с единомышленниками в закрытом чате" },
+  { title: "Треки для сна", desc: "Звуки природы и музыка для засыпания" },
+  { title: "Личный прогресс", desc: "Статистика и достижения в вашем профиле" },
+];
+
 const testimonials = [
   { text: "Медитации помогли справиться с тревожностью", author: "Анна" },
   { text: "Практикую каждый день уже 3 месяца", author: "Мария" },
@@ -116,51 +78,88 @@ const testimonials = [
 export default function SubscriptionPage() {
   return (
     <main className="bg-[#0a0c0a] min-h-screen">
-      {/* Hero */}
-      <section className="relative py-20 md:py-28 overflow-hidden">
+      {/* Hero - with background image */}
+      <section className="relative h-screen flex items-center overflow-hidden">
+        {/* Background Image */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0c0a] via-[#0f120e] to-[#0a0c0a]" />
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-[#4a6741]/[0.08] rounded-full blur-[150px]" />
+          <Image
+            src="/images/backgrounds/woman-silhouette.jpg"
+            alt=""
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0c0e0c]/88 via-[#0a0c0a]/80 to-[#0c0e0c]/90" />
         </div>
 
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center w-full">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
             <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="w-8 h-px bg-[#8fb583]/50" />
-              <span className="text-xs uppercase tracking-[0.3em] text-[#8fb583]">Подписка</span>
-              <div className="w-8 h-px bg-[#8fb583]/50" />
+              <div className="h-px w-8 bg-gradient-to-r from-transparent to-[#b49b78]/40" />
+              <span className="text-[10px] uppercase tracking-[0.3em] text-[#b49b78]/60">Подписка</span>
+              <div className="h-px w-8 bg-gradient-to-l from-transparent to-[#b49b78]/40" />
             </div>
             
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-light text-white mb-6">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-light text-white mb-4">
               Ежедневные практики тишины
             </h1>
             
-            <p className="text-lg text-white/50 max-w-2xl mx-auto mb-8">
+            {/* Tags - простое перечисление */}
+            <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
+              <span className="text-[10px] text-white/40 uppercase tracking-wider">
+                Медитации
+              </span>
+              <span className="text-white/20">•</span>
+              <span className="text-[10px] text-white/40 uppercase tracking-wider">
+                Дыхание
+              </span>
+              <span className="text-white/20">•</span>
+              <span className="text-[10px] text-white/40 uppercase tracking-wider">
+                Осознанность
+              </span>
+              <span className="text-white/20">•</span>
+              <span className="text-[10px] text-white/40 uppercase tracking-wider">
+                Рефлексия
+              </span>
+            </div>
+            
+            <p className="text-sm md:text-base text-white/50 max-w-xl mx-auto leading-relaxed">
               Медитации, дыхательные упражнения и практики осознанности. Новый контент каждый день.
             </p>
-
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              <PillTag active>Медитации</PillTag>
-              <PillTag>Дыхание</PillTag>
-              <PillTag>Осознанность</PillTag>
-              <PillTag>Рефлексия</PillTag>
-            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Pricing */}
+      {/* Pricing - solid gradient */}
       <section className="relative py-16 md:py-24 overflow-visible">
         {/* Background */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0f120e]/30 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0c0e0c] via-[#0a0c0a] to-[#0c0e0c]" />
         </div>
         
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section header */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="h-px w-8 bg-gradient-to-r from-transparent to-[#b49b78]/40" />
+              <span className="text-[10px] uppercase tracking-[0.3em] text-[#b49b78]/60">Тарифы</span>
+              <div className="h-px w-8 bg-gradient-to-l from-transparent to-[#b49b78]/40" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-heading font-light text-white">
+              Выбери свой путь
+            </h2>
+          </motion.div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {plans.map((plan, index) => {
               const Icon = plan.icon;
@@ -173,8 +172,8 @@ export default function SubscriptionPage() {
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   className={`relative rounded-2xl p-6 md:p-8 transition-all duration-500 ${
                     plan.popular
-                      ? 'bg-gradient-to-br from-[#4a6741] to-[#3a5232] md:-mt-4 md:pb-12'
-                      : 'bg-white/[0.02] border border-white/[0.08] hover:border-[#8fb583]/20'
+                      ? 'bg-gradient-to-br from-[#4a6741] to-[#3a5232] md:-mt-4 md:pb-12 shadow-2xl shadow-[#4a6741]/20'
+                      : 'bg-white/[0.02] border border-white/[0.05] hover:border-[#8fb583]/20'
                   }`}
                 >
                   {/* Popular badge */}
@@ -228,7 +227,7 @@ export default function SubscriptionPage() {
                   <button className={`w-full py-3 rounded-full font-medium transition-all duration-300 ${
                     plan.popular
                       ? 'bg-white text-[#4a6741] hover:bg-white/90'
-                      : 'border border-white/20 text-white/70 hover:bg-white/5 hover:text-white'
+                      : 'border border-white/10 text-white/60 hover:bg-white/[0.03] hover:text-white hover:border-white/20'
                   }`}>
                     Выбрать
                   </button>
@@ -239,9 +238,18 @@ export default function SubscriptionPage() {
         </div>
       </section>
 
-      {/* What's included */}
+      {/* What's included - with background image (roots, foundation) */}
       <section className="relative py-16 md:py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0f120e]/50 to-transparent" />
+        {/* Background Image - tree cross section */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/images/backgrounds/tree-cross-section.jpg"
+            alt=""
+            fill
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0c0e0c]/92 via-[#0a0c0a]/88 to-[#0c0e0c]/92" />
+        </div>
         
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -251,28 +259,25 @@ export default function SubscriptionPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-12"
           >
-            <div className="w-12 h-px bg-gradient-to-r from-transparent via-[#8fb583]/50 to-transparent mx-auto mb-6" />
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="h-px w-8 bg-gradient-to-r from-transparent to-[#b49b78]/40" />
+              <span className="text-[10px] uppercase tracking-[0.3em] text-[#b49b78]/60">Содержание</span>
+              <div className="h-px w-8 bg-gradient-to-l from-transparent to-[#b49b78]/40" />
+            </div>
             <h2 className="text-3xl md:text-4xl font-heading font-light text-white">
               Что входит в подписку
             </h2>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              { title: "Ежедневные медитации", desc: "Короткие и длинные сессии на любое настроение" },
-              { title: "Дыхательные практики", desc: "Техники для снятия стресса и концентрации" },
-              { title: "Карточка дня", desc: "Новый вопрос для рефлексии каждый день" },
-              { title: "Сообщество", desc: "Общение с единомышленниками в закрытом чате" },
-              { title: "Треки для сна", desc: "Звуки природы и музыка для засыпания" },
-              { title: "Личный прогресс", desc: "Статистика и достижения в вашем профиле" },
-            ].map((item, index) => (
+            {subscriptionFeatures.map((item, index) => (
               <motion.div
                 key={item.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="flex gap-4 p-5 rounded-xl bg-white/[0.02] border border-white/[0.06]"
+                className="flex gap-4 p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] backdrop-blur-sm"
               >
                 <div className="w-5 h-5 text-[#8fb583] flex-shrink-0 mt-0.5">
                   <CheckIcon />
@@ -287,8 +292,12 @@ export default function SubscriptionPage() {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Testimonials - solid gradient */}
       <section className="relative py-16 md:py-24 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0c0e0c] via-[#0a0c0a] to-[#0c0e0c]" />
+        </div>
+
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -313,9 +322,9 @@ export default function SubscriptionPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.06]"
+                className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05]"
               >
-                <p className="text-white/70 mb-3 italic">"{item.text}"</p>
+                <p className="text-white/70 mb-3 italic">&ldquo;{item.text}&rdquo;</p>
                 <p className="text-sm text-[#8fb583]">— {item.author}</p>
               </motion.div>
             ))}
@@ -323,9 +332,18 @@ export default function SubscriptionPage() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* CTA - with background image */}
       <section className="relative py-16 md:py-24 overflow-hidden">
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[250px] bg-[#4a6741]/[0.1] rounded-full blur-[100px]" />
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/images/backgrounds/Без названия - 2025-12-24T131919.379.jfif"
+            alt=""
+            fill
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0c0e0c]/90 via-[#0a0c0a]/85 to-[#0c0e0c]/95" />
+        </div>
         
         <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
@@ -343,11 +361,12 @@ export default function SubscriptionPage() {
             
             <a
               href="/auth/register"
-              className="group inline-flex items-center justify-center gap-3 px-10 py-4 rounded-full bg-[#4a6741] text-white hover:bg-[#5a7a51] transition-all duration-300"
+              className="group relative inline-flex items-center justify-center gap-3 px-10 py-4 bg-[#4a6741]/30 hover:bg-[#4a6741]/50 border border-[#4a6741]/40 hover:border-[#4a6741]/60 rounded-full text-white transition-all duration-300"
             >
-              <span className="font-medium">Попробовать бесплатно</span>
-              <div className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300">
-                <ArrowIcon />
+              <div className="absolute inset-0 rounded-full bg-[#4a6741]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <span className="relative z-10 font-medium">Попробовать бесплатно</span>
+              <div className="relative z-10 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300">
+                <ArrowRightIcon />
               </div>
             </a>
           </motion.div>

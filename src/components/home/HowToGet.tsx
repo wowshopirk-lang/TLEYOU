@@ -88,7 +88,7 @@ export default function HowToGet() {
               <span className="text-3xl font-heading font-medium ml-3">3 390 ₽</span>
             </div>
             <a
-              href="https://t.me/tleyou"
+              href="https://t.me/tleyouself"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block w-full"
@@ -108,6 +108,14 @@ export default function HowToGet() {
     </section>
   );
 }
+
+
+
+
+
+
+
+
 
 
 
