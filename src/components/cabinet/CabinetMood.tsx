@@ -135,7 +135,7 @@ const MoodCircleChart = ({ data }: { data: MoodEntry[] }) => {
   const avgMoodInfo = moods[avgMoodIndex];
 
   return (
-    <div className="relative w-full h-full mx-auto">
+    <div className="relative w-64 h-64 mx-auto">
       {/* Outer rings */}
       <svg className="absolute inset-0 w-full h-full" viewBox="0 0 256 256">
         {/* Background circles */}
@@ -179,11 +179,11 @@ const MoodCircleChart = ({ data }: { data: MoodEntry[] }) => {
 
       {/* Center content */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className="w-8 h-8 mb-1">
+        <div className="w-12 h-12 mb-2">
           {avgMoodInfo.icon(avgMoodInfo.color, "w-full h-full")}
         </div>
-        <span className="text-xl font-heading text-white/90">{avgMood.toFixed(1)}</span>
-        <span className="text-[9px] uppercase tracking-wider text-white/40 mt-0.5">средний балл</span>
+        <span className="text-2xl font-heading text-white/90">{avgMood.toFixed(1)}</span>
+        <span className="text-[10px] uppercase tracking-wider text-white/40 mt-1">средний балл</span>
       </div>
     </div>
   );
@@ -194,7 +194,7 @@ const WeekMoodChart = ({ data }: { data: MoodEntry[] }) => {
   const lastWeek = data.slice(-7);
 
   return (
-    <div className="flex items-end justify-between h-24 gap-1.5">
+    <div className="flex items-end justify-between h-32 gap-2">
       {lastWeek.map((day, index) => {
         const moodInfo = moods[day.mood - 1];
         const height = (day.mood / 5) * 100;
@@ -358,7 +358,7 @@ export default function CabinetMood() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="lg:col-span-2 flex flex-col"
         >
-          <div className="relative p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] overflow-hidden flex-1 flex flex-col">
+          <div className="relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] overflow-hidden">
             {/* Decorative elements */}
             <div className="absolute -right-20 -bottom-20 w-60 h-60 opacity-20">
               <svg viewBox="0 0 200 200" fill="none" className="w-full h-full">
@@ -367,14 +367,14 @@ export default function CabinetMood() {
               </svg>
             </div>
 
-            <div className="relative z-10 flex-1 flex flex-col">
+            <div className="relative z-10">
               {/* View Toggle */}
-              <div className="flex items-center justify-between mb-3 flex-shrink-0">
-                <span className="text-[10px] uppercase tracking-[0.15em] text-white/40">Последние 30 дней</span>
+              <div className="flex items-center justify-between mb-6">
+                <span className="text-xs uppercase tracking-[0.15em] text-white/40">Последние 30 дней</span>
                 <div className="flex rounded-lg bg-white/[0.03] p-1">
                   <button
                     onClick={() => setView("chart")}
-                    className={`px-2.5 py-1 rounded-md text-[10px] transition-all ${
+                    className={`px-3 py-1.5 rounded-md text-xs transition-all ${
                       view === "chart" ? "bg-white/[0.08] text-white" : "text-white/40 hover:text-white/60"
                     }`}
                   >
@@ -382,7 +382,7 @@ export default function CabinetMood() {
                   </button>
                   <button
                     onClick={() => setView("heatmap")}
-                    className={`px-2.5 py-1 rounded-md text-[10px] transition-all ${
+                    className={`px-3 py-1.5 rounded-md text-xs transition-all ${
                       view === "heatmap" ? "bg-white/[0.08] text-white" : "text-white/40 hover:text-white/60"
                     }`}
                   >
@@ -392,34 +392,30 @@ export default function CabinetMood() {
               </div>
 
               {/* Chart/Heatmap */}
-              <div className="flex-1 flex items-center justify-center min-h-0">
-                {view === "chart" ? (
-                  <div className="flex flex-col md:flex-row items-center gap-3 w-full">
-                    <div className="w-40 h-40 flex-shrink-0">
-                      <MoodCircleChart data={moodData} />
-                    </div>
-                    <div className="flex-1 w-full">
-                      <p className="text-[10px] text-white/40 mb-2">Эта неделя</p>
-                      <WeekMoodChart data={moodData} />
-                    </div>
+              {view === "chart" ? (
+                <div className="flex flex-col md:flex-row items-center gap-8">
+                  <MoodCircleChart data={moodData} />
+                  <div className="flex-1 w-full">
+                    <p className="text-xs text-white/40 mb-4">Эта неделя</p>
+                    <WeekMoodChart data={moodData} />
                   </div>
-                ) : (
-                  <div className="w-full">
-                    <p className="text-[10px] text-white/40 mb-2">Карта настроения за месяц</p>
-                    <MoodHeatmap data={moodData} />
-                  </div>
-                )}
-              </div>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-xs text-white/40 mb-4">Карта настроения за месяц</p>
+                  <MoodHeatmap data={moodData} />
+                </div>
+              )}
 
               {/* Mood Legend */}
-              <div className="mt-3 pt-3 border-t border-white/[0.06] flex-shrink-0">
-                <div className="flex flex-wrap items-center justify-center gap-3">
+              <div className="mt-6 pt-6 border-t border-white/[0.06]">
+                <div className="flex flex-wrap items-center justify-center gap-6">
                   {moods.map((mood) => (
-                    <div key={mood.level} className="flex items-center gap-1.5">
-                      <div className="w-4 h-4">
+                    <div key={mood.level} className="flex items-center gap-2">
+                      <div className="w-5 h-5">
                         {mood.icon(mood.color, "w-full h-full")}
                       </div>
-                      <span className="text-[9px] text-white/40 whitespace-nowrap">{mood.label}</span>
+                      <span className="text-[10px] text-white/40 whitespace-nowrap">{mood.label}</span>
                     </div>
                   ))}
                 </div>
