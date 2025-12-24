@@ -12,10 +12,6 @@ interface CardsState {
   // Открытые карточки (с датами)
   openedCards: OpenedCard[];
   
-  // Текущая карточка дня
-  todayCardDate: string | null;
-  todayCardId: number | null;
-  
   // Методы
   getTodayCard: () => { cardId: number; isOpened: boolean; canOpen: boolean };
   openTodayCard: () => boolean;
@@ -23,6 +19,7 @@ interface CardsState {
   canOpenCard: (cardId: number) => boolean;
   getOpenedCardsData: () => OpenedCard[];
   getCardOpenDate: (cardId: number) => string | null;
+  getDayOfMonth: () => number;
 }
 
 // Получить дату в формате YYYY-MM-DD
@@ -31,52 +28,32 @@ const getDateKey = () => {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 };
 
-// Получить день года (1-366)
-const getDayOfYear = () => {
-  const now = new Date();
-  const start = new Date(now.getFullYear(), 0, 0);
-  const diff = now.getTime() - start.getTime();
-  const oneDay = 1000 * 60 * 60 * 24;
-  return Math.floor(diff / oneDay);
+// Получить день месяца (1-31)
+const getDayOfMonth = (): number => {
+  return new Date().getDate();
 };
 
-// Вычислить ID карточки для конкретного дня
-const getCardIdForDay = (dayOffset = 0): number => {
-  const dayOfYear = getDayOfYear() + dayOffset;
-  // Карточки 1-30 (ID 1-30)
-  const cardIndex = ((dayOfYear - 1) % allCards.length);
-  return allCards[cardIndex].id;
+// Карточка дня = день месяца (1-30, с циклом)
+const getTodayCardId = (): number => {
+  const day = getDayOfMonth();
+  // Если день > 30, берём остаток (31 -> 1)
+  const cardId = day > 30 ? day - 30 : day;
+  return cardId;
 };
 
 export const useCardsStore = create<CardsState>()(
   persist(
     (set, get) => ({
       openedCards: [],
-      todayCardDate: null,
-      todayCardId: null,
+
+      getDayOfMonth: () => getDayOfMonth(),
 
       getTodayCard: () => {
         const dateKey = getDateKey();
+        const todayCardId = getTodayCardId();
         const state = get();
         
-        // Определяем карточку дня
-        let todayCardId: number;
-        
-        if (state.todayCardDate === dateKey && state.todayCardId !== null) {
-          // Карточка уже определена на сегодня
-          todayCardId = state.todayCardId;
-        } else {
-          // Вычисляем новую карточку
-          todayCardId = getCardIdForDay();
-          
-          // Сохраняем
-          set({
-            todayCardDate: dateKey,
-            todayCardId: todayCardId,
-          });
-        }
-        
-        // Проверяем, открыта ли она
+        // Проверяем, открыта ли карточка сегодня
         const isOpened = state.openedCards.some(
           (c) => c.cardId === todayCardId && c.dateOpened === dateKey
         );
@@ -84,7 +61,7 @@ export const useCardsStore = create<CardsState>()(
         return {
           cardId: todayCardId,
           isOpened,
-          canOpen: !isOpened, // Можно открыть если ещё не открыта
+          canOpen: !isOpened,
         };
       },
 
@@ -93,7 +70,7 @@ export const useCardsStore = create<CardsState>()(
         const state = get();
         const todayCard = state.getTodayCard();
         
-        // Проверяем, не открыта ли уже
+        // Проверяем, не открыта ли уже сегодня
         if (todayCard.isOpened) {
           return false;
         }
@@ -144,8 +121,6 @@ export const useCardsStore = create<CardsState>()(
       name: 'cards-storage',
       partialize: (state) => ({
         openedCards: state.openedCards,
-        todayCardDate: state.todayCardDate,
-        todayCardId: state.todayCardId,
       }),
     }
   )
@@ -153,6 +128,7 @@ export const useCardsStore = create<CardsState>()(
 
 // Хелпер для форматирования даты
 export const formatCardDate = (dateString: string): string => {
+  if (!dateString) return '';
   const [year, month, day] = dateString.split('-').map(Number);
   const date = new Date(year, month - 1, day);
   return date.toLocaleDateString('ru-RU', {
@@ -161,3 +137,7 @@ export const formatCardDate = (dateString: string): string => {
   });
 };
 
+// Получить название дня недели
+export const getDayName = (date: Date): string => {
+  return date.toLocaleDateString('ru-RU', { weekday: 'short' });
+};

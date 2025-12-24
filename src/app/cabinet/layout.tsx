@@ -722,7 +722,7 @@ export default function CabinetLayout({ children }: { children: React.ReactNode 
               </motion.div>
 
             {/* Mood Selector with Date Row - hidden on chat page */}
-            {pathname !== '/cabinet/chat' && (
+            {pathname !== '/cabinet/chat' && pathname !== '/cabinet/cards' && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}

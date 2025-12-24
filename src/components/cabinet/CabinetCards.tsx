@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { useCardsStore, formatCardDate } from "@/stores/cardsStore";
+import { useCardsStore, formatCardDate, getDayName } from "@/stores/cardsStore";
 import { cards as allCards, categoryNames, categoryColors } from "@/data/cards";
 
 // Icons
@@ -11,20 +11,12 @@ const LockIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
     <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" />
     <path d="M8 11 L8 7 C8 4.79 9.79 3 12 3 C14.21 3 16 4.79 16 7 L16 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    <circle cx="12" cy="16" r="1.5" fill="currentColor" />
   </svg>
 );
 
 const CheckIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
     <path d="M5 12 L10 17 L19 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const TodayIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
-    <circle cx="12" cy="12" r="3" fill="currentColor" />
   </svg>
 );
 
@@ -35,296 +27,287 @@ const CloseIcon = () => (
   </svg>
 );
 
-// Circular progress for cards
-const CardsProgress = ({ opened, total }: { opened: number; total: number }) => {
-  const radius = 55;
-  const circumference = 2 * Math.PI * radius;
-  const progress = (opened / total) * circumference;
+const ChevronLeftIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+    <path d="M15 18 L9 12 L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 
-  return (
-    <div className="relative w-36 h-36">
-      <svg className="w-full h-full transform -rotate-90" viewBox="0 0 130 130">
-        {/* Background ring */}
-        <circle
-          cx="65"
-          cy="65"
-          r={radius}
-          stroke="rgba(255,255,255,0.05)"
-          strokeWidth="8"
-          fill="none"
-        />
-        {/* Dashed decorative ring */}
-        <circle
-          cx="65"
-          cy="65"
-          r={radius - 12}
-          stroke="rgba(143,181,131,0.1)"
-          strokeWidth="0.5"
-          strokeDasharray="4 8"
-          fill="none"
-        />
-        {/* Progress ring */}
-        <motion.circle
-          cx="65"
-          cy="65"
-          r={radius}
-          stroke="#8fb583"
-          strokeWidth="8"
-          fill="none"
-          strokeLinecap="round"
-          initial={{ strokeDasharray: circumference, strokeDashoffset: circumference }}
-          animate={{ strokeDashoffset: circumference - progress }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
-        />
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-2xl font-heading text-white/90">{opened}</span>
-        <span className="text-[9px] uppercase tracking-wider text-white/40">из {total}</span>
-      </div>
-    </div>
-  );
-};
+const ChevronRightIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+    <path d="M9 18 L15 12 L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+// Дни недели
+const weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+
+// Месяцы на русском
+const monthNames = [
+  'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+  'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+];
 
 export default function CabinetCards() {
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
   
-  const { getTodayCard, isCardOpened, openTodayCard, getOpenedCardsData, getCardOpenDate } = useCardsStore();
+  const { getTodayCard, isCardOpened, openTodayCard, getCardOpenDate } = useCardsStore();
   
   const todayCardData = getTodayCard();
-  const openedCardsData = getOpenedCardsData();
-  const openedCount = openedCardsData.length;
+  const today = new Date();
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // Определяем статус каждой карточки
-  const getCardStatus = (cardId: number): 'opened' | 'today' | 'locked' => {
-    if (isCardOpened(cardId)) {
-      return 'opened';
+  // Получить дни месяца для календаря
+  const getCalendarDays = () => {
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+    
+    // Первый день месяца
+    const firstDay = new Date(year, month, 1);
+    // День недели первого дня (0=вс, 1=пн, ...) - корректируем для пн=0
+    let startDayOfWeek = firstDay.getDay() - 1;
+    if (startDayOfWeek < 0) startDayOfWeek = 6;
+    
+    // Последний день месяца
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    
+    // Создаём массив дней
+    const days: { date: Date | null; dayNum: number }[] = [];
+    
+    // Пустые ячейки до первого дня
+    for (let i = 0; i < startDayOfWeek; i++) {
+      days.push({ date: null, dayNum: 0 });
     }
-    if (cardId === todayCardData.cardId && !todayCardData.isOpened) {
-      return 'today';
+    
+    // Дни месяца
+    for (let day = 1; day <= daysInMonth; day++) {
+      days.push({ date: new Date(year, month, day), dayNum: day });
     }
-    return 'locked';
+    
+    return days;
   };
 
-  // Открыть сегодняшнюю карточку
-  const handleOpenTodayCard = (cardId: number) => {
-    if (cardId === todayCardData.cardId && !todayCardData.isOpened) {
+  // Проверить, является ли день сегодняшним
+  const isToday = (date: Date | null) => {
+    if (!date) return false;
+    return date.toDateString() === today.toDateString();
+  };
+
+  // Проверить, прошёл ли день
+  const isPastDay = (date: Date | null) => {
+    if (!date) return false;
+    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    return date < todayStart;
+  };
+
+  // Проверить, текущий ли месяц
+  const isCurrentMonth = () => {
+    return currentMonth.getMonth() === today.getMonth() && 
+           currentMonth.getFullYear() === today.getFullYear();
+  };
+
+  // Получить ID карточки для дня (день месяца, но не больше 30)
+  const getCardIdForDay = (dayNum: number): number => {
+    return dayNum > 30 ? dayNum - 30 : dayNum;
+  };
+
+  // Статус дня: opened, today, missed, future
+  const getDayStatus = (date: Date | null, dayNum: number): 'opened' | 'today' | 'missed' | 'future' | 'empty' => {
+    if (!date || dayNum === 0) return 'empty';
+    
+    const cardId = getCardIdForDay(dayNum);
+    
+    if (isToday(date)) {
+      return isCardOpened(cardId) ? 'opened' : 'today';
+    }
+    
+    if (isPastDay(date)) {
+      return isCardOpened(cardId) ? 'opened' : 'missed';
+    }
+    
+    return 'future';
+  };
+
+  // Клик по дню
+  const handleDayClick = (date: Date | null, dayNum: number) => {
+    if (!date || dayNum === 0) return;
+    
+    const status = getDayStatus(date, dayNum);
+    const cardId = getCardIdForDay(dayNum);
+    
+    if (status === 'opened') {
+      setSelectedCard(cardId);
+    } else if (status === 'today') {
       openTodayCard();
       setSelectedCard(cardId);
     }
   };
 
-  // Клик по карточке
-  const handleCardClick = (cardId: number) => {
-    const status = getCardStatus(cardId);
-    
-    if (status === 'opened') {
-      setSelectedCard(cardId);
-    } else if (status === 'today') {
-      handleOpenTodayCard(cardId);
-    }
-    // locked - ничего не делаем
+  // Навигация по месяцам
+  const prevMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
+  };
+
+  const nextMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
   };
 
   if (!isMounted) {
     return (
-      <div className="h-[calc(100vh-400px)] flex items-center justify-center">
+      <div className="h-full flex items-center justify-center">
         <div className="w-16 h-16 rounded-full border border-white/10 animate-pulse" />
       </div>
     );
   }
 
+  const calendarDays = getCalendarDays();
   const selectedCardData = selectedCard ? allCards.find(c => c.id === selectedCard) : null;
+  const openedCount = useCardsStore.getState().openedCards.length;
 
   return (
-    <div className="max-w-5xl mx-auto">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="mb-8"
-      >
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-1 h-1 rounded-full bg-[#8fb583]/50" />
-          <span className="text-[10px] uppercase tracking-[0.2em] text-white/30">Коллекция</span>
-          <div className="h-px flex-1 bg-gradient-to-r from-white/[0.06] to-transparent" />
+    <div className="h-full flex flex-col">
+      {/* Compact Header */}
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h1 className="text-xl font-heading font-light text-white">
+            Календарь карточек
+          </h1>
+          <p className="text-xs text-white/40">
+            Открыто {openedCount} из 30 • День {today.getDate()} = Карточка {getCardIdForDay(today.getDate())}
+          </p>
         </div>
-        <h1 className="text-2xl md:text-3xl font-heading font-light text-white mb-2">
-          30 карточек рефлексии
-        </h1>
-        <p className="text-white/40 text-sm">
-          Каждый день — новый вопрос. Пропущенные карточки остаются закрытыми навсегда.
-        </p>
-      </motion.div>
-
-      {/* Progress Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.1 }}
-        className="mb-8"
-      >
-        <div className="relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] overflow-hidden">
-          {/* Decorative background */}
-          <div className="absolute -right-20 -top-20 w-60 h-60 opacity-20">
-            <svg viewBox="0 0 200 200" fill="none" className="w-full h-full">
-              <circle cx="100" cy="100" r="80" stroke="rgba(143,181,131,0.2)" strokeWidth="1" />
-            </svg>
+        
+        {/* Legend */}
+        <div className="hidden md:flex items-center gap-3 text-[9px] uppercase tracking-wider text-white/40">
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded bg-[#8fb583]/30 border border-[#8fb583]/50" />
+            <span>Открыта</span>
           </div>
-
-          {/* Corner decorations */}
-          <div className="absolute top-3 left-3 w-4 h-4">
-            <svg viewBox="0 0 16 16" fill="none" className="w-full h-full">
-              <path d="M0 5 L0 0 L5 0" stroke="rgba(143,181,131,0.3)" strokeWidth="1" />
-            </svg>
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded bg-[#b49b78]/30 border border-[#b49b78]/50 animate-pulse" />
+            <span>Сегодня</span>
           </div>
-          <div className="absolute top-3 right-3 w-4 h-4">
-            <svg viewBox="0 0 16 16" fill="none" className="w-full h-full">
-              <path d="M11 0 L16 0 L16 5" stroke="rgba(143,181,131,0.3)" strokeWidth="1" />
-            </svg>
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded bg-red-900/20 border border-red-900/30" />
+            <span>Пропущена</span>
           </div>
+        </div>
+      </div>
 
-          <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
-            <CardsProgress opened={openedCount} total={30} />
-            <div className="flex-1 text-center md:text-left">
-              <h3 className="text-lg font-heading text-white/90 mb-2">Твоя коллекция</h3>
-              <p className="text-sm text-white/50 mb-4">
-                {openedCount === 0 
-                  ? "Ты ещё не открыла ни одной карточки. Начни сегодня!"
-                  : openedCount === 30
-                    ? "Поздравляем! Ты открыла все 30 карточек!"
-                    : `Ты открыла ${openedCount} ${openedCount === 1 ? 'карточку' : openedCount < 5 ? 'карточки' : 'карточек'}. Продолжай каждый день!`
-                }
-              </p>
-              <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#8fb583]/10 border border-[#8fb583]/20">
-                  <div className="w-2 h-2 rounded-full bg-[#8fb583]" />
-                  <span className="text-xs text-[#8fb583]">{openedCount} открыто</span>
-                </div>
-                {!todayCardData.isOpened && (
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#b49b78]/10 border border-[#b49b78]/20">
-                    <div className="w-2 h-2 rounded-full bg-[#b49b78] animate-pulse" />
-                    <span className="text-xs text-[#b49b78]">Сегодняшняя доступна</span>
-                  </div>
-                )}
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08]">
-                  <div className="w-2 h-2 rounded-full bg-white/20" />
-                  <span className="text-xs text-white/40">{30 - openedCount} закрыто</span>
-                </div>
-              </div>
+      {/* Calendar */}
+      <div className="flex-1 flex flex-col bg-white/[0.02] border border-white/[0.06] rounded-2xl p-4 overflow-hidden">
+        {/* Month Navigation */}
+        <div className="flex items-center justify-between mb-4">
+          <button 
+            onClick={prevMonth}
+            className="w-8 h-8 rounded-lg bg-white/[0.03] border border-white/[0.08] flex items-center justify-center text-white/40 hover:text-white/70 hover:border-white/[0.15] transition-all"
+          >
+            <div className="w-4 h-4"><ChevronLeftIcon /></div>
+          </button>
+          
+          <div className="text-center">
+            <h2 className="text-lg font-heading text-white/90">
+              {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
+            </h2>
+            {!isCurrentMonth() && (
+              <button 
+                onClick={() => setCurrentMonth(new Date())}
+                className="text-[10px] text-[#8fb583] hover:underline"
+              >
+                Вернуться к сегодня
+              </button>
+            )}
+          </div>
+          
+          <button 
+            onClick={nextMonth}
+            className="w-8 h-8 rounded-lg bg-white/[0.03] border border-white/[0.08] flex items-center justify-center text-white/40 hover:text-white/70 hover:border-white/[0.15] transition-all"
+          >
+            <div className="w-4 h-4"><ChevronRightIcon /></div>
+          </button>
+        </div>
+
+        {/* Week Days Header */}
+        <div className="grid grid-cols-7 gap-1 mb-2">
+          {weekDays.map((day, i) => (
+            <div key={i} className="text-center text-[10px] uppercase tracking-wider text-white/30 py-2">
+              {day}
             </div>
-          </div>
+          ))}
         </div>
-      </motion.div>
 
-      {/* Legend */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.15 }}
-        className="mb-6 flex flex-wrap gap-4 text-[10px] uppercase tracking-wider text-white/40"
-      >
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-[#8fb583]/20 border border-[#8fb583]/40 flex items-center justify-center">
-            <div className="w-2 h-2 text-[#8fb583]"><CheckIcon /></div>
-          </div>
-          <span>Открыта</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-[#b49b78]/20 border border-[#b49b78]/40 flex items-center justify-center">
-            <div className="w-2 h-2 text-[#b49b78]"><TodayIcon /></div>
-          </div>
-          <span>Сегодня</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-white/[0.02] border border-white/[0.08] flex items-center justify-center">
-            <div className="w-2 h-2 text-white/20"><LockIcon /></div>
-          </div>
-          <span>Недоступна</span>
-        </div>
-      </motion.div>
-
-      {/* Cards Grid */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-      >
-        <div className="grid grid-cols-5 md:grid-cols-6 lg:grid-cols-10 gap-2">
-          {allCards.map((card, index) => {
-            const status = getCardStatus(card.id);
-            const isOpened = status === 'opened';
-            const isToday = status === 'today';
-            const isLocked = status === 'locked';
+        {/* Calendar Grid */}
+        <div className="grid grid-cols-7 gap-1 flex-1">
+          {calendarDays.map((day, index) => {
+            const status = getDayStatus(day.date, day.dayNum);
+            const cardId = day.dayNum > 0 ? getCardIdForDay(day.dayNum) : 0;
+            
+            if (status === 'empty') {
+              return <div key={index} className="aspect-square" />;
+            }
             
             return (
               <motion.button
-                key={card.id}
+                key={index}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3, delay: index * 0.01 }}
-                onClick={() => handleCardClick(card.id)}
-                disabled={isLocked}
-                className={`relative aspect-square rounded-xl transition-all duration-300 group ${
-                  isOpened
-                    ? 'bg-[#8fb583]/15 border border-[#8fb583]/30 cursor-pointer hover:border-[#8fb583]/50 hover:bg-[#8fb583]/20'
-                    : isToday
-                      ? 'bg-[#b49b78]/15 border border-[#b49b78]/40 cursor-pointer hover:border-[#b49b78]/60 hover:bg-[#b49b78]/25 animate-pulse'
-                      : 'bg-white/[0.01] border border-white/[0.05] cursor-not-allowed opacity-50'
+                transition={{ duration: 0.2, delay: index * 0.01 }}
+                onClick={() => handleDayClick(day.date, day.dayNum)}
+                disabled={status === 'future' || status === 'missed'}
+                className={`relative aspect-square rounded-xl transition-all duration-200 flex flex-col items-center justify-center gap-0.5 group ${
+                  status === 'opened'
+                    ? 'bg-[#8fb583]/20 border border-[#8fb583]/40 cursor-pointer hover:bg-[#8fb583]/30'
+                    : status === 'today'
+                      ? 'bg-[#b49b78]/20 border-2 border-[#b49b78]/60 cursor-pointer hover:bg-[#b49b78]/30 animate-pulse'
+                      : status === 'missed'
+                        ? 'bg-red-900/10 border border-red-900/20 cursor-not-allowed opacity-60'
+                        : 'bg-white/[0.01] border border-white/[0.04] cursor-not-allowed opacity-40'
                 }`}
               >
-                {/* Status indicator */}
-                {isOpened && (
-                  <div className="absolute top-1 right-1 w-4 h-4 rounded-full bg-[#8fb583] flex items-center justify-center">
-                    <div className="w-2.5 h-2.5 text-white">
-                      <CheckIcon />
-                    </div>
+                {/* Day number */}
+                <span className={`text-sm font-medium ${
+                  status === 'opened' ? 'text-[#8fb583]' 
+                    : status === 'today' ? 'text-[#b49b78]' 
+                    : status === 'missed' ? 'text-red-400/60'
+                    : 'text-white/30'
+                }`}>
+                  {day.dayNum}
+                </span>
+                
+                {/* Card number (small) */}
+                <span className={`text-[8px] ${
+                  status === 'opened' ? 'text-[#8fb583]/60' 
+                    : status === 'today' ? 'text-[#b49b78]/60' 
+                    : 'text-white/20'
+                }`}>
+                  #{cardId}
+                </span>
+
+                {/* Status indicators */}
+                {status === 'opened' && (
+                  <div className="absolute top-1 right-1 w-3 h-3 rounded-full bg-[#8fb583] flex items-center justify-center">
+                    <div className="w-2 h-2 text-white"><CheckIcon /></div>
                   </div>
                 )}
-                {isToday && (
-                  <div className="absolute top-1 right-1 w-4 h-4 rounded-full bg-[#b49b78] flex items-center justify-center">
-                    <div className="w-2.5 h-2.5 text-white">
-                      <TodayIcon />
-                    </div>
-                  </div>
-                )}
-                {isLocked && (
-                  <div className="absolute top-1 right-1 w-3.5 h-3.5 text-white/20">
+                {status === 'missed' && (
+                  <div className="absolute top-1 right-1 w-3 h-3 text-red-400/40">
                     <LockIcon />
                   </div>
                 )}
-                
-                <div className="h-full flex flex-col items-center justify-center">
-                  <span className={`text-lg font-heading ${
-                    isOpened 
-                      ? 'text-[#8fb583]' 
-                      : isToday 
-                        ? 'text-[#b49b78]' 
-                        : 'text-white/20'
-                  }`}>
-                    {card.id}
-                  </span>
-                </div>
 
-                {/* Hover tooltip for opened cards */}
-                {isOpened && (
+                {/* Hover tooltip */}
+                {(status === 'opened' || status === 'today') && (
                   <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 translate-y-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                    <div className="bg-[#1a1d1a] border border-white/10 rounded-lg px-2 py-1 text-[9px] text-white/60 whitespace-nowrap">
-                      {formatCardDate(getCardOpenDate(card.id) || '')}
-                    </div>
-                  </div>
-                )}
-
-                {/* Hover tooltip for today */}
-                {isToday && (
-                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 translate-y-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                    <div className="bg-[#1a1d1a] border border-[#b49b78]/30 rounded-lg px-2 py-1 text-[9px] text-[#b49b78] whitespace-nowrap">
-                      Нажми, чтобы открыть
+                    <div className={`bg-[#1a1d1a] border rounded-lg px-2 py-1 text-[9px] whitespace-nowrap ${
+                      status === 'today' ? 'border-[#b49b78]/30 text-[#b49b78]' : 'border-white/10 text-white/60'
+                    }`}>
+                      {status === 'today' ? 'Нажми, чтобы открыть' : 'Карточка #' + cardId}
                     </div>
                   </div>
                 )}
@@ -332,32 +315,32 @@ export default function CabinetCards() {
             );
           })}
         </div>
-      </motion.div>
 
-      {/* Info block */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.3 }}
-        className="mt-8 p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]"
-      >
-        <div className="flex items-start gap-3">
-          <div className="w-5 h-5 text-white/30 flex-shrink-0 mt-0.5">
-            <svg viewBox="0 0 20 20" fill="none" className="w-full h-full">
-              <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" />
-              <path d="M10 6 L10 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              <circle cx="10" cy="14" r="1" fill="currentColor" />
-            </svg>
-          </div>
-          <div>
-            <p className="text-sm text-white/60 leading-relaxed">
-              <span className="text-white/80">Как это работает:</span> Каждый день тебе доступна одна новая карточка. 
-              Открой её на <Link href="/cabinet" className="text-[#8fb583] hover:underline">главной странице</Link> или здесь, 
-              нажав на карточку с пульсирующей рамкой. Если пропустишь день — карточка останется закрытой навсегда.
-            </p>
-          </div>
-        </div>
-      </motion.div>
+        {/* Today's Card Quick Access */}
+        {!todayCardData.isOpened && isCurrentMonth() && (
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-4 p-3 rounded-xl bg-[#b49b78]/10 border border-[#b49b78]/30"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-[#b49b78]">Сегодняшняя карточка доступна!</p>
+                <p className="text-xs text-white/40">Карточка #{todayCardData.cardId}</p>
+              </div>
+              <button
+                onClick={() => {
+                  openTodayCard();
+                  setSelectedCard(todayCardData.cardId);
+                }}
+                className="px-4 py-2 rounded-lg bg-[#b49b78] text-white text-sm font-medium hover:bg-[#b49b78]/80 transition-colors"
+              >
+                Открыть
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </div>
 
       {/* Selected Card Modal */}
       <AnimatePresence>
@@ -374,42 +357,12 @@ export default function CabinetCards() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: "spring", duration: 0.5 }}
-              className="relative bg-gradient-to-br from-[#1a1d1a] to-[#0f120e] rounded-3xl p-8 md:p-12 max-w-lg w-full border border-[#8fb583]/30"
+              className="relative bg-gradient-to-br from-[#1a1d1a] to-[#0f120e] rounded-3xl p-8 md:p-10 max-w-lg w-full border border-[#8fb583]/30"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Corner decorations */}
-              <div className="absolute top-4 left-4 w-8 h-8">
-                <svg viewBox="0 0 32 32" fill="none">
-                  <path d="M0 12 L0 0 L12 0" stroke="rgba(143,181,131,0.4)" strokeWidth="1" />
-                </svg>
-              </div>
-              <div className="absolute top-4 right-4 w-8 h-8">
-                <svg viewBox="0 0 32 32" fill="none">
-                  <path d="M20 0 L32 0 L32 12" stroke="rgba(143,181,131,0.4)" strokeWidth="1" />
-                </svg>
-              </div>
-              <div className="absolute bottom-4 left-4 w-8 h-8">
-                <svg viewBox="0 0 32 32" fill="none">
-                  <path d="M0 20 L0 32 L12 32" stroke="rgba(143,181,131,0.4)" strokeWidth="1" />
-                </svg>
-              </div>
-              <div className="absolute bottom-4 right-4 w-8 h-8">
-                <svg viewBox="0 0 32 32" fill="none">
-                  <path d="M20 32 L32 32 L32 20" stroke="rgba(143,181,131,0.4)" strokeWidth="1" />
-                </svg>
-              </div>
-
-              {/* Decorative circle */}
-              <div className="absolute -right-16 -top-16 w-48 h-48 opacity-20">
-                <svg viewBox="0 0 200 200" fill="none" className="w-full h-full">
-                  <circle cx="100" cy="100" r="80" stroke="rgba(143,181,131,0.3)" strokeWidth="1" />
-                  <circle cx="100" cy="100" r="60" stroke="rgba(143,181,131,0.2)" strokeWidth="0.5" strokeDasharray="4 8" />
-                </svg>
-              </div>
-
               {/* Card number and category */}
               <div className="text-center mb-6">
-                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[#8fb583]/20 flex items-center justify-center">
+                <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-[#8fb583]/20 flex items-center justify-center">
                   <span className="text-lg font-heading text-[#8fb583]">{selectedCardData.id}</span>
                 </div>
                 <div className="flex items-center justify-center gap-2">
@@ -423,9 +376,11 @@ export default function CabinetCards() {
                     {categoryNames[selectedCardData.category]}
                   </span>
                 </div>
-                <p className="text-[10px] text-white/30 mt-2">
-                  Открыта {formatCardDate(getCardOpenDate(selectedCardData.id) || '')}
-                </p>
+                {getCardOpenDate(selectedCardData.id) && (
+                  <p className="text-[10px] text-white/30 mt-2">
+                    Открыта {formatCardDate(getCardOpenDate(selectedCardData.id) || '')}
+                  </p>
+                )}
               </div>
 
               {/* Question */}
@@ -442,7 +397,7 @@ export default function CabinetCards() {
                       <path d="M7 8 L13 8" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
                       <path d="M7 11 L11 11" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
                     </svg>
-                    <span className="text-sm">Записать в дневник</span>
+                    <span className="text-sm">В дневник</span>
                   </button>
                 </Link>
                 <button
@@ -456,7 +411,7 @@ export default function CabinetCards() {
               {/* Close button */}
               <button
                 onClick={() => setSelectedCard(null)}
-                className="absolute top-4 right-12 w-5 h-5 text-white/30 hover:text-white/60 transition-colors"
+                className="absolute top-4 right-4 w-5 h-5 text-white/30 hover:text-white/60 transition-colors"
               >
                 <CloseIcon />
               </button>
@@ -467,4 +422,3 @@ export default function CabinetCards() {
     </div>
   );
 }
-
