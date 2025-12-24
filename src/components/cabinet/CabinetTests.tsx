@@ -3,6 +3,114 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+// Ботанические иконки в стиле проекта
+const TestIcons = {
+  stress: (color: string, size: string = "w-full h-full") => (
+    <svg viewBox="0 0 32 32" fill="none" className={size}>
+      {/* Увядший лист с трещинами */}
+      <path 
+        d="M16 4 Q20 8, 22 14 Q24 20, 20 24 Q16 26, 12 24 Q8 22, 8 16 Q8 10, 12 6 Q14 4, 16 4" 
+        stroke={color} 
+        strokeWidth="1.5" 
+        fill={`${color}15`}
+        opacity="0.7"
+      />
+      {/* Трещины */}
+      <path d="M12 10 L14 14" stroke={color} strokeWidth="0.75" strokeLinecap="round" opacity="0.5" />
+      <path d="M18 12 L20 16" stroke={color} strokeWidth="0.75" strokeLinecap="round" opacity="0.5" />
+      <path d="M14 18 L16 22" stroke={color} strokeWidth="0.75" strokeLinecap="round" opacity="0.4" />
+    </svg>
+  ),
+  emotions: (color: string, size: string = "w-full h-full") => (
+    <svg viewBox="0 0 32 32" fill="none" className={size}>
+      {/* Цветок с лепестками */}
+      <circle cx="16" cy="16" r="6" stroke={color} strokeWidth="1" fill={`${color}20`} opacity="0.6" />
+      {/* Лепестки */}
+      {[0, 72, 144, 216, 288].map((angle, i) => (
+        <ellipse
+          key={i}
+          cx="16"
+          cy="10"
+          rx="3"
+          ry="5"
+          stroke={color}
+          strokeWidth="1"
+          fill={`${color}25`}
+          opacity="0.7"
+          transform={`rotate(${angle} 16 16)`}
+        />
+      ))}
+    </svg>
+  ),
+  balance: (color: string, size: string = "w-full h-full") => (
+    <svg viewBox="0 0 32 32" fill="none" className={size}>
+      {/* Симметричный лист */}
+      <path 
+        d="M16 4 Q20 8, 22 12 Q24 16, 22 20 Q20 24, 16 26 Q12 24, 10 20 Q8 16, 10 12 Q12 8, 16 4" 
+        stroke={color} 
+        strokeWidth="1.5" 
+        fill={`${color}15`}
+        opacity="0.8"
+      />
+      {/* Центральная жилка */}
+      <path d="M16 4 L16 26" stroke={color} strokeWidth="1" opacity="0.5" />
+      {/* Боковые жилки */}
+      <path d="M16 10 Q12 12, 11 14" stroke={color} strokeWidth="0.75" opacity="0.4" />
+      <path d="M16 10 Q20 12, 21 14" stroke={color} strokeWidth="0.75" opacity="0.4" />
+    </svg>
+  ),
+  anxiety: (color: string, size: string = "w-full h-full") => (
+    <svg viewBox="0 0 32 32" fill="none" className={size}>
+      {/* Волны/рябь */}
+      <path d="M4 16 Q8 12, 12 16 T20 16 T28 16" stroke={color} strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
+      <path d="M4 20 Q8 16, 12 20 T20 20 T28 20" stroke={color} strokeWidth="1" strokeLinecap="round" opacity="0.6" />
+      <path d="M4 24 Q8 20, 12 24 T20 24 T28 24" stroke={color} strokeWidth="0.75" strokeLinecap="round" opacity="0.4" />
+      {/* Капли */}
+      <circle cx="8" cy="12" r="1.5" fill={color} opacity="0.5" />
+      <circle cx="24" cy="12" r="1" fill={color} opacity="0.4" />
+    </svg>
+  ),
+  selfesteem: (color: string, size: string = "w-full h-full") => (
+    <svg viewBox="0 0 32 32" fill="none" className={size}>
+      {/* Цветущий бутон */}
+      <circle cx="16" cy="16" r="8" stroke={color} strokeWidth="1.5" fill={`${color}20`} opacity="0.8" />
+      <circle cx="16" cy="16" r="4" stroke={color} strokeWidth="1" fill={`${color}30`} opacity="0.7" />
+      {/* Лепестки вокруг */}
+      {[0, 60, 120, 180, 240, 300].map((angle, i) => (
+        <ellipse
+          key={i}
+          cx="16"
+          cy="8"
+          rx="2"
+          ry="4"
+          stroke={color}
+          strokeWidth="1"
+          fill={`${color}25`}
+          opacity="0.7"
+          transform={`rotate(${angle} 16 16)`}
+        />
+      ))}
+    </svg>
+  ),
+  sleep: (color: string, size: string = "w-full h-full") => (
+    <svg viewBox="0 0 32 32" fill="none" className={size}>
+      {/* Луна */}
+      <path 
+        d="M20 8 C24 8, 26 12, 24 16 C26 20, 24 24, 20 24 C16 24, 14 20, 16 16 C14 12, 16 8, 20 8" 
+        stroke={color} 
+        strokeWidth="1.5" 
+        fill={`${color}20`}
+        opacity="0.8"
+      />
+      {/* Звёзды */}
+      <path d="M8 10 L8.5 11.5 L10 12 L8.5 12.5 L8 14 L7.5 12.5 L6 12 L7.5 11.5 Z" fill={color} opacity="0.5" />
+      <path d="M12 20 L12.3 20.8 L13 21 L12.3 21.2 L12 22 L11.7 21.2 L11 21 L11.7 20.8 Z" fill={color} opacity="0.4" />
+      {/* Закрытый бутон */}
+      <circle cx="10" cy="22" r="2" stroke={color} strokeWidth="0.75" fill={`${color}15`} opacity="0.5" />
+    </svg>
+  ),
+};
+
 // Types
 interface Test {
   id: number;
@@ -12,7 +120,7 @@ interface Test {
   questions: number;
   category: string;
   color: string;
-  icon: string;
+  icon: keyof typeof TestIcons;
   completed?: boolean;
   result?: string;
 }
@@ -33,7 +141,7 @@ const tests: Test[] = [
     questions: 10,
     category: "Стресс",
     color: "#b58f8f",
-    icon: "⚡",
+    icon: "stress",
   },
   {
     id: 2,
@@ -43,7 +151,7 @@ const tests: Test[] = [
     questions: 20,
     category: "Эмоции",
     color: "#9a8fb5",
-    icon: "💜",
+    icon: "emotions",
   },
   {
     id: 3,
@@ -53,7 +161,7 @@ const tests: Test[] = [
     questions: 15,
     category: "Баланс",
     color: "#8fb583",
-    icon: "⚖️",
+    icon: "balance",
   },
   {
     id: 4,
@@ -63,7 +171,7 @@ const tests: Test[] = [
     questions: 7,
     category: "Тревога",
     color: "#7a9ebb",
-    icon: "🌊",
+    icon: "anxiety",
   },
   {
     id: 5,
@@ -73,7 +181,7 @@ const tests: Test[] = [
     questions: 10,
     category: "Самооценка",
     color: "#b49b78",
-    icon: "✨",
+    icon: "selfesteem",
     completed: true,
     result: "Здоровая самооценка",
   },
@@ -85,7 +193,7 @@ const tests: Test[] = [
     questions: 8,
     category: "Сон",
     color: "#5f7a9e",
-    icon: "🌙",
+    icon: "sleep",
   },
 ];
 
@@ -149,114 +257,120 @@ const stressQuestions: Question[] = [
 ];
 
 // Test Card Component
-const TestCard = ({ test, onClick }: { test: Test; onClick: () => void }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    whileHover={{ y: -4 }}
-    className="relative group cursor-pointer"
-    onClick={onClick}
-  >
-    <div className="relative p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.12] transition-all duration-300 overflow-hidden">
-      {/* Background glow */}
-      <div
-        className="absolute -inset-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-3xl"
-        style={{ background: `radial-gradient(circle, ${test.color}10, transparent)` }}
-      />
+const TestCard = ({ test, onClick }: { test: Test; onClick: () => void }) => {
+  const IconComponent = TestIcons[test.icon];
+  
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -4 }}
+      className="relative group cursor-pointer"
+      onClick={onClick}
+    >
+      <div className="relative p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.12] transition-all duration-300 overflow-hidden">
+        {/* Background glow */}
+        <div
+          className="absolute -inset-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-3xl"
+          style={{ background: `radial-gradient(circle, ${test.color}10, transparent)` }}
+        />
 
-      {/* Corner decorations */}
-      <div className="absolute top-2 left-2 w-3 h-3">
-        <svg viewBox="0 0 12 12" fill="none" className="w-full h-full">
-          <path d="M0 4 L0 0 L4 0" stroke={`${test.color}40`} strokeWidth="1" />
-        </svg>
-      </div>
-      <div className="absolute top-2 right-2 w-3 h-3">
-        <svg viewBox="0 0 12 12" fill="none" className="w-full h-full">
-          <path d="M8 0 L12 0 L12 4" stroke={`${test.color}40`} strokeWidth="1" />
-        </svg>
-      </div>
-
-      {/* Completed badge */}
-      {test.completed && (
-        <div className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-[#8fb583]/20 border border-[#8fb583]/30">
-          <span className="text-[9px] uppercase tracking-wider text-[#8fb583]">Пройден</span>
+        {/* Corner decorations */}
+        <div className="absolute top-2 left-2 w-3 h-3">
+          <svg viewBox="0 0 12 12" fill="none" className="w-full h-full">
+            <path d="M0 4 L0 0 L4 0" stroke={`${test.color}40`} strokeWidth="1" />
+          </svg>
         </div>
-      )}
+        <div className="absolute top-2 right-2 w-3 h-3">
+          <svg viewBox="0 0 12 12" fill="none" className="w-full h-full">
+            <path d="M8 0 L12 0 L12 4" stroke={`${test.color}40`} strokeWidth="1" />
+          </svg>
+        </div>
 
-      <div className="relative z-10">
-        {/* Icon and Category */}
-        <div className="flex items-center gap-3 mb-4">
-          <div
-            className="w-12 h-12 rounded-xl flex items-center justify-center text-xl"
-            style={{ backgroundColor: `${test.color}20` }}
-          >
-            {test.icon}
+        {/* Completed badge */}
+        {test.completed && (
+          <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-[#8fb583]/20 border border-[#8fb583]/30">
+            <span className="text-[9px] uppercase tracking-wider text-[#8fb583]">Пройден</span>
           </div>
-          <div>
-            <span
-              className="text-[10px] uppercase tracking-wider"
-              style={{ color: test.color }}
+        )}
+
+        <div className="relative z-10">
+          {/* Icon and Category */}
+          <div className="flex items-center gap-3 mb-3">
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ backgroundColor: `${test.color}20` }}
             >
-              {test.category}
-            </span>
-            <div className="flex items-center gap-2 text-white/30 text-[10px] mt-0.5">
-              <span>{test.duration}</span>
-              <span>•</span>
-              <span>{test.questions} вопросов</span>
+              <div className="w-6 h-6" style={{ color: test.color }}>
+                <IconComponent test.color, "w-full h-full" />
+              </div>
+            </div>
+            <div className="min-w-0">
+              <span
+                className="text-[10px] uppercase tracking-wider block"
+                style={{ color: test.color }}
+              >
+                {test.category}
+              </span>
+              <div className="flex items-center gap-2 text-white/30 text-[9px] mt-0.5">
+                <span>{test.duration}</span>
+                <span>•</span>
+                <span>{test.questions} вопросов</span>
+              </div>
             </div>
           </div>
+
+          {/* Title & Description */}
+          <h3 className="text-base font-heading font-light text-white/90 mb-1.5">
+            {test.title}
+          </h3>
+          <p className="text-xs text-white/40 mb-3 line-clamp-2">
+            {test.description}
+          </p>
+
+          {/* Result or Start button */}
+          {test.completed && test.result ? (
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-white/60">Результат:</span>
+              <span className="text-xs font-medium" style={{ color: test.color }}>
+                {test.result}
+              </span>
+            </div>
+          ) : (
+            <button
+              className="w-full py-2 rounded-xl border border-white/10 text-white/60 hover:bg-white/[0.05] hover:text-white transition-all text-xs"
+            >
+              Начать тест
+            </button>
+          )}
         </div>
-
-        {/* Title & Description */}
-        <h3 className="text-lg font-heading font-light text-white/90 mb-2">
-          {test.title}
-        </h3>
-        <p className="text-sm text-white/40 mb-4 line-clamp-2">
-          {test.description}
-        </p>
-
-        {/* Result or Start button */}
-        {test.completed && test.result ? (
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-white/60">Результат:</span>
-            <span className="text-sm font-medium" style={{ color: test.color }}>
-              {test.result}
-            </span>
-          </div>
-        ) : (
-          <button
-            className="w-full py-2.5 rounded-xl border border-white/10 text-white/60 hover:bg-white/[0.05] hover:text-white transition-all text-sm"
-          >
-            Начать тест
-          </button>
-        )}
       </div>
-    </div>
-  </motion.div>
-);
+    </motion.div>
+  );
+};
 
 // Progress Ring Component
 const ProgressRing = ({ progress, color }: { progress: number; color: string }) => {
-  const circumference = 2 * Math.PI * 45;
+  const circumference = 2 * Math.PI * 40;
   const offset = circumference - (progress / 100) * circumference;
 
   return (
-    <div className="relative w-28 h-28">
+    <div className="relative w-20 h-20 flex-shrink-0">
       <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
         <circle
           cx="50"
           cy="50"
-          r="45"
+          r="40"
           stroke="rgba(255,255,255,0.05)"
-          strokeWidth="6"
+          strokeWidth="5"
           fill="none"
         />
         <motion.circle
           cx="50"
           cy="50"
-          r="45"
+          r="40"
           stroke={color}
-          strokeWidth="6"
+          strokeWidth="5"
           fill="none"
           strokeLinecap="round"
           initial={{ strokeDasharray: circumference, strokeDashoffset: circumference }}
@@ -265,7 +379,7 @@ const ProgressRing = ({ progress, color }: { progress: number; color: string }) 
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-xl font-heading text-white/90">{progress}%</span>
+        <span className="text-lg font-heading text-white/90">{progress}%</span>
       </div>
     </div>
   );
@@ -319,23 +433,23 @@ export default function CabinetTests() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-5xl mx-auto h-full flex flex-col overflow-hidden">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="mb-8"
+        className="mb-4 flex-shrink-0"
       >
-        <div className="flex items-center gap-3 mb-2">
+        <div className="flex items-center gap-3 mb-1">
           <div className="w-1 h-1 rounded-full bg-[#b49b78]/50" />
           <span className="text-[10px] uppercase tracking-[0.2em] text-white/30">Благополучие</span>
           <div className="h-px flex-1 bg-gradient-to-r from-white/[0.06] to-transparent" />
         </div>
-        <h1 className="text-2xl md:text-3xl font-heading font-light text-white mb-2">
+        <h1 className="text-xl md:text-2xl font-heading font-light text-white mb-1">
           Психологические тесты
         </h1>
-        <p className="text-white/40 text-sm">
+        <p className="text-white/40 text-xs">
           Узнай себя лучше и получи персональные рекомендации
         </p>
       </motion.div>
@@ -345,27 +459,21 @@ export default function CabinetTests() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.1 }}
-        className="mb-8"
+        className="mb-4 flex-shrink-0"
       >
-        <div className="relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] overflow-hidden">
-          <div className="absolute -right-20 -top-20 w-60 h-60 opacity-20">
-            <svg viewBox="0 0 200 200" fill="none" className="w-full h-full">
-              <circle cx="100" cy="100" r="80" stroke="rgba(180,155,120,0.2)" strokeWidth="1" />
-            </svg>
-          </div>
-
-          <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
+        <div className="relative p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] overflow-hidden">
+          <div className="relative z-10 flex flex-col md:flex-row items-center gap-4">
             <ProgressRing progress={Math.round((completedTests / totalTests) * 100)} color="#b49b78" />
             <div className="flex-1 text-center md:text-left">
-              <h3 className="text-lg font-heading text-white/90 mb-1">Твой прогресс</h3>
-              <p className="text-sm text-white/40 mb-4">
+              <h3 className="text-base font-heading text-white/90 mb-1">Твой прогресс</h3>
+              <p className="text-xs text-white/40 mb-3">
                 {completedTests} из {totalTests} тестов пройдено
               </p>
-              <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+              <div className="flex flex-wrap gap-1.5 justify-center md:justify-start">
                 {tests.filter(t => t.completed).map((test) => (
                   <div
                     key={test.id}
-                    className="px-3 py-1 rounded-full text-[10px] uppercase tracking-wider"
+                    className="px-2 py-0.5 rounded-full text-[9px] uppercase tracking-wider"
                     style={{ backgroundColor: `${test.color}20`, color: test.color }}
                   >
                     {test.category}
@@ -378,13 +486,13 @@ export default function CabinetTests() {
       </motion.div>
 
       {/* Tests Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 flex-1 overflow-y-auto pb-4">
         {tests.map((test, index) => (
           <motion.div
             key={test.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
+            transition={{ duration: 0.5, delay: index * 0.05 }}
           >
             <TestCard test={test} onClick={() => handleStartTest(test)} />
           </motion.div>
@@ -434,9 +542,11 @@ export default function CabinetTests() {
               {!showResult ? (
                 <>
                   {/* Test Header */}
-                  <div className="mb-6">
+                  <div className="mb-5">
                     <div className="flex items-center gap-3 mb-2">
-                      <span className="text-xl">{selectedTest.icon}</span>
+                      <div className="w-8 h-8" style={{ color: selectedTest.color }}>
+                        {TestIcons[selectedTest.icon](selectedTest.color, "w-full h-full")}
+                      </div>
                       <span className="text-xs uppercase tracking-wider" style={{ color: selectedTest.color }}>
                         {selectedTest.title}
                       </span>
@@ -457,19 +567,19 @@ export default function CabinetTests() {
                   </div>
 
                   {/* Question */}
-                  <div className="mb-6">
-                    <p className="text-lg font-heading font-light text-white/90 leading-relaxed">
+                  <div className="mb-5">
+                    <p className="text-base font-heading font-light text-white/90 leading-relaxed">
                       {stressQuestions[currentQuestion].text}
                     </p>
                   </div>
 
                   {/* Options */}
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {stressQuestions[currentQuestion].options.map((option, index) => (
                       <motion.button
                         key={index}
                         onClick={() => handleAnswer(option.value)}
-                        className="w-full p-4 rounded-xl bg-white/[0.03] border border-white/[0.08] text-left text-white/70 hover:bg-white/[0.06] hover:border-white/[0.15] transition-all"
+                        className="w-full p-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-left text-white/70 hover:bg-white/[0.06] hover:border-white/[0.15] transition-all text-sm"
                         whileHover={{ x: 4 }}
                         whileTap={{ scale: 0.98 }}
                       >
@@ -483,20 +593,22 @@ export default function CabinetTests() {
                   {/* Result */}
                   <div className="text-center">
                     <div
-                      className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center"
+                      className="w-16 h-16 mx-auto mb-5 rounded-full flex items-center justify-center"
                       style={{ backgroundColor: `${getResult().color}20` }}
                     >
-                      <span className="text-3xl">{selectedTest.icon}</span>
+                      <div className="w-10 h-10" style={{ color: getResult().color }}>
+                        {TestIcons[selectedTest.icon](getResult().color, "w-full h-full")}
+                      </div>
                     </div>
-                    <h3 className="text-xl font-heading text-white/90 mb-2">
+                    <h3 className="text-lg font-heading text-white/90 mb-2">
                       Уровень стресса: <span style={{ color: getResult().color }}>{getResult().level}</span>
                     </h3>
-                    <p className="text-sm text-white/50 mb-6">
+                    <p className="text-sm text-white/50 mb-5">
                       {getResult().text}
                     </p>
                     <button
                       onClick={closeTest}
-                      className="px-8 py-3 rounded-xl text-white transition-colors"
+                      className="px-8 py-2.5 rounded-xl text-white transition-colors text-sm"
                       style={{ backgroundColor: selectedTest.color }}
                     >
                       Понятно
@@ -511,5 +623,3 @@ export default function CabinetTests() {
     </div>
   );
 }
-
-
