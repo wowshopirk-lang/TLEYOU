@@ -259,7 +259,7 @@ export default function CabinetDashboard() {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
         transition={{ duration: 0.5 }}
-        className="flex flex-col lg:flex-row items-start gap-6 lg:gap-10"
+        className="flex flex-col lg:flex-row items-start gap-4 lg:gap-6 h-full"
       >
         {/* Left - Card of the Day (большая) */}
         <motion.div

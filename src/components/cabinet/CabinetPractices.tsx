@@ -223,13 +223,13 @@ export default function CabinetPractices() {
     : practices.filter(p => p.category === activeCategory);
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-5xl mx-auto h-full flex flex-col">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="mb-8"
+        className="mb-4 flex-shrink-0"
       >
         <div className="flex items-center gap-3 mb-2">
           <div className="w-1 h-1 rounded-full bg-[#8fb583]/50" />
@@ -249,7 +249,7 @@ export default function CabinetPractices() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.1 }}
-        className="flex flex-wrap gap-2 mb-8"
+        className="flex flex-wrap gap-2 mb-4 flex-shrink-0"
       >
         {categories.map((category) => (
           <button
@@ -267,7 +267,7 @@ export default function CabinetPractices() {
       </motion.div>
 
       {/* Practices Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 flex-1 overflow-y-auto pb-4">
         {filteredPractices.map((practice, index) => (
           <PracticeCard
             key={practice.id}

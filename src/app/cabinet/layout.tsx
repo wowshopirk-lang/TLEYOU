@@ -812,9 +812,11 @@ export default function CabinetLayout({ children }: { children: React.ReactNode 
         </header>
         )}
 
-        {/* Page content with proper padding */}
-        <div className={`${pathname === '/cabinet/chat' ? 'h-screen pt-4 px-4 lg:px-6' : 'px-6 lg:px-8 py-4'}`}>
-          {children}
+        {/* Page content with proper padding - full height for all pages */}
+        <div className={`flex flex-col overflow-hidden ${pathname === '/cabinet/chat' ? 'h-screen pt-4 px-4 lg:px-6' : pathname === '/cabinet' ? 'h-[calc(100vh-280px)]' : 'h-[calc(100vh-140px)]'} ${pathname !== '/cabinet/chat' ? 'px-6 lg:px-8 py-4' : ''}`}>
+          <div className="flex-1 overflow-y-auto">
+            {children}
+          </div>
         </div>
       </main>
     </div>

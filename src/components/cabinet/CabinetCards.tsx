@@ -171,7 +171,7 @@ export default function CabinetCards() {
   const openedCount = useCardsStore.getState().openedCards.length;
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col overflow-hidden">
       {/* Compact Header */}
       <div className="flex items-center justify-between mb-4">
         <div>

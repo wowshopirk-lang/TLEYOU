@@ -77,7 +77,7 @@ export default function PracticeDetail({ practiceId }: { practiceId: string }) {
   const progress = ((currentStep + 1) / practice.steps.length) * 100;
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-3xl mx-auto h-full flex flex-col overflow-hidden">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -126,12 +126,13 @@ export default function PracticeDetail({ practiceId }: { practiceId: string }) {
       </motion.div>
 
       {/* Practice Steps */}
+      <div className="flex-1 overflow-y-auto">
       {!isPlaying ? (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-center py-12"
+          className="text-center py-8"
         >
           <div 
             className="w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center border-2"
@@ -263,6 +264,7 @@ export default function PracticeDetail({ practiceId }: { practiceId: string }) {
           </div>
         </motion.div>
       )}
+      </div>
     </div>
   );
 }
