@@ -302,7 +302,7 @@ const TestCard = ({ test, onClick }: { test: Test; onClick: () => void }) => {
               style={{ backgroundColor: `${test.color}20` }}
             >
               <div className="w-6 h-6" style={{ color: test.color }}>
-                <IconComponent test.color, "w-full h-full" />
+                {IconComponent(test.color, "w-full h-full")}
               </div>
             </div>
             <div className="min-w-0">
