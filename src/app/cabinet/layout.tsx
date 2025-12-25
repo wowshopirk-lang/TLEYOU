@@ -8,6 +8,7 @@ import { useMoodStore, MoodKey } from "@/stores/moodStore";
 import { useCardsStore } from "@/stores/cardsStore";
 import { usePracticesStore } from "@/stores/practicesStore";
 import { useJournalStore } from "@/stores/journalStore";
+import { useUserStore } from "@/stores/userStore";
 
 // Icons with brand-consistent design
 const HomeIcon = () => (
@@ -107,13 +108,42 @@ const CloseIcon = () => (
   </svg>
 );
 
+const PlaylistIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+    <circle cx="7" cy="17" r="3" stroke="currentColor" strokeWidth="1.5" />
+    <path d="M10 17 L10 5 L18 3 L18 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <circle cx="15" cy="15" r="3" stroke="currentColor" strokeWidth="1.5" />
+  </svg>
+);
+
+const ExpertsIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+    <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.5" />
+    <path d="M6 20 C6 16.69 8.69 14 12 14 C15.31 14 18 16.69 18 20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M12 4 L12 2" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+    <path d="M8 5 L6.5 3.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+    <path d="M16 5 L17.5 3.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+  </svg>
+);
+
+const TogetherIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+    <circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1.5" />
+    <circle cx="16" cy="8" r="3" stroke="currentColor" strokeWidth="1.5" />
+    <path d="M4 18 C4 15, 6 13, 8 13 C10 13, 11 14, 12 15 C13 14, 14 13, 16 13 C18 13, 20 15, 20 18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+  </svg>
+);
+
 const navItems = [
   { href: "/cabinet", label: "Главная", icon: HomeIcon, category: "main" },
   { href: "/cabinet/cards", label: "Карточки", icon: CardsIcon, category: "main" },
   { href: "/cabinet/practices", label: "Практики", icon: PracticeIcon, category: "main" },
+  { href: "/cabinet/playlist", label: "Плейлист", icon: PlaylistIcon, category: "main" },
   { href: "/cabinet/journal", label: "Дневник", icon: JournalIcon, category: "wellness" },
   { href: "/cabinet/mood", label: "Настроение", icon: MoodIcon, category: "wellness" },
   { href: "/cabinet/tests", label: "Тесты", icon: TestsIcon, category: "wellness" },
+  { href: "/cabinet/experts", label: "Эксперты", icon: ExpertsIcon, category: "support" },
+  { href: "/cabinet/together", label: "Вместе", icon: TogetherIcon, category: "support" },
   { href: "/cabinet/chat", label: "Поддержка", icon: ChatIcon, category: "support" },
   { href: "/cabinet/calendar", label: "Календарь", icon: CalendarIcon, category: "support" },
   { href: "/cabinet/profile", label: "Профиль", icon: ProfileIcon, category: "settings" },
@@ -266,7 +296,11 @@ const moods: { key: MoodKey; icon: typeof MoodIcons.radiant; label: string; colo
   { key: "confused", icon: MoodIcons.confused, label: "Растеряна", color: "#9b8b7a" },
 ];
 
-export default function CabinetLayout({ children }: { children: React.ReactNode }) {
+export default function CabinetLayout({ 
+  children
+}: { 
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -274,17 +308,28 @@ export default function CabinetLayout({ children }: { children: React.ReactNode 
   const [greeting, setGreeting] = useState("Добрый день");
   const [encouragement, setEncouragement] = useState(encouragements[0]);
   const [userName, setUserName] = useState<string>("");
+  const [isMounted, setIsMounted] = useState(false);
+  
+  // Client-only stats to prevent hydration mismatch
+  const [cardsCount, setCardsCount] = useState(0);
+  const [practicesCount, setPracticesCount] = useState(0);
+  const [journalCount, setJournalCount] = useState(0);
+  const [streak, setStreak] = useState(0);
   
   // Zustand stores
-  const { currentMood, setMood } = useMoodStore();
+  const { currentMood, setMood, moodHistory } = useMoodStore();
   const { openedCards } = useCardsStore();
   const { getCompletedCount } = usePracticesStore();
   const { getEntriesCount } = useJournalStore();
+  // useUserStore accessed via getState() in useEffect to avoid unused variable warnings
   
-  // Real stats
-  const cardsCount = openedCards.length;
-  const practicesCount = getCompletedCount();
-  const journalCount = getEntriesCount();
+  // Проверяем, было ли настроение уже выбрано сегодня
+  const getDateKey = () => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  };
+  const todayMood = moodHistory.find(entry => entry.date === getDateKey());
+  const isMoodSelectedToday = !!todayMood;
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -315,6 +360,52 @@ export default function CabinetLayout({ children }: { children: React.ReactNode 
         console.error('Error reading user data:', error);
         // Don't set default name, let it be empty
       }
+      
+      // Mark as mounted
+      setIsMounted(true);
+      
+      // Record visit and update stats from stores after hydration
+      // Use setTimeout to ensure stores are rehydrated from localStorage
+      const updateStats = () => {
+        setCardsCount(useCardsStore.getState().openedCards.length);
+        setPracticesCount(usePracticesStore.getState().getCompletedCount());
+        setJournalCount(useJournalStore.getState().getEntriesCount());
+        
+        // Record visit and update streak
+        useUserStore.getState().recordVisit();
+        setStreak(useUserStore.getState().getStreak());
+      };
+      
+      // Delay update to ensure Zustand stores are rehydrated
+      setTimeout(updateStats, 0);
+      
+      // Subscribe to store changes to keep stats updated
+      const unsubscribeCards = useCardsStore.subscribe(
+        (state) => state.openedCards,
+        () => setCardsCount(useCardsStore.getState().openedCards.length)
+      );
+      
+      const unsubscribePractices = usePracticesStore.subscribe(
+        (state) => state.completedPractices,
+        () => setPracticesCount(usePracticesStore.getState().getCompletedCount())
+      );
+      
+      const unsubscribeJournal = useJournalStore.subscribe(
+        (state) => state.entries,
+        () => setJournalCount(useJournalStore.getState().getEntriesCount())
+      );
+      
+      const unsubscribeUser = useUserStore.subscribe(
+        (state) => state.visitDates,
+        () => setStreak(useUserStore.getState().getStreak())
+      );
+      
+      return () => {
+        unsubscribeCards();
+        unsubscribePractices();
+        unsubscribeJournal();
+        unsubscribeUser();
+      };
     }
   }, []);
 
@@ -626,17 +717,17 @@ export default function CabinetLayout({ children }: { children: React.ReactNode 
       </AnimatePresence>
 
       {/* Main content */}
-      <main className={`flex-1 lg:ml-72 relative z-10 ${pathname === '/cabinet/chat' ? 'pb-0' : 'pb-6'}`}>
+      <main className={`flex-1 lg:ml-72 relative z-10 flex flex-col h-screen ${pathname === '/cabinet/chat' ? 'pb-0' : ''}`}>
         {/* Top bar with organic styling - hidden on chat page for full screen */}
         {pathname !== '/cabinet/chat' && (
-          <header className="sticky top-0 z-40 bg-[#0a0c0a]/90 backdrop-blur-xl border-b border-white/[0.04]">
+          <header className="flex-shrink-0 z-40 bg-[#0a0c0a]/90 backdrop-blur-xl border-b border-white/[0.04]">
             <div className="flex flex-col">
               {/* Stats Row */}
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="relative flex items-center justify-between px-6 lg:px-8 py-3"
+                className="relative flex items-center justify-between px-4 lg:px-6 py-2"
               >
                 {/* Left - Welcome message with user name */}
                 {userName && (
@@ -644,16 +735,15 @@ export default function CabinetLayout({ children }: { children: React.ReactNode 
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
-                    className="flex items-center gap-4 p-3 rounded-2xl bg-white/[0.02] border border-white/[0.05]"
+                    className="flex items-center gap-3 p-2 rounded-xl bg-white/[0.02] border border-white/[0.05]"
                   >
                     <div className="text-left">
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] uppercase tracking-[0.15em] text-white/30">
+                        <span className="text-[9px] uppercase tracking-[0.15em] text-white/30">
                           Добро пожаловать
                         </span>
-                        <div className="w-1 h-1 rounded-full bg-[#8fb583]/50" />
                       </div>
-                      <h1 className="text-xl lg:text-2xl font-heading font-light text-white/90 leading-tight mt-0.5">
+                      <h1 className="text-lg font-heading font-light text-white/90 leading-tight">
                         {userName}
                       </h1>
                     </div>
@@ -665,25 +755,25 @@ export default function CabinetLayout({ children }: { children: React.ReactNode 
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
-                  className="flex-1 flex justify-center items-center gap-6"
+                  className="flex-1 flex justify-center items-center gap-4"
                 >
                   {/* Current mood indicator - shown on non-home pages when mood is selected */}
                   {pathname !== '/cabinet' && currentMood && (
-                    <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/[0.02] border border-white/[0.05]">
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.02] border border-white/[0.05]">
                       {(() => {
                         const activeMood = moods.find(m => m.key === currentMood);
                         if (!activeMood) return null;
                         return (
                           <>
                             <div 
-                              className="w-8 h-8 rounded-full flex items-center justify-center p-1.5"
+                              className="w-6 h-6 rounded-full flex items-center justify-center p-1"
                               style={{ backgroundColor: `${activeMood.color}20`, borderColor: `${activeMood.color}40` }}
                             >
                               {activeMood.icon(activeMood.color, true)}
                             </div>
                             <div>
-                              <p className="text-[9px] uppercase tracking-wider text-white/30">Настроение</p>
-                              <p className="text-sm text-white/80">{activeMood.label}</p>
+                              <p className="text-[8px] uppercase tracking-wider text-white/30">Настроение</p>
+                              <p className="text-xs text-white/80">{activeMood.label}</p>
                             </div>
                           </>
                         );
@@ -692,18 +782,18 @@ export default function CabinetLayout({ children }: { children: React.ReactNode 
                   )}
                   
                   {/* Mini stats */}
-                  <div className="hidden md:flex items-center gap-6 lg:gap-10">
+                  <div className="hidden md:flex items-center gap-4 lg:gap-6">
                     <div className="text-center">
-                      <span className="text-2xl lg:text-3xl font-heading text-[#b49b78] leading-tight">{cardsCount}</span>
-                      <p className="text-xs uppercase tracking-widest text-white/30 leading-tight">карточек</p>
+                      <span className="text-xl font-heading text-[#b49b78] leading-tight" suppressHydrationWarning>{cardsCount}</span>
+                      <p className="text-[10px] uppercase tracking-widest text-white/30 leading-tight">карточек</p>
                     </div>
                     <div className="text-center">
-                      <span className="text-2xl lg:text-3xl font-heading text-[#7a9ebb] leading-tight">{practicesCount}</span>
-                      <p className="text-xs uppercase tracking-widest text-white/30 leading-tight">практик</p>
+                      <span className="text-xl font-heading text-[#7a9ebb] leading-tight" suppressHydrationWarning>{practicesCount}</span>
+                      <p className="text-[10px] uppercase tracking-widest text-white/30 leading-tight">практик</p>
                     </div>
                     <div className="text-center">
-                      <span className="text-2xl lg:text-3xl font-heading text-[#9a8fb5] leading-tight">{journalCount}</span>
-                      <p className="text-xs uppercase tracking-widest text-white/30 leading-tight">записей</p>
+                      <span className="text-xl font-heading text-[#9a8fb5] leading-tight" suppressHydrationWarning>{journalCount}</span>
+                      <p className="text-[10px] uppercase tracking-widest text-white/30 leading-tight">записей</p>
                     </div>
                   </div>
                 </motion.div>
@@ -713,10 +803,10 @@ export default function CabinetLayout({ children }: { children: React.ReactNode 
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
-                  className="flex items-center gap-4 p-3 rounded-2xl bg-white/[0.02] border border-white/[0.05]"
+                  className="flex items-center gap-3 p-2 rounded-xl bg-white/[0.02] border border-white/[0.05]"
                 >
-                  {/* Progress indicator */}
-                  <div className="relative w-12 h-12 lg:w-14 lg:h-14">
+                  {/* Progress indicator - fills based on streak (max 30 days = full) */}
+                  <div className="relative w-10 h-10">
                     <svg className="w-full h-full -rotate-90" viewBox="0 0 56 56">
                       <circle cx="28" cy="28" r="24" stroke="rgba(255,255,255,0.05)" strokeWidth="2.5" fill="none" />
                       <motion.circle
@@ -726,19 +816,19 @@ export default function CabinetLayout({ children }: { children: React.ReactNode 
                         fill="none"
                         strokeLinecap="round"
                         initial={{ strokeDasharray: 150.8, strokeDashoffset: 150.8 }}
-                        animate={{ strokeDashoffset: 60 }}
+                        animate={{ strokeDashoffset: 150.8 * (1 - Math.min(streak, 30) / 30) }}
                         transition={{ duration: 1.2, delay: 0.3 }}
                       />
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-base lg:text-lg font-heading text-[#8fb583]">12</span>
+                      <span className="text-sm font-heading text-[#8fb583]" suppressHydrationWarning>{streak}</span>
                     </div>
                   </div>
                   
                   {/* Text content */}
                   <div className="text-right">
-                    <p className="text-sm lg:text-base text-white/90 font-light leading-tight">дней подряд</p>
-                    <p className="text-[9px] lg:text-[10px] uppercase tracking-[0.1em] text-white/30 mt-0.5 max-w-[140px]">
+                    <p className="text-xs text-white/90 font-light leading-tight">дней подряд</p>
+                    <p className="text-[8px] uppercase tracking-[0.1em] text-white/30 max-w-[100px] hidden lg:block">
                       {encouragement}
                     </p>
                   </div>
@@ -753,67 +843,121 @@ export default function CabinetLayout({ children }: { children: React.ReactNode 
                 transition={{ duration: 0.5, delay: 0.1 }}
                 className="px-6 lg:px-8 py-3 border-t border-white/[0.02]"
               >
-                <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] w-full max-w-full">
-                  {/* Header with question and date */}
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-px w-6 bg-gradient-to-r from-transparent to-white/10" />
-                      <p className="text-xs uppercase tracking-[0.2em] text-white/40">
-                        Как ты сегодня?
-                      </p>
-                      <div className="h-px w-6 bg-gradient-to-l from-transparent to-white/10" />
+                <AnimatePresence mode="wait">
+                  {isMoodSelectedToday ? (
+                    /* Компактный вид - настроение уже выбрано сегодня */
+                    <motion.div
+                      key="compact"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="p-3 rounded-2xl bg-white/[0.02] border border-white/[0.05] w-full max-w-full overflow-hidden"
+                    >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        {(() => {
+                          const selectedMood = moods.find(m => m.key === todayMood?.mood);
+                          if (!selectedMood) return null;
+                          return (
+                            <>
+                              <div 
+                                className="w-10 h-10 rounded-full flex items-center justify-center border p-2"
+                                style={{ 
+                                  backgroundColor: `${selectedMood.color}18`,
+                                  borderColor: `${selectedMood.color}50`
+                                }}
+                              >
+                                {selectedMood.icon(selectedMood.color, true)}
+                              </div>
+                              <div>
+                                <p className="text-sm text-white/80">{selectedMood.label}</p>
+                                <p className="text-[10px] text-white/30 uppercase tracking-wider">Твоё настроение сегодня</p>
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-1 h-1 rounded-full bg-[#8fb583]/40" />
+                        <p className="text-xs text-white/30 tracking-wide">
+                          {new Date().toLocaleDateString("ru-RU", { weekday: "short", day: "numeric", month: "short" })}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-1 h-1 rounded-full bg-[#8fb583]/40" />
-                      <p className="text-xs text-white/30 tracking-wide">
-                        {new Date().toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" })}
-                      </p>
+                    </motion.div>
+                  ) : (
+                    /* Полный вид - выбор настроения */
+                    <motion.div
+                      key="full"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] w-full max-w-full overflow-hidden"
+                    >
+                    {/* Header with question and date */}
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="h-px w-6 bg-gradient-to-r from-transparent to-white/10" />
+                        <p className="text-xs uppercase tracking-[0.2em] text-white/40">
+                          Как ты сегодня?
+                        </p>
+                        <div className="h-px w-6 bg-gradient-to-l from-transparent to-white/10" />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-1 h-1 rounded-full bg-[#8fb583]/40" />
+                        <p className="text-xs text-white/30 tracking-wide">
+                          {new Date().toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" })}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  
-                  {/* Mood options - grid layout */}
-                  <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-11 gap-2 lg:gap-3 w-full">
-                    {moods.map((mood) => {
-                      const isActive = currentMood === mood.key;
-                      return (
-                        <motion.button
-                          key={mood.key}
-                          onClick={() => setMood(mood.key)}
-                          whileHover={{ scale: 1.08 }}
-                          whileTap={{ scale: 0.95 }}
-                          className={`flex flex-col items-center justify-center gap-2 p-2 lg:p-3 rounded-xl transition-all duration-300 w-full ${
-                            isActive ? 'bg-white/[0.06]' : 'hover:bg-white/[0.03]'
-                          }`}
-                        >
-                          <div 
-                            className={`w-12 h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center transition-all duration-300 border p-2.5 lg:p-3 ${
-                              isActive ? 'scale-110' : ''
+                    
+                    {/* Mood options - grid layout */}
+                    <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-11 gap-2 lg:gap-3 w-full">
+                      {moods.map((mood) => {
+                        const isActive = currentMood === mood.key;
+                        return (
+                          <motion.button
+                            key={mood.key}
+                            onClick={() => setMood(mood.key)}
+                            whileHover={{ scale: 1.08 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`flex flex-col items-center justify-center gap-2 p-2 lg:p-3 rounded-xl transition-all duration-300 w-full ${
+                              isActive ? 'bg-white/[0.06]' : 'hover:bg-white/[0.03]'
                             }`}
-                            style={{ 
-                              backgroundColor: isActive ? `${mood.color}18` : 'transparent',
-                              borderColor: isActive ? `${mood.color}50` : 'rgba(255,255,255,0.06)'
-                            }}
                           >
-                            {mood.icon(mood.color, isActive)}
-                          </div>
-                          <span className={`text-[9px] lg:text-[10px] uppercase tracking-wider whitespace-nowrap text-center ${
-                            isActive ? 'text-white/80' : 'text-white/40'
-                          }`}>
-                            {mood.label}
-                          </span>
-                        </motion.button>
-                      );
-                    })}
-                  </div>
-                </div>
+                            <div 
+                              className={`w-12 h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center transition-all duration-300 border p-2.5 lg:p-3 ${
+                                isActive ? 'scale-110' : ''
+                              }`}
+                              style={{ 
+                                backgroundColor: isActive ? `${mood.color}18` : 'transparent',
+                                borderColor: isActive ? `${mood.color}50` : 'rgba(255,255,255,0.06)'
+                              }}
+                            >
+                              {mood.icon(mood.color, isActive)}
+                            </div>
+                            <span className={`text-[9px] lg:text-[10px] uppercase tracking-wider whitespace-nowrap text-center ${
+                              isActive ? 'text-white/80' : 'text-white/40'
+                            }`}>
+                              {mood.label}
+                            </span>
+                          </motion.button>
+                        );
+                      })}
+                    </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             )}
           </div>
         </header>
         )}
 
-        {/* Page content with proper padding - full height for all pages */}
-        <div className={`flex flex-col overflow-hidden ${pathname === '/cabinet/chat' ? 'h-screen pt-4 px-4 lg:px-6' : pathname === '/cabinet' ? 'h-[calc(100vh-280px)]' : 'h-[calc(100vh-140px)]'} ${pathname !== '/cabinet/chat' ? 'px-6 lg:px-8 py-4' : ''}`}>
+        {/* Page content with proper padding - uses remaining height */}
+        <div className={`flex-1 flex flex-col min-h-0 ${pathname !== '/cabinet/chat' ? 'px-4 lg:px-6 py-2' : 'pt-4 px-4 lg:px-6'}`}>
           <div className="flex-1 overflow-y-auto">
             {children}
           </div>

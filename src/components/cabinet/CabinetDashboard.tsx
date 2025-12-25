@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useMoodStore, MoodKey } from "@/stores/moodStore";
 import { useCardsStore, formatCardDate } from "@/stores/cardsStore";
 import { cards as allCards } from "@/data/cards";
 import { getPracticeByMoodAndIndex } from "@/data/practices";
+import { getTipOfDay } from "@/data/expertTips";
 
 // Персонализированный контент для каждого настроения
 const moodContent: Record<MoodKey, { 
@@ -113,7 +114,7 @@ const baseActions = [
 ];
 
 const ActionIcon = ({ icon, color }: { icon: string; color: string }) => {
-  const icons: Record<string, JSX.Element> = {
+  const icons: Record<string, React.ReactNode> = {
     practice: (
       <svg viewBox="0 0 20 20" fill="none" className="w-full h-full" style={{ color }}>
         <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.5" />
@@ -261,24 +262,24 @@ export default function CabinetDashboard() {
         transition={{ duration: 0.5 }}
         className="flex flex-col lg:flex-row items-start gap-4 lg:gap-6 h-full"
       >
-        {/* Left - Card of the Day (большая) */}
+        {/* Left - Card of the Day (выровнена по верхнему краю) */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="flex justify-center flex-shrink-0 w-full lg:w-auto"
+          className="flex justify-center flex-shrink-0 w-full lg:w-[340px] self-start"
         >
           <div 
-            className="block cursor-pointer"
+            className="block cursor-pointer w-full"
             onClick={handleOpenCard}
           >
             <div className="group relative">
               {/* Ambient glow */}
-              <div className="absolute -inset-12 bg-gradient-radial from-[#b49b78]/15 via-transparent to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-700 rounded-full blur-2xl" />
+              <div className="absolute -inset-8 bg-gradient-radial from-[#b49b78]/15 via-transparent to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-700 rounded-full blur-2xl" />
               
               {/* Card with flip animation */}
               <motion.div 
-                className="relative w-64 lg:w-80 aspect-[3/4.2]"
+                className="relative w-full aspect-[3/4.2] max-w-[340px]"
                 animate={{ rotateY: isFlipping ? 180 : 0 }}
                 transition={{ duration: 0.6, ease: "easeInOut" }}
                 style={{ transformStyle: "preserve-3d" }}
@@ -387,7 +388,7 @@ export default function CabinetDashboard() {
         </motion.div>
 
         {/* Right - Personalized Content */}
-        <div className="flex-1 flex flex-col gap-4 w-full">
+        <div className="flex-1 flex flex-col gap-4 w-full self-start">
           {/* Статистика открытых карточек */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -456,11 +457,11 @@ export default function CabinetDashboard() {
             </motion.div>
           )}
 
-          {/* Быстрые действия - сетка 2x2 */}
+          {/* Быстрые действия - сетка 2x2 (перемещено вверх) */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.4 }}
+            transition={{ duration: 0.4, delay: 0.35 }}
             className="grid grid-cols-2 gap-3"
           >
             {baseActions.map((action, i) => (
@@ -468,7 +469,7 @@ export default function CabinetDashboard() {
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.45 + i * 0.05 }}
+                  transition={{ duration: 0.3, delay: 0.4 + i * 0.05 }}
                   className="group flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] transition-all duration-300 hover:bg-white/[0.04] hover:border-white/[0.1]"
                 >
                   <div 
@@ -484,6 +485,38 @@ export default function CabinetDashboard() {
                 </motion.div>
               </Link>
             ))}
+          </motion.div>
+
+          {/* Совет эксперта дня (перемещено вниз) */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.5 }}
+          >
+            {(() => {
+              const expertTipOfDay = getTipOfDay();
+              if (!expertTipOfDay) return null;
+              return (
+                <Link href="/cabinet/experts">
+                  <div className="group p-4 rounded-2xl bg-gradient-to-br from-[#8fb583]/10 to-[#7a9ebb]/10 border border-[#8fb583]/20 hover:border-[#8fb583]/30 transition-all cursor-pointer">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[10px] uppercase tracking-widest text-[#8fb583]/70 mb-1">Совет дня</p>
+                        <p className="text-sm text-white/85 font-light truncate">{expertTipOfDay.title}</p>
+                        <p className="text-[10px] text-white/40 mt-1">
+                          {expertTipOfDay.expertName} • {expertTipOfDay.duration}
+                        </p>
+                      </div>
+                      <div className="ml-3 text-white/30 group-hover:text-[#8fb583] transition-colors">
+                        <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
+                          <path d="M9 6 L15 12 L9 18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })()}
           </motion.div>
         </div>
       </motion.div>

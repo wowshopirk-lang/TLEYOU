@@ -5,7 +5,7 @@ export interface JournalEntry {
   id: number;
   date: string; // YYYY-MM-DD
   timestamp: number;
-  mood: { emoji: string; label: string; color: string };
+  mood: { icon: string; label: string; color: string; emoji?: string }; // emoji для обратной совместимости
   text: string;
   tags: string[];
 }
@@ -26,6 +26,34 @@ const getDateKey = () => {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 };
 
+// Маппинг старых эмодзи на новые иконки
+const emojiToIconMap: Record<string, string> = {
+  "😊": "LightIcon",
+  "😌": "BalanceIcon",
+  "😐": "MindIcon",
+  "😔": "RelaxIcon",
+  "😤": "LabyrinthIcon",
+  "🥰": "LightIcon",
+  "😴": "RelaxIcon",
+  "🤔": "LabyrinthIcon",
+};
+
+// Миграция старых записей
+const migrateEntry = (entry: any): JournalEntry => {
+  if (entry.mood.emoji && !entry.mood.icon) {
+    // Старая запись с emoji - конвертируем в icon
+    const icon = emojiToIconMap[entry.mood.emoji] || "MindIcon";
+    return {
+      ...entry,
+      mood: {
+        ...entry.mood,
+        icon,
+      },
+    };
+  }
+  return entry as JournalEntry;
+};
+
 export const useJournalStore = create<JournalState>()(
   persist(
     (set, get) => ({
@@ -44,7 +72,9 @@ export const useJournalStore = create<JournalState>()(
       },
 
       getEntries: () => {
-        return get().entries;
+        // Мигрируем записи при получении
+        const entries = get().entries;
+        return entries.map(migrateEntry);
       },
 
       getEntriesCount: () => {
@@ -62,6 +92,13 @@ export const useJournalStore = create<JournalState>()(
       partialize: (state) => ({
         entries: state.entries,
       }),
+      onRehydrateStorage: () => (state) => {
+        // Мигрируем записи при загрузке из localStorage
+        if (state) {
+          const migratedEntries = state.entries.map(migrateEntry);
+          state.entries = migratedEntries;
+        }
+      },
     }
   )
 );

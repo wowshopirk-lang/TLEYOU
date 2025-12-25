@@ -384,4 +384,15 @@ export const RelaxIcon = ({ className }: IconProps) => (
   </svg>
 );
 
+// Календарь - минималистичный календарь
+export const CalendarIcon = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.75" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="4" y="5" width="16" height="15" rx="1.5" />
+    <path d="M4 10 L20 10" strokeWidth="0.5" opacity="0.4" />
+    <path d="M8 3 L8 7" strokeWidth="1" />
+    <path d="M16 3 L16 7" strokeWidth="1" />
+    <circle cx="12" cy="15" r="1" opacity="0.5" />
+  </svg>
+);
+
 

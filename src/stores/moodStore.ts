@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { useCalendarStore } from './calendarStore';
 
 export type MoodKey = 
   | 'radiant' 
@@ -63,20 +64,50 @@ export const useMoodStore = create<MoodState>()(
 
       setMood: (mood: MoodKey) => {
         const dateKey = getDateKey();
+        const state = get();
+        
+        // Проверяем, было ли уже выбрано настроение сегодня
+        const todayMood = state.moodHistory.find(entry => entry.date === dateKey);
+        if (todayMood) {
+          // Настроение уже выбрано сегодня, не позволяем изменить
+          return;
+        }
+        
         const timestamp = Date.now();
         
-        set((state) => {
-          // Добавляем запись в историю
-          const newEntry: MoodEntry = {
-            date: dateKey,
-            mood,
-            timestamp,
-          };
-          
-          return {
-            currentMood: mood,
-            moodHistory: [...state.moodHistory, newEntry],
-          };
+        // Добавляем запись в историю
+        const newEntry: MoodEntry = {
+          date: dateKey,
+          mood,
+          timestamp,
+        };
+        
+        // Сохраняем настроение в календарь
+        const moodLabels: Record<MoodKey, string> = {
+          radiant: 'Отлично',
+          calm: 'Спокойно',
+          balanced: 'Нормально',
+          tender: 'Грустно',
+          tired: 'Устала',
+          anxious: 'Тревожно',
+          inspired: 'Вдохновлена',
+          grateful: 'Благодарна',
+          energetic: 'Энергичная',
+          peaceful: 'Умиротворена',
+          confused: 'Растеряна',
+        };
+        
+        useCalendarStore.getState().addEvent({
+          date: dateKey,
+          type: 'mood',
+          eventId: mood,
+          title: moodLabels[mood] || mood,
+          metadata: { mood },
+        });
+        
+        set({
+          currentMood: mood,
+          moodHistory: [...state.moodHistory, newEntry],
         });
       },
 
@@ -118,13 +149,27 @@ export const useMoodStore = create<MoodState>()(
     {
       name: 'mood-storage',
       // Сохраняем только историю и данные карточки дня
-      partialize: (state) => ({
-        moodHistory: state.moodHistory,
-        todayCardDate: state.todayCardDate,
-        todayCardIndex: state.todayCardIndex,
-        // currentMood сбрасывается при новом дне
-        currentMood: state.todayCardDate === getDateKey() ? state.currentMood : null,
-      }),
+      partialize: (state) => {
+        const dateKey = getDateKey();
+        const todayMood = state.moodHistory.find(entry => entry.date === dateKey);
+        return {
+          moodHistory: state.moodHistory,
+          todayCardDate: state.todayCardDate,
+          todayCardIndex: state.todayCardIndex,
+          // currentMood устанавливается из истории настроений на сегодня
+          currentMood: todayMood ? todayMood.mood : null,
+        };
+      },
+      // При загрузке восстанавливаем currentMood из истории
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          const dateKey = getDateKey();
+          const todayMood = state.moodHistory.find(entry => entry.date === dateKey);
+          if (todayMood) {
+            state.currentMood = todayMood.mood;
+          }
+        }
+      },
     }
   )
 );

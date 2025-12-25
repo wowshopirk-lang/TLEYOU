@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTestsStore } from "@/stores/testsStore";
+import { useCalendarStore, getDateKey } from "@/stores/calendarStore";
 
 // Ботанические иконки в стиле проекта
 const TestIcons = {
@@ -390,12 +392,16 @@ export default function CabinetTests() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [showResult, setShowResult] = useState(false);
+  const [activeTab, setActiveTab] = useState<"tests" | "history">("tests");
+  
+  const { addResult, canTakeTest, getResultsByTest, getAllResults } = useTestsStore();
+  const { addEvent } = useCalendarStore();
 
-  const completedTests = tests.filter(t => t.completed).length;
+  const completedTests = getAllResults().length;
   const totalTests = tests.length;
 
   const handleStartTest = (test: Test) => {
-    if (!test.completed) {
+    if (canTakeTest(String(test.id))) {
       setSelectedTest(test);
       setCurrentQuestion(0);
       setAnswers([]);
@@ -419,10 +425,34 @@ export default function CabinetTests() {
     const maxScore = stressQuestions.length * 4;
     const percentage = (total / maxScore) * 100;
 
-    if (percentage <= 25) return { level: "Низкий", text: "У тебя низкий уровень стресса. Продолжай заботиться о себе!", color: "#8fb583" };
-    if (percentage <= 50) return { level: "Умеренный", text: "Уровень стресса умеренный. Обрати внимание на практики релаксации.", color: "#b49b78" };
-    if (percentage <= 75) return { level: "Повышенный", text: "Стресс повышен. Рекомендуем больше времени уделять отдыху и практикам.", color: "#9a8fb5" };
-    return { level: "Высокий", text: "Уровень стресса высокий. Важно обратить внимание на своё состояние.", color: "#b58f8f" };
+    if (percentage <= 25) return { level: "Низкий", text: "У тебя низкий уровень стресса. Продолжай заботиться о себе!", color: "#8fb583", score: total, maxScore };
+    if (percentage <= 50) return { level: "Умеренный", text: "Уровень стресса умеренный. Обрати внимание на практики релаксации.", color: "#b49b78", score: total, maxScore };
+    if (percentage <= 75) return { level: "Повышенный", text: "Стресс повышен. Рекомендуем больше времени уделять отдыху и практикам.", color: "#9a8fb5", score: total, maxScore };
+    return { level: "Высокий", text: "Уровень стресса высокий. Важно обратить внимание на своё состояние.", color: "#b58f8f", score: total, maxScore };
+  };
+
+  const handleCompleteTest = () => {
+    if (!selectedTest) return;
+    
+    const result = getResult();
+    
+    // Save result to store
+    addResult({
+      testId: String(selectedTest.id),
+      score: result.score,
+      maxScore: result.maxScore,
+      resultLevel: result.level,
+      resultText: result.text,
+      completedAt: new Date().toISOString(),
+    });
+    
+    // Add to calendar
+    addEvent({
+      date: getDateKey(),
+      type: 'test',
+      eventId: String(selectedTest.id),
+      title: selectedTest.title,
+    });
   };
 
   const closeTest = () => {
@@ -485,19 +515,133 @@ export default function CabinetTests() {
         </div>
       </motion.div>
 
-      {/* Tests Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 flex-1 overflow-y-auto pb-4">
-        {tests.map((test, index) => (
-          <motion.div
-            key={test.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.05 }}
-          >
-            <TestCard test={test} onClick={() => handleStartTest(test)} />
-          </motion.div>
-        ))}
-      </div>
+      {/* Tabs */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.15 }}
+        className="flex gap-2 mb-4 flex-shrink-0"
+      >
+        <button
+          onClick={() => setActiveTab("tests")}
+          className={`px-4 py-2 rounded-xl text-sm transition-all duration-300 ${
+            activeTab === "tests"
+              ? 'bg-[#b49b78]/20 text-[#b49b78] border border-[#b49b78]/30'
+              : 'bg-white/[0.03] border border-white/[0.08] text-white/40 hover:text-white/70'
+          }`}
+        >
+          Тесты
+        </button>
+        <button
+          onClick={() => setActiveTab("history")}
+          className={`px-4 py-2 rounded-xl text-sm transition-all duration-300 ${
+            activeTab === "history"
+              ? 'bg-[#b49b78]/20 text-[#b49b78] border border-[#b49b78]/30'
+              : 'bg-white/[0.03] border border-white/[0.08] text-white/40 hover:text-white/70'
+          }`}
+        >
+          История результатов
+        </button>
+      </motion.div>
+
+      {/* Content */}
+      {activeTab === "tests" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 flex-1 overflow-y-auto pb-4">
+          {tests.map((test, index) => {
+            const canTake = canTakeTest(String(test.id));
+            const results = getResultsByTest(String(test.id));
+            const latestResult = results[0];
+            
+            return (
+              <motion.div
+                key={test.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.05 }}
+              >
+                <TestCard 
+                  test={{
+                    ...test,
+                    completed: latestResult !== undefined,
+                    result: latestResult?.resultLevel,
+                  }} 
+                  onClick={() => handleStartTest(test)} 
+                />
+                {!canTake && results.length >= 2 && (
+                  <div className="mt-2 text-center">
+                    <span className="text-xs text-white/30">
+                      Лимит попыток на этой неделе исчерпан
+                    </span>
+                  </div>
+                )}
+              </motion.div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="flex-1 overflow-y-auto pb-4">
+          {getAllResults().length > 0 ? (
+            <div className="space-y-3">
+              {getAllResults().map((result) => {
+                const test = tests.find(t => String(t.id) === result.testId);
+                if (!test) return null;
+                
+                return (
+                  <motion.div
+                    key={result.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div
+                            className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                            style={{ backgroundColor: `${test.color}20` }}
+                          >
+                            <div className="w-6 h-6" style={{ color: test.color }}>
+                              {TestIcons[test.icon](test.color, "w-full h-full")}
+                            </div>
+                          </div>
+                          <div>
+                            <h3 className="text-base font-heading text-white/90">{test.title}</h3>
+                            <p className="text-xs text-white/40">
+                              {new Date(result.completedAt).toLocaleDateString("ru-RU", {
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric"
+                              })}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="ml-13">
+                          <p className="text-sm text-white/60 mb-1">
+                            Результат: <span style={{ color: test.color }}>{result.resultLevel}</span>
+                          </p>
+                          <p className="text-xs text-white/40">
+                            Попытка {result.attemptNumber} • Неделя {result.weekNumber}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <p className="text-white/40 mb-2">У тебя пока нет результатов тестов</p>
+              <button
+                onClick={() => setActiveTab("tests")}
+                className="text-[#b49b78] hover:underline text-sm"
+              >
+                Пройти тесты
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Test Modal */}
       <AnimatePresence>
@@ -564,6 +708,11 @@ export default function CabinetTests() {
                         {currentQuestion + 1}/{stressQuestions.length}
                       </span>
                     </div>
+                    {!canTakeTest(String(selectedTest.id)) && (
+                      <div className="mt-2 text-xs text-white/40">
+                        Попытка {getResultsByTest(String(selectedTest.id)).length + 1} из 2 на этой неделе
+                      </div>
+                    )}
                   </div>
 
                   {/* Question */}
@@ -606,13 +755,24 @@ export default function CabinetTests() {
                     <p className="text-sm text-white/50 mb-5">
                       {getResult().text}
                     </p>
-                    <button
-                      onClick={closeTest}
-                      className="px-8 py-2.5 rounded-xl text-white transition-colors text-sm"
-                      style={{ backgroundColor: selectedTest.color }}
-                    >
-                      Понятно
-                    </button>
+                    <div className="flex gap-3 justify-center">
+                      <button
+                        onClick={() => {
+                          handleCompleteTest();
+                          closeTest();
+                        }}
+                        className="px-8 py-2.5 rounded-xl text-white transition-colors text-sm"
+                        style={{ backgroundColor: selectedTest.color }}
+                      >
+                        Сохранить результат
+                      </button>
+                      <button
+                        onClick={closeTest}
+                        className="px-6 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.1] text-white/70 hover:bg-white/[0.08] transition-colors text-sm"
+                      >
+                        Закрыть
+                      </button>
+                    </div>
                   </div>
                 </>
               )}

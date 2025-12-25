@@ -2,14 +2,33 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCalendarStore } from "@/stores/calendarStore";
+import { useCardsStore } from "@/stores/cardsStore";
+import { useJournalStore } from "@/stores/journalStore";
+import { useMoodStore } from "@/stores/moodStore";
+import { getPracticeById } from "@/data/practices";
+import { 
+  LightIcon, 
+  BalanceIcon, 
+  MindIcon, 
+  RelaxIcon, 
+  LabyrinthIcon,
+  PeaceIcon,
+  HeartIcon,
+  EnergyIcon,
+  GroundingIcon,
+  AwakenIcon,
+  MeditationIcon
+} from "@/components/icons/BrandIcons";
 
 // Types
 interface DayData {
   date: number;
-  mood?: number;
+  mood?: string;
   practices: string[];
-  journal?: boolean;
-  card?: boolean;
+  journal: boolean;
+  card: boolean;
+  test: boolean;
 }
 
 // Icons
@@ -45,25 +64,47 @@ const CardIcon = () => (
   </svg>
 );
 
-// Static sample data generator - no randomness to avoid hydration issues
-const generateMonthData = (year: number, month: number): DayData[] => {
+// Generate month data from real stores
+const generateMonthData = (
+  year: number, 
+  month: number,
+  calendarEvents: ReturnType<typeof useCalendarStore.getState>['events'],
+  openedCards: ReturnType<typeof useCardsStore.getState>['openedCards'],
+  journalEntries: ReturnType<typeof useJournalStore.getState>['entries'],
+  moodHistory: ReturnType<typeof useMoodStore.getState>['moodHistory']
+): DayData[] => {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const data: DayData[] = [];
-  const practices = ["Дыхание", "Медитация", "Благодарность", "Релаксация"];
   
-  // Use deterministic pattern based on day of month
   for (let i = 1; i <= daysInMonth; i++) {
-    // Deterministic pattern: every 2nd, 3rd, 5th, 7th days have activity
-    const hasActivity = i % 2 === 0 || i % 3 === 0 || i % 5 === 0 || i % 7 === 0;
-    const practiceCount = hasActivity ? ((i % 3) + 1) : 0;
-    const mood = hasActivity ? ((i % 5) + 1) : undefined;
+    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+    
+    // Get events for this date
+    const dayEvents = calendarEvents.filter(e => e.date === dateStr);
+    const practices = dayEvents
+      .filter(e => e.type === 'practice')
+      .map(e => {
+        const practice = getPracticeById(e.eventId);
+        return practice ? practice.title : e.title;
+      });
+    
+    const hasJournal = dayEvents.some(e => e.type === 'journal') || 
+                      journalEntries.some(e => e.date === dateStr);
+    const hasCard = dayEvents.some(e => e.type === 'card') ||
+                   openedCards.some(c => c.dateOpened === dateStr);
+    const hasTest = dayEvents.some(e => e.type === 'test');
+    
+    // Get mood for this date
+    const moodEntry = moodHistory.find(m => m.date === dateStr);
+    const mood = moodEntry?.mood;
     
     data.push({
       date: i,
-      mood: mood as 1 | 2 | 3 | 4 | 5 | undefined,
-      practices: hasActivity ? practices.slice(0, practiceCount) : [],
-      journal: hasActivity && i % 2 === 0,
-      card: hasActivity && i % 3 === 0,
+      mood,
+      practices,
+      journal: hasJournal,
+      card: hasCard,
+      test: hasTest,
     });
   }
   return data;
@@ -76,8 +117,52 @@ const monthNames = [
 
 const dayNames = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 
-const moodColors = ["#b58f8f", "#9a8fb5", "#b49b78", "#7a9ebb", "#8fb583"];
-const moodEmojis = ["😤", "😔", "😐", "😌", "😊"];
+const moodColors: Record<string, string> = {
+  radiant: "#8fb583",
+  calm: "#7a9ebb",
+  balanced: "#b49b78",
+  tender: "#9a8fb5",
+  tired: "#8b8b9a",
+  anxious: "#a0b5c5",
+  inspired: "#88b5a0",
+  grateful: "#b5a888",
+  energetic: "#e5a855",
+  peaceful: "#6b9b8a",
+  confused: "#9b8b7a",
+};
+
+const moodLabels: Record<string, string> = {
+  radiant: "Отлично",
+  calm: "Спокойно",
+  balanced: "Нормально",
+  tender: "Грустно",
+  tired: "Устала",
+  anxious: "Тревожно",
+  inspired: "Вдохновлена",
+  grateful: "Благодарна",
+  energetic: "Энергичная",
+  peaceful: "Умиротворена",
+  confused: "Растеряна",
+};
+
+const moodIcons: Record<string, any> = {
+  radiant: LightIcon,
+  calm: BalanceIcon,
+  balanced: MindIcon,
+  tender: HeartIcon,
+  tired: RelaxIcon,
+  anxious: LabyrinthIcon,
+  inspired: AwakenIcon,
+  grateful: GroundingIcon,
+  energetic: EnergyIcon,
+  peaceful: PeaceIcon,
+  confused: MeditationIcon,
+};
+
+const MoodIcon = ({ mood, className, color }: { mood: string; className?: string; color?: string }) => {
+  const Icon = moodIcons[mood] || MindIcon;
+  return <Icon className={className} style={{ color }} />;
+};
 
 // Day Cell Component
 const DayCell = ({ 
@@ -121,7 +206,7 @@ const DayCell = ({
       {day.mood && (
         <div 
           className="absolute top-1 right-1 w-2 h-2 rounded-full"
-          style={{ backgroundColor: moodColors[day.mood - 1] }}
+          style={{ backgroundColor: moodColors[day.mood] || "#8fb583" }}
         />
       )}
 
@@ -137,6 +222,9 @@ const DayCell = ({
           {day.card && (
             <div className="w-1 h-1 rounded-full bg-[#b49b78]" />
           )}
+          {day.test && (
+            <div className="w-1 h-1 rounded-full bg-[#7a9ebb]" />
+          )}
         </div>
       )}
     </motion.button>
@@ -148,10 +236,10 @@ const DayDetail = ({ day, date }: { day: DayData; date: Date }) => (
   <motion.div
     initial={{ opacity: 0, x: 20 }}
     animate={{ opacity: 1, x: 0 }}
-    className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06]"
+    className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] h-full overflow-auto"
   >
     {/* Header */}
-    <div className="flex items-center justify-between mb-6">
+    <div className="flex items-center justify-between mb-3">
       <div>
         <p className="text-lg font-heading text-white/90">
           {date.toLocaleDateString("ru-RU", { day: "numeric", month: "long" })}
@@ -161,17 +249,26 @@ const DayDetail = ({ day, date }: { day: DayData; date: Date }) => (
         </p>
       </div>
       {day.mood && (
-        <div 
-          className="w-12 h-12 rounded-full flex items-center justify-center text-xl"
-          style={{ backgroundColor: `${moodColors[day.mood - 1]}20` }}
-        >
-          {moodEmojis[day.mood - 1]}
+        <div className="flex flex-col items-center gap-2">
+          <div 
+            className="w-12 h-12 rounded-full flex items-center justify-center border border-white/[0.1]"
+            style={{ backgroundColor: `${moodColors[day.mood] || '#8fb583'}20` }}
+          >
+            <MoodIcon 
+              mood={day.mood} 
+              className="w-6 h-6" 
+              color={moodColors[day.mood] || '#8fb583'} 
+            />
+          </div>
+          <span className="text-[10px] uppercase tracking-wider text-white/60">
+            {moodLabels[day.mood] || "Неизвестно"}
+          </span>
         </div>
       )}
     </div>
 
     {/* Activities */}
-    {(day.practices.length > 0 || day.journal || day.card) ? (
+    {(day.practices.length > 0 || day.journal || day.card || day.test) ? (
       <div className="space-y-3">
         {/* Practices */}
         {day.practices.length > 0 && (
@@ -217,6 +314,22 @@ const DayDetail = ({ day, date }: { day: DayData; date: Date }) => (
             </div>
           </div>
         )}
+
+        {/* Test */}
+        {day.test && (
+          <div className="p-3 rounded-xl bg-[#7a9ebb]/10 border border-[#7a9ebb]/20">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 text-[#7a9ebb]">
+                <svg viewBox="0 0 16 16" fill="none" className="w-full h-full">
+                  <rect x="3" y="3" width="10" height="10" rx="1" stroke="currentColor" strokeWidth="1" />
+                  <path d="M5 8 L7 10 L11 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+              <span className="text-xs uppercase tracking-wider text-[#7a9ebb]">Тест</span>
+              <span className="ml-auto text-xs text-white/40">✓ Пройден</span>
+            </div>
+          </div>
+        )}
       </div>
     ) : (
       <div className="text-center py-8">
@@ -235,49 +348,80 @@ const StatsBar = ({ monthData }: { monthData: DayData[] }) => {
   const daysWithJournal = monthData.filter(d => d.journal).length;
   const daysWithCard = monthData.filter(d => d.card).length;
   const moodDays = monthData.filter(d => d.mood);
-  const avgMood = moodDays.length > 0 
-    ? moodDays.reduce((sum, d) => sum + (d.mood || 0), 0) / moodDays.length 
-    : 0;
+  
+  // Вычисляем наиболее частое настроение
+  const moodCounts: Record<string, number> = {};
+  moodDays.forEach(d => {
+    if (d.mood) {
+      moodCounts[d.mood] = (moodCounts[d.mood] || 0) + 1;
+    }
+  });
+  
+  const mostCommonMood = Object.keys(moodCounts).reduce((a, b) => 
+    moodCounts[a] > moodCounts[b] ? a : b, 
+    moodDays[0]?.mood || ''
+  );
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-      <div className="p-4 rounded-xl bg-[#8fb583]/10 border border-[#8fb583]/20">
-        <div className="flex items-center gap-2 mb-1">
-          <div className="w-4 h-4 text-[#8fb583]">
+    <div className="grid grid-cols-4 gap-2">
+      <div className="p-2 rounded-lg bg-[#8fb583]/10 border border-[#8fb583]/20">
+        <div className="flex items-center gap-1.5 mb-0.5">
+          <div className="w-3 h-3 text-[#8fb583]">
             <PracticeIcon />
           </div>
-          <span className="text-xs text-white/40">Практики</span>
+          <span className="text-[10px] text-white/40">Практики</span>
         </div>
-        <p className="text-xl font-heading text-white/90" suppressHydrationWarning>{daysWithPractice}</p>
-        <p className="text-[10px] text-white/30">дней</p>
+        <p className="text-lg font-heading text-white/90" suppressHydrationWarning>{daysWithPractice}</p>
+        <p className="text-[9px] text-white/30">дней</p>
       </div>
-      <div className="p-4 rounded-xl bg-[#9a8fb5]/10 border border-[#9a8fb5]/20">
-        <div className="flex items-center gap-2 mb-1">
-          <div className="w-4 h-4 text-[#9a8fb5]">
+      <div className="p-2 rounded-lg bg-[#9a8fb5]/10 border border-[#9a8fb5]/20">
+        <div className="flex items-center gap-1.5 mb-0.5">
+          <div className="w-3 h-3 text-[#9a8fb5]">
             <JournalIcon />
           </div>
-          <span className="text-xs text-white/40">Дневник</span>
+          <span className="text-[10px] text-white/40">Дневник</span>
         </div>
-        <p className="text-xl font-heading text-white/90" suppressHydrationWarning>{daysWithJournal}</p>
-        <p className="text-[10px] text-white/30">записей</p>
+        <p className="text-lg font-heading text-white/90" suppressHydrationWarning>{daysWithJournal}</p>
+        <p className="text-[9px] text-white/30">записей</p>
       </div>
-      <div className="p-4 rounded-xl bg-[#b49b78]/10 border border-[#b49b78]/20">
-        <div className="flex items-center gap-2 mb-1">
-          <div className="w-4 h-4 text-[#b49b78]">
+      <div className="p-2 rounded-lg bg-[#b49b78]/10 border border-[#b49b78]/20">
+        <div className="flex items-center gap-1.5 mb-0.5">
+          <div className="w-3 h-3 text-[#b49b78]">
             <CardIcon />
           </div>
-          <span className="text-xs text-white/40">Карточки</span>
+          <span className="text-[10px] text-white/40">Карточки</span>
         </div>
-        <p className="text-xl font-heading text-white/90" suppressHydrationWarning>{daysWithCard}</p>
-        <p className="text-[10px] text-white/30">пройдено</p>
+        <p className="text-lg font-heading text-white/90" suppressHydrationWarning>{daysWithCard}</p>
+        <p className="text-[9px] text-white/30">пройдено</p>
       </div>
-      <div className="p-4 rounded-xl bg-[#7a9ebb]/10 border border-[#7a9ebb]/20">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-sm">{moodEmojis[Math.round(avgMood) - 1] || "😐"}</span>
-          <span className="text-xs text-white/40">Настроение</span>
+      <div className="p-2 rounded-lg bg-[#7a9ebb]/10 border border-[#7a9ebb]/20">
+        <div className="flex items-center gap-1.5 mb-0.5">
+          {mostCommonMood ? (
+            <div className="w-3 h-3">
+              <MoodIcon 
+                mood={mostCommonMood} 
+                className="w-full h-full" 
+                color={moodColors[mostCommonMood] || '#7a9ebb'} 
+              />
+            </div>
+          ) : (
+            <div className="w-3 h-3 rounded-full bg-white/10" />
+          )}
+          <span className="text-[10px] text-white/40">Настроение</span>
         </div>
-        <p className="text-xl font-heading text-white/90" suppressHydrationWarning>{avgMood.toFixed(1)}</p>
-        <p className="text-[10px] text-white/30">в среднем</p>
+        {mostCommonMood ? (
+          <>
+            <p className="text-lg font-heading text-white/90" suppressHydrationWarning>
+              {moodLabels[mostCommonMood] || "—"}
+            </p>
+            <p className="text-[9px] text-white/30">{moodDays.length} дней</p>
+          </>
+        ) : (
+          <>
+            <p className="text-lg font-heading text-white/90" suppressHydrationWarning>—</p>
+            <p className="text-[9px] text-white/30">нет данных</p>
+          </>
+        )}
       </div>
     </div>
   );
@@ -289,6 +433,12 @@ export default function CabinetCalendar() {
   const [currentMonth, setCurrentMonth] = useState(0);
   const [currentYear, setCurrentYear] = useState(2024);
   const [selectedDate, setSelectedDate] = useState(1);
+  
+  // Get real data from stores
+  const { events: calendarEvents } = useCalendarStore();
+  const { openedCards } = useCardsStore();
+  const { entries: journalEntries } = useJournalStore();
+  const { moodHistory } = useMoodStore();
   
   // Initialize date only on client
   useEffect(() => {
@@ -330,16 +480,24 @@ export default function CabinetCalendar() {
     currentMonth === today.getMonth() && 
     currentYear === today.getFullYear();
 
-  // Generate data deterministically based on year and month
+  // Generate data from real stores
   const currentMonthData = useMemo(() => {
-    return generateMonthData(currentYear, currentMonth);
-  }, [currentYear, currentMonth]);
+    return generateMonthData(
+      currentYear, 
+      currentMonth,
+      calendarEvents,
+      openedCards,
+      journalEntries,
+      moodHistory
+    );
+  }, [currentYear, currentMonth, calendarEvents, openedCards, journalEntries, moodHistory]);
   
   const selectedDayData = currentMonthData.find(d => d.date === selectedDate) || { 
     date: selectedDate, 
     practices: [], 
     journal: false, 
-    card: false 
+    card: false,
+    test: false,
   };
 
   // Show loading state until mounted
@@ -373,23 +531,23 @@ export default function CabinetCalendar() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-5xl mx-auto h-full flex flex-col">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="mb-8"
+        className="mb-4"
       >
-        <div className="flex items-center gap-3 mb-2">
+        <div className="flex items-center gap-3 mb-1">
           <div className="w-1 h-1 rounded-full bg-[#7a9ebb]/50" />
           <span className="text-[10px] uppercase tracking-[0.2em] text-white/30">Помощь</span>
           <div className="h-px flex-1 bg-gradient-to-r from-white/[0.06] to-transparent" />
         </div>
-        <h1 className="text-2xl md:text-3xl font-heading font-light text-white mb-2">
+        <h1 className="text-xl md:text-2xl font-heading font-light text-white mb-1">
           Календарь практик
         </h1>
-        <p className="text-white/40 text-sm">
+        <p className="text-white/40 text-xs">
           Отслеживай свой прогресс и активность
         </p>
       </motion.div>
@@ -399,21 +557,21 @@ export default function CabinetCalendar() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.1 }}
-        className="mb-6"
+        className="mb-4"
       >
         <StatsBar monthData={currentMonthData} />
       </motion.div>
 
       {/* Calendar Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="flex-1 grid grid-cols-1 xl:grid-cols-3 gap-3 min-h-0 overflow-hidden">
         {/* Calendar */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="lg:col-span-2"
+          className="xl:col-span-2 min-h-0"
         >
-          <div className="relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] overflow-hidden">
+          <div className="relative p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] overflow-hidden h-full">
             {/* Decorative elements */}
             <div className="absolute -right-16 -top-16 w-48 h-48 opacity-20 pointer-events-none">
               <svg viewBox="0 0 200 200" fill="none" className="w-full h-full">
@@ -423,7 +581,7 @@ export default function CabinetCalendar() {
             </div>
 
             {/* Month Navigation */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-3">
               <button
                 onClick={prevMonth}
                 className="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center text-white/40 hover:text-white/70 hover:bg-white/[0.06] transition-all"
@@ -488,31 +646,36 @@ export default function CabinetCalendar() {
               ))}
             </div>
 
-            {/* Legend */}
-            <div className="mt-6 pt-4 border-t border-white/[0.06]">
-              <div className="flex flex-wrap items-center justify-center gap-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-[#8fb583]" />
-                  <span className="text-[10px] text-white/40">Практика</span>
+            {/* Legend - compact */}
+            <div className="mt-3 pt-2 border-t border-white/[0.06]">
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <div className="flex items-center gap-1">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#8fb583]" />
+                  <span className="text-[9px] text-white/40">Практика</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-[#9a8fb5]" />
-                  <span className="text-[10px] text-white/40">Дневник</span>
+                <div className="flex items-center gap-1">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#9a8fb5]" />
+                  <span className="text-[9px] text-white/40">Дневник</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-[#b49b78]" />
-                  <span className="text-[10px] text-white/40">Карточка</span>
+                <div className="flex items-center gap-1">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#b49b78]" />
+                  <span className="text-[9px] text-white/40">Карточка</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#7a9ebb]" />
+                  <span className="text-[9px] text-white/40">Тест</span>
                 </div>
               </div>
             </div>
           </div>
         </motion.div>
 
-        {/* Day Detail */}
+        {/* Day Detail - hidden on smaller screens */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
+          className="hidden xl:block"
         >
           <AnimatePresence mode="wait">
             <DayDetail 

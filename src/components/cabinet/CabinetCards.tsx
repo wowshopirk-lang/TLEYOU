@@ -53,7 +53,7 @@ export default function CabinetCards() {
   const [isMounted, setIsMounted] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   
-  const { getTodayCard, isCardOpened, openTodayCard, getCardOpenDate } = useCardsStore();
+  const { getTodayCard, isCardOpened, openTodayCard, getCardOpenDate, openedCards } = useCardsStore();
   
   const todayCardData = getTodayCard();
   const today = new Date();
@@ -168,10 +168,21 @@ export default function CabinetCards() {
 
   const calendarDays = getCalendarDays();
   const selectedCardData = selectedCard ? allCards.find(c => c.id === selectedCard) : null;
-  const openedCount = useCardsStore.getState().openedCards.length;
+  
+  // Подсчитываем открытые карточки, которые видны на календаре (статус 'opened')
+  // Это гарантирует, что счетчик соответствует тому, что видно на календаре
+  const openedCount = calendarDays.reduce((count, day) => {
+    if (day.dayNum > 0 && day.date) {
+      const status = getDayStatus(day.date, day.dayNum);
+      if (status === 'opened') {
+        return count + 1;
+      }
+    }
+    return count;
+  }, 0);
 
   return (
-    <div className="h-full flex flex-col overflow-hidden">
+    <div className="h-full flex flex-col">
       {/* Compact Header */}
       <div className="flex items-center justify-between mb-3 flex-shrink-0">
         <div>
@@ -201,7 +212,7 @@ export default function CabinetCards() {
       </div>
 
       {/* Calendar */}
-      <div className="flex-1 flex flex-col bg-white/[0.02] border border-white/[0.06] rounded-2xl p-3 overflow-hidden min-h-0">
+      <div className="flex-1 flex flex-col bg-white/[0.02] border border-white/[0.06] rounded-2xl p-3 overflow-visible min-h-0">
         {/* Month Navigation */}
         <div className="flex items-center justify-between mb-2 flex-shrink-0">
           <button 

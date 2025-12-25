@@ -220,3 +220,5 @@ function getFallbackResponse(message: string, character: string): string {
   return categoryResponses[Math.floor(Math.random() * categoryResponses.length)];
 }
 
+
+

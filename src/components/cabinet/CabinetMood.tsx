@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
+import { useMoodStore, MoodKey } from "@/stores/moodStore";
 
 // Premium botanical mood icons
 const MoodIcons = {
@@ -100,21 +101,65 @@ interface MoodEntry {
   iconKey: keyof typeof MoodIcons;
 }
 
-// Last 30 days mood data (sample)
-const generateMoodData = (): MoodEntry[] => {
-  const iconKeys: (keyof typeof MoodIcons)[] = ["withering", "tender", "balanced", "calm", "radiant"];
+// Преобразование MoodKey в числовое значение для совместимости
+const moodKeyToNumber = (moodKey: MoodKey | null): number => {
+  if (!moodKey) return 3; // По умолчанию "Нормально"
+  const moodMap: Record<MoodKey, number> = {
+    tender: 2,
+    tired: 2,
+    anxious: 2,
+    confused: 2,
+    balanced: 3,
+    calm: 4,
+    peaceful: 4,
+    grateful: 4,
+    inspired: 4,
+    energetic: 5,
+    radiant: 5,
+  };
+  return moodMap[moodKey] || 3;
+};
+
+// Преобразование MoodKey в iconKey
+const moodKeyToIconKey = (moodKey: MoodKey | null): keyof typeof MoodIcons => {
+  if (!moodKey) return "balanced";
+  const iconMap: Record<MoodKey, keyof typeof MoodIcons> = {
+    tender: "tender",
+    tired: "tender",
+    anxious: "tender",
+    confused: "tender",
+    balanced: "balanced",
+    calm: "calm",
+    peaceful: "calm",
+    grateful: "calm",
+    inspired: "radiant",
+    energetic: "radiant",
+    radiant: "radiant",
+  };
+  return iconMap[moodKey] || "balanced";
+};
+
+// Генерация данных из истории настроений
+const generateMoodDataFromHistory = (moodHistory: Array<{ date: string; mood: MoodKey }>): MoodEntry[] => {
   const dayNames = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
   const data: MoodEntry[] = [];
   
+  // Генерируем данные за последние 30 дней
   for (let i = 29; i >= 0; i--) {
     const date = new Date();
     date.setDate(date.getDate() - i);
-    const mood = Math.floor(Math.random() * 5) + 1;
+    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    
+    // Ищем настроение для этой даты
+    const moodEntry = moodHistory.find(m => m.date === dateStr);
+    const mood = moodKeyToNumber(moodEntry?.mood || null);
+    const iconKey = moodKeyToIconKey(moodEntry?.mood || null);
+    
     data.push({
       date: date.toLocaleDateString("ru-RU", { day: "numeric", month: "short" }),
       dayOfWeek: dayNames[date.getDay()],
       mood,
-      iconKey: iconKeys[mood - 1],
+      iconKey,
     });
   }
   return data;
@@ -318,7 +363,8 @@ const StarIcon = () => (
 );
 
 export default function CabinetMood() {
-  const [moodData] = useState<MoodEntry[]>(generateMoodData);
+  const { moodHistory } = useMoodStore();
+  const moodData = useMemo(() => generateMoodDataFromHistory(moodHistory), [moodHistory]);
   const [view, setView] = useState<"chart" | "heatmap">("chart");
 
   // Calculate stats
