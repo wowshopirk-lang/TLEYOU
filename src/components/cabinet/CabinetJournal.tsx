@@ -169,63 +169,100 @@ const formatJournalDate = (dateString: string): string => {
   }
 };
 
-// Entry Card Component
-const EntryCard = ({ entry, delay }: { entry: JournalEntry; delay: number }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5, delay }}
-    className="relative p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.12] transition-all duration-300 group"
-  >
-    {/* Left accent line */}
-    <div
-      className="absolute left-0 top-4 bottom-4 w-0.5 rounded-full transition-all duration-300"
-      style={{ backgroundColor: `${entry.mood.color}40` }}
-    />
-
-    <div className="pl-4">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <div
-            className="w-8 h-8 rounded-full flex items-center justify-center"
-            style={{ backgroundColor: `${entry.mood.color}20` }}
-          >
-            {entry.mood.icon ? (
-              <MoodIcon icon={entry.mood.icon} className="w-4 h-4" color={entry.mood.color} />
-            ) : entry.mood.emoji ? (
-              <span className="text-sm">{entry.mood.emoji}</span>
-            ) : null}
-          </div>
-          <span className="text-sm text-white/60">{entry.mood.label}</span>
-        </div>
-        <div className="flex items-center gap-2 text-white/30">
-          <div className="w-4 h-4">
-            <CalendarIcon />
-          </div>
-          <span className="text-xs">{formatJournalDate(entry.date)}</span>
-        </div>
-      </div>
-
-      {/* Text */}
-      <p className="text-sm text-white/70 leading-relaxed mb-4">
-        {entry.text}
-      </p>
-
-      {/* Tags */}
-      <div className="flex flex-wrap gap-2">
-        {entry.tags.map((tag) => (
-          <span
-            key={tag}
-            className="px-2 py-0.5 rounded-full bg-white/[0.05] text-[10px] uppercase tracking-wider text-white/40"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-    </div>
-  </motion.div>
+// Delete Icon
+const DeleteIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+    <path d="M18 6 L6 18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M6 6 L18 18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+  </svg>
 );
+
+// Entry Card Component
+const EntryCard = ({ entry, delay, onDelete }: { entry: JournalEntry; delay: number; onDelete: (id: number) => void }) => {
+  const [showDelete, setShowDelete] = useState(false);
+  
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay }}
+      className="relative p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.12] transition-all duration-300 group"
+      onMouseEnter={() => setShowDelete(true)}
+      onMouseLeave={() => setShowDelete(false)}
+    >
+      {/* Left accent line */}
+      <div
+        className="absolute left-0 top-4 bottom-4 w-0.5 rounded-full transition-all duration-300"
+        style={{ backgroundColor: `${entry.mood.color}40` }}
+      />
+
+      {/* Delete Button */}
+      <AnimatePresence>
+        {showDelete && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.2 }}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (confirm('Удалить эту запись?')) {
+                onDelete(entry.id);
+              }
+            }}
+            className="absolute top-3 right-3 w-7 h-7 rounded-lg bg-white/[0.05] text-white/30 hover:bg-red-500/20 hover:text-red-400 flex items-center justify-center transition-all duration-200 z-10"
+          >
+            <div className="w-4 h-4">
+              <DeleteIcon />
+            </div>
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      <div className="pl-4">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-3">
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center"
+              style={{ backgroundColor: `${entry.mood.color}20` }}
+            >
+              {entry.mood.icon ? (
+                <MoodIcon icon={entry.mood.icon} className="w-4 h-4" color={entry.mood.color} />
+              ) : entry.mood.emoji ? (
+                <span className="text-sm">{entry.mood.emoji}</span>
+              ) : null}
+            </div>
+            <span className="text-sm text-white/60">{entry.mood.label}</span>
+          </div>
+          <div className="flex items-center gap-2 text-white/30">
+            <div className="w-4 h-4">
+              <CalendarIcon />
+            </div>
+            <span className="text-xs">{formatJournalDate(entry.date)}</span>
+          </div>
+        </div>
+
+        {/* Text */}
+        <p className="text-sm text-white/70 leading-relaxed mb-4">
+          {entry.text}
+        </p>
+
+        {/* Tags */}
+        <div className="flex flex-wrap gap-2">
+          {entry.tags.map((tag) => (
+            <span
+              key={tag}
+              className="px-2 py-0.5 rounded-full bg-white/[0.05] text-[10px] uppercase tracking-wider text-white/40"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+};
 
 export default function CabinetJournal() {
   const [isWriting, setIsWriting] = useState(false);
@@ -456,7 +493,12 @@ export default function CabinetJournal() {
       {/* Entries List */}
       <div className="space-y-4 flex-1 overflow-y-auto pb-4">
         {displayEntries.map((entry, index) => (
-          <EntryCard key={entry.id} entry={entry} delay={index * 0.1} />
+          <EntryCard 
+            key={entry.id} 
+            entry={entry} 
+            delay={index * 0.1}
+            onDelete={deleteEntry}
+          />
         ))}
       </div>
 

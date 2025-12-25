@@ -199,7 +199,7 @@ const tests: Test[] = [
   },
 ];
 
-// Sample questions for stress test
+// Questions for stress test (Уровень стресса)
 const stressQuestions: Question[] = [
   {
     id: 1,
@@ -256,7 +256,748 @@ const stressQuestions: Question[] = [
       { text: "Никогда", value: 4 },
     ],
   },
+  {
+    id: 6,
+    text: "Как часто ты испытываешь физическое напряжение?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Очень часто", value: 4 },
+    ],
+  },
+  {
+    id: 7,
+    text: "Как часто ты чувствуешь усталость без видимой причины?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Очень часто", value: 4 },
+    ],
+  },
+  {
+    id: 8,
+    text: "Как часто у тебя возникают проблемы со сном из-за переживаний?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Очень часто", value: 4 },
+    ],
+  },
+  {
+    id: 9,
+    text: "Как часто ты чувствуешь, что у тебя нет времени на отдых?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Очень часто", value: 4 },
+    ],
+  },
+  {
+    id: 10,
+    text: "Как часто ты чувствуешь, что не можешь расслабиться?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Очень часто", value: 4 },
+    ],
+  },
 ];
+
+// Questions for emotional intelligence test (Эмоциональный интеллект)
+const emotionsQuestions: Question[] = [
+  {
+    id: 1,
+    text: "Насколько хорошо ты понимаешь свои эмоции в момент их возникновения?",
+    options: [
+      { text: "Очень плохо", value: 0 },
+      { text: "Плохо", value: 1 },
+      { text: "Средне", value: 2 },
+      { text: "Хорошо", value: 3 },
+      { text: "Очень хорошо", value: 4 },
+    ],
+  },
+  {
+    id: 2,
+    text: "Как часто ты можешь назвать конкретную эмоцию, которую испытываешь?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Всегда", value: 4 },
+    ],
+  },
+  {
+    id: 3,
+    text: "Насколько хорошо ты понимаешь эмоции других людей?",
+    options: [
+      { text: "Очень плохо", value: 0 },
+      { text: "Плохо", value: 1 },
+      { text: "Средне", value: 2 },
+      { text: "Хорошо", value: 3 },
+      { text: "Очень хорошо", value: 4 },
+    ],
+  },
+  {
+    id: 4,
+    text: "Как часто ты можешь предсказать, как твои действия повлияют на эмоции других?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Всегда", value: 4 },
+    ],
+  },
+  {
+    id: 5,
+    text: "Насколько хорошо ты управляешь своими эмоциями в стрессовых ситуациях?",
+    options: [
+      { text: "Очень плохо", value: 0 },
+      { text: "Плохо", value: 1 },
+      { text: "Средне", value: 2 },
+      { text: "Хорошо", value: 3 },
+      { text: "Очень хорошо", value: 4 },
+    ],
+  },
+  {
+    id: 6,
+    text: "Как часто ты используешь эмоции для принятия решений?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Всегда", value: 4 },
+    ],
+  },
+  {
+    id: 7,
+    text: "Насколько легко тебе выразить свои чувства словами?",
+    options: [
+      { text: "Очень сложно", value: 0 },
+      { text: "Сложно", value: 1 },
+      { text: "Средне", value: 2 },
+      { text: "Легко", value: 3 },
+      { text: "Очень легко", value: 4 },
+    ],
+  },
+  {
+    id: 8,
+    text: "Как часто ты замечаешь изменения в настроении других людей?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Всегда", value: 4 },
+    ],
+  },
+  {
+    id: 9,
+    text: "Насколько хорошо ты понимаешь связь между мыслями и эмоциями?",
+    options: [
+      { text: "Очень плохо", value: 0 },
+      { text: "Плохо", value: 1 },
+      { text: "Средне", value: 2 },
+      { text: "Хорошо", value: 3 },
+      { text: "Очень хорошо", value: 4 },
+    ],
+  },
+  {
+    id: 10,
+    text: "Как часто ты можешь успокоить себя, когда расстроена?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Всегда", value: 4 },
+    ],
+  },
+  {
+    id: 11,
+    text: "Насколько хорошо ты понимаешь, почему ты испытываешь ту или иную эмоцию?",
+    options: [
+      { text: "Очень плохо", value: 0 },
+      { text: "Плохо", value: 1 },
+      { text: "Средне", value: 2 },
+      { text: "Хорошо", value: 3 },
+      { text: "Очень хорошо", value: 4 },
+    ],
+  },
+  {
+    id: 12,
+    text: "Как часто ты можешь помочь другим справиться с их эмоциями?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Всегда", value: 4 },
+    ],
+  },
+  {
+    id: 13,
+    text: "Насколько хорошо ты контролируешь свои импульсивные реакции?",
+    options: [
+      { text: "Очень плохо", value: 0 },
+      { text: "Плохо", value: 1 },
+      { text: "Средне", value: 2 },
+      { text: "Хорошо", value: 3 },
+      { text: "Очень хорошо", value: 4 },
+    ],
+  },
+  {
+    id: 14,
+    text: "Как часто ты используешь эмпатию в общении с другими?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Всегда", value: 4 },
+    ],
+  },
+  {
+    id: 15,
+    text: "Насколько хорошо ты понимаешь невербальные сигналы других людей?",
+    options: [
+      { text: "Очень плохо", value: 0 },
+      { text: "Плохо", value: 1 },
+      { text: "Средне", value: 2 },
+      { text: "Хорошо", value: 3 },
+      { text: "Очень хорошо", value: 4 },
+    ],
+  },
+  {
+    id: 16,
+    text: "Как часто ты можешь изменить своё настроение, когда это необходимо?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Всегда", value: 4 },
+    ],
+  },
+  {
+    id: 17,
+    text: "Насколько хорошо ты понимаешь влияние эмоций на твоё поведение?",
+    options: [
+      { text: "Очень плохо", value: 0 },
+      { text: "Плохо", value: 1 },
+      { text: "Средне", value: 2 },
+      { text: "Хорошо", value: 3 },
+      { text: "Очень хорошо", value: 4 },
+    ],
+  },
+  {
+    id: 18,
+    text: "Как часто ты можешь найти баланс между логикой и эмоциями?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Всегда", value: 4 },
+    ],
+  },
+  {
+    id: 19,
+    text: "Насколько хорошо ты понимаешь свои эмоциональные потребности?",
+    options: [
+      { text: "Очень плохо", value: 0 },
+      { text: "Плохо", value: 1 },
+      { text: "Средне", value: 2 },
+      { text: "Хорошо", value: 3 },
+      { text: "Очень хорошо", value: 4 },
+    ],
+  },
+  {
+    id: 20,
+    text: "Как часто ты можешь использовать эмоции для мотивации себя?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Всегда", value: 4 },
+    ],
+  },
+];
+
+// Questions for life balance test (Баланс жизни)
+const balanceQuestions: Question[] = [
+  {
+    id: 1,
+    text: "Насколько ты удовлетворена своей работой или учёбой?",
+    options: [
+      { text: "Совсем не удовлетворена", value: 0 },
+      { text: "Слабо удовлетворена", value: 1 },
+      { text: "Удовлетворена", value: 2 },
+      { text: "Хорошо удовлетворена", value: 3 },
+      { text: "Полностью удовлетворена", value: 4 },
+    ],
+  },
+  {
+    id: 2,
+    text: "Как часто ты находишь время для отдыха и восстановления?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Всегда", value: 4 },
+    ],
+  },
+  {
+    id: 3,
+    text: "Насколько хорошо ты заботишься о своём физическом здоровье?",
+    options: [
+      { text: "Очень плохо", value: 0 },
+      { text: "Плохо", value: 1 },
+      { text: "Средне", value: 2 },
+      { text: "Хорошо", value: 3 },
+      { text: "Отлично", value: 4 },
+    ],
+  },
+  {
+    id: 4,
+    text: "Как часто ты проводишь время с близкими людьми?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Очень часто", value: 4 },
+    ],
+  },
+  {
+    id: 5,
+    text: "Насколько ты удовлетворена своими отношениями?",
+    options: [
+      { text: "Совсем не удовлетворена", value: 0 },
+      { text: "Слабо удовлетворена", value: 1 },
+      { text: "Удовлетворена", value: 2 },
+      { text: "Хорошо удовлетворена", value: 3 },
+      { text: "Полностью удовлетворена", value: 4 },
+    ],
+  },
+  {
+    id: 6,
+    text: "Как часто ты занимаешься хобби или творчеством?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Очень часто", value: 4 },
+    ],
+  },
+  {
+    id: 7,
+    text: "Насколько хорошо ты управляешь своим временем?",
+    options: [
+      { text: "Очень плохо", value: 0 },
+      { text: "Плохо", value: 1 },
+      { text: "Средне", value: 2 },
+      { text: "Хорошо", value: 3 },
+      { text: "Отлично", value: 4 },
+    ],
+  },
+  {
+    id: 8,
+    text: "Как часто ты чувствуешь, что у тебя есть время для себя?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Всегда", value: 4 },
+    ],
+  },
+  {
+    id: 9,
+    text: "Насколько ты удовлетворена своим финансовым положением?",
+    options: [
+      { text: "Совсем не удовлетворена", value: 0 },
+      { text: "Слабо удовлетворена", value: 1 },
+      { text: "Удовлетворена", value: 2 },
+      { text: "Хорошо удовлетворена", value: 3 },
+      { text: "Полностью удовлетворена", value: 4 },
+    ],
+  },
+  {
+    id: 10,
+    text: "Как часто ты чувствуешь, что успеваешь сделать всё необходимое?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Всегда", value: 4 },
+    ],
+  },
+  {
+    id: 11,
+    text: "Насколько хорошо ты заботишься о своём ментальном здоровье?",
+    options: [
+      { text: "Очень плохо", value: 0 },
+      { text: "Плохо", value: 1 },
+      { text: "Средне", value: 2 },
+      { text: "Хорошо", value: 3 },
+      { text: "Отлично", value: 4 },
+    ],
+  },
+  {
+    id: 12,
+    text: "Как часто ты чувствуешь баланс между разными сферами жизни?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Всегда", value: 4 },
+    ],
+  },
+  {
+    id: 13,
+    text: "Насколько ты удовлетворена своим личностным ростом?",
+    options: [
+      { text: "Совсем не удовлетворена", value: 0 },
+      { text: "Слабо удовлетворена", value: 1 },
+      { text: "Удовлетворена", value: 2 },
+      { text: "Хорошо удовлетворена", value: 3 },
+      { text: "Полностью удовлетворена", value: 4 },
+    ],
+  },
+  {
+    id: 14,
+    text: "Как часто ты чувствуешь, что живёшь в соответствии со своими ценностями?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Всегда", value: 4 },
+    ],
+  },
+  {
+    id: 15,
+    text: "Насколько хорошо ты устанавливаешь границы в отношениях?",
+    options: [
+      { text: "Очень плохо", value: 0 },
+      { text: "Плохо", value: 1 },
+      { text: "Средне", value: 2 },
+      { text: "Хорошо", value: 3 },
+      { text: "Отлично", value: 4 },
+    ],
+  },
+];
+
+// Questions for anxiety test (GAD-7) (Уровень тревожности)
+const anxietyQuestions: Question[] = [
+  {
+    id: 1,
+    text: "За последние 2 недели, как часто тебя беспокоило чувство нервозности, тревоги или напряжения?",
+    options: [
+      { text: "Совсем не беспокоило", value: 0 },
+      { text: "Несколько дней", value: 1 },
+      { text: "Больше половины дней", value: 2 },
+      { text: "Почти каждый день", value: 3 },
+    ],
+  },
+  {
+    id: 2,
+    text: "За последние 2 недели, как часто ты не могла остановить или контролировать беспокойство?",
+    options: [
+      { text: "Совсем не беспокоило", value: 0 },
+      { text: "Несколько дней", value: 1 },
+      { text: "Больше половины дней", value: 2 },
+      { text: "Почти каждый день", value: 3 },
+    ],
+  },
+  {
+    id: 3,
+    text: "За последние 2 недели, как часто тебя беспокоило чрезмерное беспокойство о разных вещах?",
+    options: [
+      { text: "Совсем не беспокоило", value: 0 },
+      { text: "Несколько дней", value: 1 },
+      { text: "Больше половины дней", value: 2 },
+      { text: "Почти каждый день", value: 3 },
+    ],
+  },
+  {
+    id: 4,
+    text: "За последние 2 недели, как часто тебе было трудно расслабиться?",
+    options: [
+      { text: "Совсем не беспокоило", value: 0 },
+      { text: "Несколько дней", value: 1 },
+      { text: "Больше половины дней", value: 2 },
+      { text: "Почти каждый день", value: 3 },
+    ],
+  },
+  {
+    id: 5,
+    text: "За последние 2 недели, как часто ты чувствовала такое беспокойство, что было трудно сидеть спокойно?",
+    options: [
+      { text: "Совсем не беспокоило", value: 0 },
+      { text: "Несколько дней", value: 1 },
+      { text: "Больше половины дней", value: 2 },
+      { text: "Почти каждый день", value: 3 },
+    ],
+  },
+  {
+    id: 6,
+    text: "За последние 2 недели, как часто тебя раздражало или беспокоило то, что обычно тебя не беспокоит?",
+    options: [
+      { text: "Совсем не беспокоило", value: 0 },
+      { text: "Несколько дней", value: 1 },
+      { text: "Больше половины дней", value: 2 },
+      { text: "Почти каждый день", value: 3 },
+    ],
+  },
+  {
+    id: 7,
+    text: "За последние 2 недели, как часто ты чувствовала страх, как будто должно произойти что-то ужасное?",
+    options: [
+      { text: "Совсем не беспокоило", value: 0 },
+      { text: "Несколько дней", value: 1 },
+      { text: "Больше половины дней", value: 2 },
+      { text: "Почти каждый день", value: 3 },
+    ],
+  },
+];
+
+// Questions for self-esteem test (Самооценка)
+const selfesteemQuestions: Question[] = [
+  {
+    id: 1,
+    text: "Насколько ты довольна собой в целом?",
+    options: [
+      { text: "Совсем не довольна", value: 0 },
+      { text: "Слабо довольна", value: 1 },
+      { text: "Довольна", value: 2 },
+      { text: "Хорошо довольна", value: 3 },
+      { text: "Полностью довольна", value: 4 },
+    ],
+  },
+  {
+    id: 2,
+    text: "Как часто ты чувствуешь, что у тебя есть хорошие качества?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Всегда", value: 4 },
+    ],
+  },
+  {
+    id: 3,
+    text: "Насколько ты уверена в своих способностях?",
+    options: [
+      { text: "Совсем не уверена", value: 0 },
+      { text: "Слабо уверена", value: 1 },
+      { text: "Уверена", value: 2 },
+      { text: "Хорошо уверена", value: 3 },
+      { text: "Полностью уверена", value: 4 },
+    ],
+  },
+  {
+    id: 4,
+    text: "Как часто ты сравниваешь себя с другими в негативном ключе?",
+    options: [
+      { text: "Всегда", value: 4 },
+      { text: "Часто", value: 3 },
+      { text: "Иногда", value: 2 },
+      { text: "Редко", value: 1 },
+      { text: "Никогда", value: 0 },
+    ],
+  },
+  {
+    id: 5,
+    text: "Насколько хорошо ты принимаешь комплименты?",
+    options: [
+      { text: "Очень плохо", value: 0 },
+      { text: "Плохо", value: 1 },
+      { text: "Средне", value: 2 },
+      { text: "Хорошо", value: 3 },
+      { text: "Отлично", value: 4 },
+    ],
+  },
+  {
+    id: 6,
+    text: "Как часто ты чувствуешь себя достойной любви и уважения?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Всегда", value: 4 },
+    ],
+  },
+  {
+    id: 7,
+    text: "Насколько ты уверена в своём внешнем виде?",
+    options: [
+      { text: "Совсем не уверена", value: 0 },
+      { text: "Слабо уверена", value: 1 },
+      { text: "Уверена", value: 2 },
+      { text: "Хорошо уверена", value: 3 },
+      { text: "Полностью уверена", value: 4 },
+    ],
+  },
+  {
+    id: 8,
+    text: "Как часто ты критикуешь себя за ошибки?",
+    options: [
+      { text: "Всегда", value: 4 },
+      { text: "Часто", value: 3 },
+      { text: "Иногда", value: 2 },
+      { text: "Редко", value: 1 },
+      { text: "Никогда", value: 0 },
+    ],
+  },
+  {
+    id: 9,
+    text: "Насколько хорошо ты заботишься о себе?",
+    options: [
+      { text: "Очень плохо", value: 0 },
+      { text: "Плохо", value: 1 },
+      { text: "Средне", value: 2 },
+      { text: "Хорошо", value: 3 },
+      { text: "Отлично", value: 4 },
+    ],
+  },
+  {
+    id: 10,
+    text: "Как часто ты чувствуешь, что заслуживаешь хорошего в жизни?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Всегда", value: 4 },
+    ],
+  },
+];
+
+// Questions for sleep quality test (Качество сна)
+const sleepQuestions: Question[] = [
+  {
+    id: 1,
+    text: "Как часто у тебя возникают проблемы с засыпанием?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Очень часто", value: 4 },
+    ],
+  },
+  {
+    id: 2,
+    text: "Как часто ты просыпаешься ночью?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Очень часто", value: 4 },
+    ],
+  },
+  {
+    id: 3,
+    text: "Насколько хорошо ты высыпаешься?",
+    options: [
+      { text: "Очень плохо", value: 0 },
+      { text: "Плохо", value: 1 },
+      { text: "Средне", value: 2 },
+      { text: "Хорошо", value: 3 },
+      { text: "Отлично", value: 4 },
+    ],
+  },
+  {
+    id: 4,
+    text: "Как часто ты чувствуешь усталость после пробуждения?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Очень часто", value: 4 },
+    ],
+  },
+  {
+    id: 5,
+    text: "Насколько регулярен твой режим сна?",
+    options: [
+      { text: "Очень нерегулярен", value: 0 },
+      { text: "Нерегулярен", value: 1 },
+      { text: "Средне регулярен", value: 2 },
+      { text: "Регулярен", value: 3 },
+      { text: "Очень регулярен", value: 4 },
+    ],
+  },
+  {
+    id: 6,
+    text: "Как часто ты используешь гаджеты перед сном?",
+    options: [
+      { text: "Всегда", value: 4 },
+      { text: "Часто", value: 3 },
+      { text: "Иногда", value: 2 },
+      { text: "Редко", value: 1 },
+      { text: "Никогда", value: 0 },
+    ],
+  },
+  {
+    id: 7,
+    text: "Насколько хорошо твоя спальня подходит для сна?",
+    options: [
+      { text: "Очень плохо", value: 0 },
+      { text: "Плохо", value: 1 },
+      { text: "Средне", value: 2 },
+      { text: "Хорошо", value: 3 },
+      { text: "Отлично", value: 4 },
+    ],
+  },
+  {
+    id: 8,
+    text: "Как часто ты чувствуешь, что сон восстанавливает твои силы?",
+    options: [
+      { text: "Никогда", value: 0 },
+      { text: "Редко", value: 1 },
+      { text: "Иногда", value: 2 },
+      { text: "Часто", value: 3 },
+      { text: "Всегда", value: 4 },
+    ],
+  },
+];
+
+// Function to get questions for a specific test
+const getQuestionsForTest = (testId: number): Question[] => {
+  switch (testId) {
+    case 1: return stressQuestions;
+    case 2: return emotionsQuestions;
+    case 3: return balanceQuestions;
+    case 4: return anxietyQuestions;
+    case 5: return selfesteemQuestions;
+    case 6: return sleepQuestions;
+    default: return stressQuestions;
+  }
+};
 
 // Test Card Component
 const TestCard = ({ test, onClick }: { test: Test; onClick: () => void }) => {
@@ -410,10 +1151,13 @@ export default function CabinetTests() {
   };
 
   const handleAnswer = (value: number) => {
+    if (!selectedTest) return;
+    
     const newAnswers = [...answers, value];
     setAnswers(newAnswers);
+    const questions = getQuestionsForTest(selectedTest.id);
 
-    if (currentQuestion < stressQuestions.length - 1) {
+    if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
       setShowResult(true);
@@ -421,14 +1165,51 @@ export default function CabinetTests() {
   };
 
   const getResult = () => {
+    if (!selectedTest) return { level: "", text: "", color: "", score: 0, maxScore: 0 };
+    
+    const questions = getQuestionsForTest(selectedTest.id);
     const total = answers.reduce((sum, a) => sum + a, 0);
-    const maxScore = stressQuestions.length * 4;
+    const maxScore = questions.length * 4;
     const percentage = (total / maxScore) * 100;
 
-    if (percentage <= 25) return { level: "Низкий", text: "У тебя низкий уровень стресса. Продолжай заботиться о себе!", color: "#8fb583", score: total, maxScore };
-    if (percentage <= 50) return { level: "Умеренный", text: "Уровень стресса умеренный. Обрати внимание на практики релаксации.", color: "#b49b78", score: total, maxScore };
-    if (percentage <= 75) return { level: "Повышенный", text: "Стресс повышен. Рекомендуем больше времени уделять отдыху и практикам.", color: "#9a8fb5", score: total, maxScore };
-    return { level: "Высокий", text: "Уровень стресса высокий. Важно обратить внимание на своё состояние.", color: "#b58f8f", score: total, maxScore };
+    // Different result logic for different tests
+    switch (selectedTest.id) {
+      case 1: // Stress
+        if (percentage <= 25) return { level: "Низкий", text: "У тебя низкий уровень стресса. Продолжай заботиться о себе!", color: "#8fb583", score: total, maxScore };
+        if (percentage <= 50) return { level: "Умеренный", text: "Уровень стресса умеренный. Обрати внимание на практики релаксации.", color: "#b49b78", score: total, maxScore };
+        if (percentage <= 75) return { level: "Повышенный", text: "Стресс повышен. Рекомендуем больше времени уделять отдыху и практикам.", color: "#9a8fb5", score: total, maxScore };
+        return { level: "Высокий", text: "Уровень стресса высокий. Важно обратить внимание на своё состояние.", color: "#b58f8f", score: total, maxScore };
+      
+      case 2: // Emotional Intelligence
+        if (percentage >= 75) return { level: "Высокий", text: "У тебя высокий эмоциональный интеллект! Ты хорошо понимаешь и управляешь эмоциями.", color: "#8fb583", score: total, maxScore };
+        if (percentage >= 50) return { level: "Средний", text: "Твой эмоциональный интеллект на среднем уровне. Есть куда расти!", color: "#9a8fb5", score: total, maxScore };
+        return { level: "Низкий", text: "Эмоциональный интеллект можно развить. Практикуй осознанность и эмпатию.", color: "#b58f8f", score: total, maxScore };
+      
+      case 3: // Life Balance
+        if (percentage >= 75) return { level: "Сбалансированная", text: "У тебя отличный баланс в жизни! Продолжай поддерживать равновесие.", color: "#8fb583", score: total, maxScore };
+        if (percentage >= 50) return { level: "Частично сбалансированная", text: "Есть некоторые дисбалансы. Обрати внимание на области, которым нужно больше внимания.", color: "#b49b78", score: total, maxScore };
+        return { level: "Дисбаланс", text: "В твоей жизни есть значительные дисбалансы. Важно пересмотреть приоритеты.", color: "#b58f8f", score: total, maxScore };
+      
+      case 4: // Anxiety (GAD-7)
+        if (total <= 4) return { level: "Минимальная", text: "У тебя минимальный уровень тревожности. Продолжай заботиться о себе!", color: "#8fb583", score: total, maxScore };
+        if (total <= 9) return { level: "Лёгкая", text: "Лёгкий уровень тревожности. Обрати внимание на практики релаксации.", color: "#b49b78", score: total, maxScore };
+        if (total <= 14) return { level: "Умеренная", text: "Умеренная тревожность. Рекомендуем больше времени уделять саморегуляции.", color: "#9a8fb5", score: total, maxScore };
+        return { level: "Высокая", text: "Высокий уровень тревожности. Важно обратиться за поддержкой.", color: "#b58f8f", score: total, maxScore };
+      
+      case 5: // Self-esteem
+        if (percentage >= 75) return { level: "Высокая", text: "У тебя здоровая самооценка! Ты ценишь себя и свои качества.", color: "#8fb583", score: total, maxScore };
+        if (percentage >= 50) return { level: "Средняя", text: "Твоя самооценка на среднем уровне. Работай над принятием себя.", color: "#b49b78", score: total, maxScore };
+        return { level: "Низкая", text: "Самооценка нуждается в поддержке. Практикуй самосострадание и заботу о себе.", color: "#b58f8f", score: total, maxScore };
+      
+      case 6: // Sleep
+        if (percentage <= 25) return { level: "Отличное", text: "У тебя отличное качество сна! Продолжай поддерживать здоровый режим.", color: "#8fb583", score: total, maxScore };
+        if (percentage <= 50) return { level: "Хорошее", text: "Качество сна хорошее, но есть что улучшить. Обрати внимание на режим.", color: "#5f7a9e", score: total, maxScore };
+        if (percentage <= 75) return { level: "Среднее", text: "Качество сна среднее. Рекомендуем улучшить гигиену сна.", color: "#b49b78", score: total, maxScore };
+        return { level: "Плохое", text: "Качество сна нуждается в улучшении. Важно обратиться к специалисту.", color: "#b58f8f", score: total, maxScore };
+      
+      default:
+        return { level: "Неизвестно", text: "", color: "#8fb583", score: total, maxScore };
+    }
   };
 
   const handleCompleteTest = () => {
@@ -686,56 +1467,63 @@ export default function CabinetTests() {
               {!showResult ? (
                 <>
                   {/* Test Header */}
-                  <div className="mb-5">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-8 h-8" style={{ color: selectedTest.color }}>
-                        {TestIcons[selectedTest.icon](selectedTest.color, "w-full h-full")}
-                      </div>
-                      <span className="text-xs uppercase tracking-wider" style={{ color: selectedTest.color }}>
-                        {selectedTest.title}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 h-1 bg-white/[0.05] rounded-full overflow-hidden">
-                        <motion.div
-                          className="h-full rounded-full"
-                          style={{ backgroundColor: selectedTest.color }}
-                          initial={{ width: 0 }}
-                          animate={{ width: `${((currentQuestion + 1) / stressQuestions.length) * 100}%` }}
-                        />
-                      </div>
-                      <span className="text-xs text-white/40">
-                        {currentQuestion + 1}/{stressQuestions.length}
-                      </span>
-                    </div>
-                    {!canTakeTest(String(selectedTest.id)) && (
-                      <div className="mt-2 text-xs text-white/40">
-                        Попытка {getResultsByTest(String(selectedTest.id)).length + 1} из 2 на этой неделе
-                      </div>
-                    )}
-                  </div>
+                  {(() => {
+                    const questions = getQuestionsForTest(selectedTest.id);
+                    return (
+                      <>
+                        <div className="mb-5">
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className="w-8 h-8" style={{ color: selectedTest.color }}>
+                              {TestIcons[selectedTest.icon](selectedTest.color, "w-full h-full")}
+                            </div>
+                            <span className="text-xs uppercase tracking-wider" style={{ color: selectedTest.color }}>
+                              {selectedTest.title}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 h-1 bg-white/[0.05] rounded-full overflow-hidden">
+                              <motion.div
+                                className="h-full rounded-full"
+                                style={{ backgroundColor: selectedTest.color }}
+                                initial={{ width: 0 }}
+                                animate={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
+                              />
+                            </div>
+                            <span className="text-xs text-white/40">
+                              {currentQuestion + 1}/{questions.length}
+                            </span>
+                          </div>
+                          {!canTakeTest(String(selectedTest.id)) && (
+                            <div className="mt-2 text-xs text-white/40">
+                              Попытка {getResultsByTest(String(selectedTest.id)).length + 1} из 2 на этой неделе
+                            </div>
+                          )}
+                        </div>
 
-                  {/* Question */}
-                  <div className="mb-5">
-                    <p className="text-base font-heading font-light text-white/90 leading-relaxed">
-                      {stressQuestions[currentQuestion].text}
-                    </p>
-                  </div>
+                        {/* Question */}
+                        <div className="mb-5">
+                          <p className="text-base font-heading font-light text-white/90 leading-relaxed">
+                            {questions[currentQuestion].text}
+                          </p>
+                        </div>
 
-                  {/* Options */}
-                  <div className="space-y-2">
-                    {stressQuestions[currentQuestion].options.map((option, index) => (
-                      <motion.button
-                        key={index}
-                        onClick={() => handleAnswer(option.value)}
-                        className="w-full p-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-left text-white/70 hover:bg-white/[0.06] hover:border-white/[0.15] transition-all text-sm"
-                        whileHover={{ x: 4 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        {option.text}
-                      </motion.button>
-                    ))}
-                  </div>
+                        {/* Options */}
+                        <div className="space-y-2">
+                          {questions[currentQuestion].options.map((option, index) => (
+                            <motion.button
+                              key={index}
+                              onClick={() => handleAnswer(option.value)}
+                              className="w-full p-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-left text-white/70 hover:bg-white/[0.06] hover:border-white/[0.15] transition-all text-sm"
+                              whileHover={{ x: 4 }}
+                              whileTap={{ scale: 0.98 }}
+                            >
+                              {option.text}
+                            </motion.button>
+                          ))}
+                        </div>
+                      </>
+                    );
+                  })()}
                 </>
               ) : (
                 <>
@@ -750,7 +1538,7 @@ export default function CabinetTests() {
                       </div>
                     </div>
                     <h3 className="text-lg font-heading text-white/90 mb-2">
-                      Уровень стресса: <span style={{ color: getResult().color }}>{getResult().level}</span>
+                      {selectedTest.title}: <span style={{ color: getResult().color }}>{getResult().level}</span>
                     </h3>
                     <p className="text-sm text-white/50 mb-5">
                       {getResult().text}

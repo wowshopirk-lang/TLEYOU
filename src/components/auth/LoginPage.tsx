@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useUserStore } from "@/stores/userStore";
 
 // Icons
 const ArrowIcon = () => (
@@ -36,17 +37,18 @@ export default function LoginPage() {
     setIsLoading(true);
     await new Promise((resolve) => setTimeout(resolve, 1000));
     
-    // Get or create user data from localStorage
-    // In real app, this would come from API
-    let userData = localStorage.getItem('user');
-    if (!userData) {
-      // If no user data exists, create from email
+    // Check if user already exists in store
+    const existingName = useUserStore.getState().name;
+    const existingEmail = useUserStore.getState().email;
+    
+    // If no user data exists, create from email
+    if (!existingName && !existingEmail) {
       const name = formData.email.split('@')[0];
-      userData = JSON.stringify({
-        name: name.charAt(0).toUpperCase() + name.slice(1),
-        email: formData.email,
-      });
-      localStorage.setItem('user', userData);
+      const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
+      useUserStore.getState().setProfile(capitalizedName, formData.email);
+    } else if (existingEmail !== formData.email) {
+      // Update email if user logs in with different email
+      useUserStore.getState().updateEmail(formData.email);
     }
     
     localStorage.setItem('token', 'mock-token-' + Date.now());

@@ -53,8 +53,8 @@ const PracticeCard = ({
   practice: Practice; 
   delay: number;
 }) => {
-  const { isFavorite, addToFavorites, removeFromFavorites, isPracticeCompletedFully } = usePracticesStore();
-  const isFav = isFavorite(practice.id);
+  const { addToFavorites, removeFromFavorites, isPracticeCompletedFully, favoritePractices } = usePracticesStore();
+  const isFav = favoritePractices.includes(practice.id);
   const isCompleted = isPracticeCompletedFully(practice.id);
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
@@ -182,7 +182,7 @@ const PracticeCard = ({
 export default function CabinetPractices() {
   const [activeTab, setActiveTab] = useState<TabType>("all");
   
-  const { getFavoritePractices, getCompletedPractices, isFavorite, isPracticeCompletedFully } = usePracticesStore();
+  const { getFavoritePractices, getCompletedPractices, isPracticeCompletedFully } = usePracticesStore();
   
   // Get practices - 7 weekly practices for "all" tab, all practices for other tabs
   const weeklyPractices = getWeeklyPractices();

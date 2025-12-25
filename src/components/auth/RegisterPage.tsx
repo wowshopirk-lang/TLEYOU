@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useUserStore } from "@/stores/userStore";
 
 // Icons
 const ArrowIcon = () => (
@@ -49,12 +50,15 @@ export default function RegisterPage() {
     setIsLoading(true);
     await new Promise((resolve) => setTimeout(resolve, 1000));
     
-    // Save user data to localStorage
-    const userData = {
-      name: formData.name,
-      email: formData.email,
-    };
-    localStorage.setItem('user', JSON.stringify(userData));
+    // Save user data to Zustand store (persisted to localStorage)
+    useUserStore.getState().setProfile(formData.name, formData.email);
+    
+    // Set subscription start date
+    const today = new Date();
+    const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    useUserStore.getState().setSubscriptionStartDate(dateStr);
+    
+    // Also save for backward compatibility
     localStorage.setItem('token', 'mock-token-' + Date.now());
     localStorage.setItem('auth', 'true');
     

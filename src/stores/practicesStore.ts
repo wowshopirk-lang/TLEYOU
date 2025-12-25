@@ -36,6 +36,18 @@ interface PracticesState {
   removeFromFavorites: (practiceId: string) => void;
   isFavorite: (practiceId: string) => boolean;
   getFavoritePractices: () => string[];
+  
+  // Аналитика времени практик
+  getTimeOfDayStats: () => {
+    morning: number;   // 6-12
+    afternoon: number; // 12-18
+    evening: number;   // 18-22
+    night: number;     // 22-6
+    total: number;
+    mostActiveTime: string;
+    mostActiveHour: number;
+    hourlyData: number[];
+  };
 }
 
 // Получить дату в формате YYYY-MM-DD
@@ -151,6 +163,61 @@ export const usePracticesStore = create<PracticesState>()(
 
       getFavoritePractices: () => {
         return get().favoritePractices;
+      },
+
+      getTimeOfDayStats: () => {
+        const practices = get().completedPractices;
+        
+        // Initialize counters
+        let morning = 0;   // 6-12
+        let afternoon = 0; // 12-18
+        let evening = 0;   // 18-22
+        let night = 0;     // 22-6
+        const hourlyData = new Array(24).fill(0);
+        
+        practices.forEach((p) => {
+          const date = new Date(p.timestamp);
+          const hour = date.getHours();
+          
+          hourlyData[hour]++;
+          
+          if (hour >= 6 && hour < 12) {
+            morning++;
+          } else if (hour >= 12 && hour < 18) {
+            afternoon++;
+          } else if (hour >= 18 && hour < 22) {
+            evening++;
+          } else {
+            night++;
+          }
+        });
+        
+        const total = practices.length;
+        const counts = { morning, afternoon, evening, night };
+        const maxCount = Math.max(morning, afternoon, evening, night);
+        
+        let mostActiveTime = "Нет данных";
+        if (total > 0) {
+          if (maxCount === morning) mostActiveTime = "Утро (6:00–12:00)";
+          else if (maxCount === afternoon) mostActiveTime = "День (12:00–18:00)";
+          else if (maxCount === evening) mostActiveTime = "Вечер (18:00–22:00)";
+          else mostActiveTime = "Ночь (22:00–6:00)";
+        }
+        
+        // Find most active hour
+        const maxHourCount = Math.max(...hourlyData);
+        const mostActiveHour = hourlyData.indexOf(maxHourCount);
+        
+        return {
+          morning,
+          afternoon,
+          evening,
+          night,
+          total,
+          mostActiveTime,
+          mostActiveHour,
+          hourlyData,
+        };
       },
     }),
     {

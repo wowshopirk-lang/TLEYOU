@@ -1,569 +1,454 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useMoodStore, MoodKey } from "@/stores/moodStore";
+import { usePracticesStore } from "@/stores/practicesStore";
 
-// Premium botanical mood icons
-const MoodIcons = {
-  // Withering - feeling terrible
-  withering: (color: string, size: string = "w-full h-full") => (
-    <svg viewBox="0 0 32 32" fill="none" className={size}>
-      {/* Fallen, wilted leaf */}
-      <path 
-        d="M8 10 Q16 8, 24 14 Q26 20, 22 24 Q18 26, 12 24 Q8 22, 8 16 Q8 12, 8 10" 
-        stroke={color} 
-        strokeWidth="1" 
-        fill={`${color}15`}
-        opacity="0.7"
-      />
-      {/* Broken stem */}
-      <path d="M8 10 L6 6" stroke={color} strokeWidth="1" strokeLinecap="round" opacity="0.5" />
-      {/* Decay marks */}
-      <circle cx="14" cy="16" r="1" fill={color} opacity="0.3" />
-      <circle cx="18" cy="20" r="0.75" fill={color} opacity="0.25" />
-    </svg>
-  ),
-  // Tender/drooping - feeling low
-  tender: (color: string, size: string = "w-full h-full") => (
-    <svg viewBox="0 0 32 32" fill="none" className={size}>
-      {/* Delicate drooping leaf */}
-      <path 
-        d="M16 6 Q22 10, 22 16 Q22 22, 16 26 Q10 22, 10 16 Q10 10, 16 6" 
-        stroke={color} 
-        strokeWidth="1" 
-        fill={`${color}15`}
-        opacity="0.8"
-      />
-      {/* Leaf vein */}
-      <path d="M16 8 L16 24" stroke={color} strokeWidth="0.75" opacity="0.5" />
-      <path d="M16 12 Q12 14, 11 16" stroke={color} strokeWidth="0.5" strokeLinecap="round" opacity="0.4" />
-      <path d="M16 12 Q20 14, 21 16" stroke={color} strokeWidth="0.5" strokeLinecap="round" opacity="0.4" />
-      {/* Dew drop - tear */}
-      <circle cx="13" cy="19" r="1.25" fill={color} opacity="0.5" />
-    </svg>
-  ),
-  // Balanced - feeling neutral
-  balanced: (color: string, size: string = "w-full h-full") => (
-    <svg viewBox="0 0 32 32" fill="none" className={size}>
-      {/* Outer circle */}
-      <circle cx="16" cy="16" r="11" stroke={color} strokeWidth="0.5" opacity="0.3" />
-      {/* Horizontal balance line */}
-      <line x1="6" y1="16" x2="26" y2="16" stroke={color} strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
-      {/* Vertical support */}
-      <line x1="16" y1="10" x2="16" y2="22" stroke={color} strokeWidth="1" strokeLinecap="round" opacity="0.5" />
-      {/* Balance points */}
-      <circle cx="9" cy="16" r="2.5" stroke={color} strokeWidth="1" fill={`${color}20`} opacity="0.7" />
-      <circle cx="23" cy="16" r="2.5" stroke={color} strokeWidth="1" fill={`${color}20`} opacity="0.7" />
-      {/* Center diamond */}
-      <path d="M16 12 L18 16 L16 20 L14 16 Z" stroke={color} strokeWidth="0.75" fill={`${color}25`} opacity="0.7" />
-    </svg>
-  ),
-  // Calm wave - feeling peaceful
-  calm: (color: string, size: string = "w-full h-full") => (
-    <svg viewBox="0 0 32 32" fill="none" className={size}>
-      <circle cx="16" cy="16" r="12" stroke={color} strokeWidth="0.5" opacity="0.3" />
-      {/* Flowing water curves */}
-      <path d="M8 14 Q12 11, 16 14 Q20 17, 24 14" stroke={color} strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
-      <path d="M10 18 Q14 15, 18 18 Q22 21, 26 18" stroke={color} strokeWidth="1" strokeLinecap="round" opacity="0.5" />
-      <path d="M6 22 Q10 19, 14 22" stroke={color} strokeWidth="0.75" strokeLinecap="round" opacity="0.35" />
-      {/* Moon accent */}
-      <circle cx="22" cy="10" r="2" stroke={color} strokeWidth="0.75" fill={`${color}20`} opacity="0.6" />
-    </svg>
-  ),
-  // Radiant bloom - feeling great
-  radiant: (color: string, size: string = "w-full h-full") => (
-    <svg viewBox="0 0 32 32" fill="none" className={size}>
-      <circle cx="16" cy="16" r="10" stroke={color} strokeWidth="1" opacity="0.8" />
-      <circle cx="16" cy="16" r="6" stroke={color} strokeWidth="0.5" strokeDasharray="2 2" opacity="0.4" />
-      {/* Petals */}
-      {[0, 60, 120, 180, 240, 300].map((angle, i) => (
-        <path
-          key={i}
-          d={`M16 6 Q18 3, 16 1 Q14 3, 16 6`}
-          stroke={color}
-          strokeWidth="1"
-          fill={`${color}30`}
-          transform={`rotate(${angle} 16 16)`}
-          opacity="0.7"
-        />
-      ))}
-      <circle cx="16" cy="16" r="2" fill={color} opacity="0.7" />
-    </svg>
-  ),
-};
+// Botanical Icons
+const LightBulbLeafIcon = ({ color = "currentColor" }: { color?: string }) => (
+  <svg viewBox="0 0 32 32" fill="none" className="w-full h-full">
+    <path d="M16 4 Q22 8, 22 14 Q22 18, 18 22 L14 22 Q10 18, 10 14 Q10 8, 16 4" stroke={color} strokeWidth="1" fill={`${color}15`} />
+    <path d="M13 22 L13 26 Q13 28, 16 28 Q19 28, 19 26 L19 22" stroke={color} strokeWidth="1" />
+    <circle cx="16" cy="12" r="2" fill={color} opacity="0.3" />
+  </svg>
+);
 
-// Mood data types
-interface MoodEntry {
-  date: string;
-  dayOfWeek: string;
-  mood: number; // 1-5
-  iconKey: keyof typeof MoodIcons;
-}
-
-// Преобразование MoodKey в числовое значение для совместимости
-const moodKeyToNumber = (moodKey: MoodKey | null): number => {
-  if (!moodKey) return 3; // По умолчанию "Нормально"
-  const moodMap: Record<MoodKey, number> = {
-    tender: 2,
-    tired: 2,
-    anxious: 2,
-    confused: 2,
-    balanced: 3,
-    calm: 4,
-    peaceful: 4,
-    grateful: 4,
-    inspired: 4,
-    energetic: 5,
-    radiant: 5,
-  };
-  return moodMap[moodKey] || 3;
-};
-
-// Преобразование MoodKey в iconKey
-const moodKeyToIconKey = (moodKey: MoodKey | null): keyof typeof MoodIcons => {
-  if (!moodKey) return "balanced";
-  const iconMap: Record<MoodKey, keyof typeof MoodIcons> = {
-    tender: "tender",
-    tired: "tender",
-    anxious: "tender",
-    confused: "tender",
-    balanced: "balanced",
-    calm: "calm",
-    peaceful: "calm",
-    grateful: "calm",
-    inspired: "radiant",
-    energetic: "radiant",
-    radiant: "radiant",
-  };
-  return iconMap[moodKey] || "balanced";
-};
-
-// Генерация данных из истории настроений
-const generateMoodDataFromHistory = (moodHistory: Array<{ date: string; mood: MoodKey }>): MoodEntry[] => {
-  const dayNames = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
-  const data: MoodEntry[] = [];
-  
-  // Генерируем данные за последние 30 дней
-  for (let i = 29; i >= 0; i--) {
-    const date = new Date();
-    date.setDate(date.getDate() - i);
-    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    
-    // Ищем настроение для этой даты
-    const moodEntry = moodHistory.find(m => m.date === dateStr);
-    const mood = moodKeyToNumber(moodEntry?.mood || null);
-    const iconKey = moodKeyToIconKey(moodEntry?.mood || null);
-    
-    data.push({
-      date: date.toLocaleDateString("ru-RU", { day: "numeric", month: "short" }),
-      dayOfWeek: dayNames[date.getDay()],
-      mood,
-      iconKey,
-    });
-  }
-  return data;
-};
-
-const moods = [
-  { level: 1, icon: MoodIcons.withering, label: "Плохо", color: "#b58f8f" },
-  { level: 2, icon: MoodIcons.tender, label: "Грустно", color: "#9a8fb5" },
-  { level: 3, icon: MoodIcons.balanced, label: "Нормально", color: "#b49b78" },
-  { level: 4, icon: MoodIcons.calm, label: "Хорошо", color: "#7a9ebb" },
-  { level: 5, icon: MoodIcons.radiant, label: "Отлично", color: "#8fb583" },
+// Mood categories
+const moodLevels = [
+  { key: "great", label: "Отлично", color: "#8fb583" },
+  { key: "good", label: "Хорошо", color: "#7a9ebb" },
+  { key: "neutral", label: "Нейтрально", color: "#b49b78" },
+  { key: "low", label: "Грустно", color: "#9a8fb5" },
+  { key: "bad", label: "Тяжело", color: "#8b7355" },
 ];
 
-// Circular Mood Chart Component
-const MoodCircleChart = ({ data }: { data: MoodEntry[] }) => {
-  const avgMood = data.reduce((sum, d) => sum + d.mood, 0) / data.length;
-  const avgMoodIndex = Math.round(avgMood) - 1;
-  const avgMoodInfo = moods[avgMoodIndex];
-
-  return (
-    <div className="relative w-64 h-64 mx-auto">
-      {/* Outer rings */}
-      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 256 256">
-        {/* Background circles */}
-        <circle cx="128" cy="128" r="120" stroke="rgba(255,255,255,0.03)" strokeWidth="1" fill="none" />
-        <circle cx="128" cy="128" r="100" stroke="rgba(255,255,255,0.02)" strokeWidth="20" fill="none" />
-        
-        {/* Mood level indicators */}
-        {[0.2, 0.4, 0.6, 0.8, 1].map((opacity, i) => (
-          <circle
-            key={i}
-            cx="128"
-            cy="128"
-            r={80 - i * 12}
-            stroke={`rgba(143,181,131,${opacity * 0.2})`}
-            strokeWidth="0.5"
-            strokeDasharray="2 4"
-            fill="none"
-          />
-        ))}
-
-        {/* Progress arc based on avg mood */}
-        <motion.circle
-          cx="128"
-          cy="128"
-          r="100"
-          stroke={avgMoodInfo.color}
-          strokeWidth="8"
-          fill="none"
-          strokeLinecap="round"
-          initial={{ 
-            strokeDasharray: 628.32, 
-            strokeDashoffset: 628.32 
-          }}
-          animate={{ 
-            strokeDashoffset: 628.32 - (628.32 * avgMood / 5) 
-          }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
-          transform="rotate(-90 128 128)"
-        />
-      </svg>
-
-      {/* Center content */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className="w-12 h-12 mb-2">
-          {avgMoodInfo.icon(avgMoodInfo.color, "w-full h-full")}
-        </div>
-        <span className="text-2xl font-heading text-white/90">{avgMood.toFixed(1)}</span>
-        <span className="text-[10px] uppercase tracking-wider text-white/40 mt-1">средний балл</span>
-      </div>
-    </div>
-  );
+const moodKeyToLevel = (moodKey: MoodKey | null): number => {
+  if (!moodKey) return 2;
+  const map: Record<MoodKey, number> = {
+    radiant: 0, energetic: 0, inspired: 0,
+    calm: 1, peaceful: 1, grateful: 1,
+    balanced: 2,
+    tender: 3, tired: 3, anxious: 3, confused: 3,
+  };
+  return map[moodKey] ?? 2;
 };
 
-// Week Mood Bar Chart
-const WeekMoodChart = ({ data }: { data: MoodEntry[] }) => {
-  const lastWeek = data.slice(-7);
-
-  return (
-    <div className="flex items-end justify-between h-32 gap-2">
-      {lastWeek.map((day, index) => {
-        const moodInfo = moods[day.mood - 1];
-        const height = (day.mood / 5) * 100;
-
-        return (
-          <motion.div
-            key={index}
-            className="flex flex-col items-center gap-2 flex-1"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05 }}
-          >
-            <motion.div
-              className="w-full rounded-t-lg relative overflow-hidden"
-              style={{ backgroundColor: `${moodInfo.color}30` }}
-              initial={{ height: 0 }}
-              animate={{ height: `${height}%` }}
-              transition={{ duration: 0.8, delay: index * 0.1, ease: "easeOut" }}
-            >
-              {/* Inner gradient */}
-              <div
-                className="absolute bottom-0 left-0 right-0 h-1/2"
-                style={{ background: `linear-gradient(to top, ${moodInfo.color}50, transparent)` }}
-              />
-            </motion.div>
-            <span className="text-[9px] text-white/40">{day.dayOfWeek}</span>
-          </motion.div>
-        );
-      })}
-    </div>
-  );
+// Wave Chart Component
+const WaveChart = ({ data }: { data: number[] }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const parent = canvas.parentElement;
+    if (!parent) return;
+    
+    const updateDimensions = () => {
+      const rect = parent.getBoundingClientRect();
+      setDimensions({ width: rect.width, height: rect.height });
+    };
+    
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
+  
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || dimensions.width === 0) return;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    const { width, height } = dimensions;
+    canvas.width = width * 2;
+    canvas.height = height * 2;
+    ctx.scale(2, 2);
+    ctx.clearRect(0, 0, width, height);
+    
+    const padding = 10;
+    const chartHeight = height - padding * 2;
+    const chartWidth = width - padding * 2;
+    const points = data.map((v, i) => ({
+      x: padding + (i / (data.length - 1)) * chartWidth,
+      y: padding + ((4 - v) / 4) * chartHeight,
+    }));
+    
+    const drawCurve = (pts: typeof points) => {
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 0; i < pts.length - 1; i++) {
+        const xc = (pts[i].x + pts[i + 1].x) / 2;
+        const yc = (pts[i].y + pts[i + 1].y) / 2;
+        ctx.quadraticCurveTo(pts[i].x, pts[i].y, xc, yc);
+      }
+      ctx.quadraticCurveTo(pts[pts.length - 1].x, pts[pts.length - 1].y, pts[pts.length - 1].x, pts[pts.length - 1].y);
+    };
+    
+    // Gradient fill
+    const gradient = ctx.createLinearGradient(0, 0, 0, height);
+    gradient.addColorStop(0, 'rgba(143, 181, 131, 0.4)');
+    gradient.addColorStop(0.5, 'rgba(122, 158, 187, 0.2)');
+    gradient.addColorStop(1, 'rgba(143, 181, 131, 0)');
+    
+    ctx.save();
+    drawCurve(points);
+    ctx.lineTo(points[points.length - 1].x, height);
+    ctx.lineTo(points[0].x, height);
+    ctx.closePath();
+    ctx.fillStyle = gradient;
+    ctx.fill();
+    ctx.restore();
+    
+    // Main line with glow
+    ctx.save();
+    ctx.shadowColor = '#8fb583';
+    ctx.shadowBlur = 12;
+    ctx.strokeStyle = '#8fb583';
+    ctx.lineWidth = 2;
+    drawCurve(points);
+    ctx.stroke();
+    ctx.restore();
+    
+    // Dots
+    points.forEach((p, i) => {
+      if (i % 3 === 0) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = '#8fb583';
+        ctx.shadowColor = '#8fb583';
+        ctx.shadowBlur = 8;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    });
+    
+    // Grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) {
+      const y = padding + (i / 4) * chartHeight;
+      ctx.beginPath();
+      ctx.moveTo(padding, y);
+      ctx.lineTo(width - padding, y);
+      ctx.stroke();
+    }
+  }, [data, dimensions]);
+  
+  return <canvas ref={canvasRef} className="w-full h-full" />;
 };
 
-// Mood Heatmap for the month
-const MoodHeatmap = ({ data }: { data: MoodEntry[] }) => {
-  return (
-    <div className="grid grid-cols-7 gap-1">
-      {data.map((day, index) => {
-        const moodInfo = moods[day.mood - 1];
-        return (
-          <motion.div
-            key={index}
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: index * 0.02 }}
-            className="relative group"
-          >
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer hover:scale-110 transition-transform p-1.5"
-              style={{ backgroundColor: `${moodInfo.color}40` }}
-            >
-              {moodInfo.icon(moodInfo.color, "w-full h-full")}
-            </div>
-            {/* Tooltip */}
-            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 rounded bg-[#1a1d1a] border border-white/10 text-[10px] text-white/70 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-              {day.date}
-            </div>
-          </motion.div>
-        );
-      })}
+// Compact Bar
+const CompactBar = ({ label, value, color }: { label: string; value: number; color: string }) => (
+  <div className="flex items-center gap-2">
+    <span className="text-[10px] text-white/40 w-14 truncate">{label}</span>
+    <div className="flex-1 h-1.5 bg-white/[0.03] rounded-full overflow-hidden">
+      <motion.div
+        className="h-full rounded-full"
+        style={{ backgroundColor: color }}
+        initial={{ width: 0 }}
+        animate={{ width: `${value}%` }}
+        transition={{ duration: 0.8 }}
+      />
     </div>
-  );
-};
-
-// Stats Card
-const StatCard = ({ icon: Icon, label, value, sublabel, color }: { 
-  icon: React.FC; 
-  label: string; 
-  value: string; 
-  sublabel: string;
-  color: string;
-}) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    className="relative p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] overflow-hidden flex-1"
-  >
-    <div 
-      className="absolute top-0 right-0 w-20 h-20 opacity-10 blur-xl"
-      style={{ backgroundColor: color }}
-    />
-    <div className="relative z-10">
-      <div className="flex items-center gap-2 mb-2">
-        <div className="w-4 h-4" style={{ color }}>
-          <Icon />
-        </div>
-        <span className="text-[10px] uppercase tracking-wider text-white/40">{label}</span>
-      </div>
-      <p className="text-xl font-heading text-white/90">{value}</p>
-      <p className="text-[10px] text-white/40 mt-1">{sublabel}</p>
-    </div>
-  </motion.div>
-);
-
-// Icons
-const TrendUpIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-    <path d="M4 18 L10 12 L14 16 L20 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M16 10 L20 10 L20 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const CalendarIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-    <rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" strokeWidth="1.5" />
-    <path d="M8 3 L8 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    <path d="M16 3 L16 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-  </svg>
-);
-
-const HeartIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-    <path d="M12 20 C9 17, 4 13, 4 9 C4 6, 6 4, 9 4 C10.5 4, 11.5 5, 12 6 C12.5 5, 13.5 4, 15 4 C18 4, 20 6, 20 9 C20 13, 15 17, 12 20" stroke="currentColor" strokeWidth="1.5" fill="none" />
-  </svg>
-);
-
-const StarIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
-    <path d="M12 3 L14 9 L20 9 L15 13 L17 19 L12 15 L7 19 L9 13 L4 9 L10 9 Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-  </svg>
+    <span className="text-[10px] text-white/50 w-8 text-right">{value.toFixed(0)}%</span>
+  </div>
 );
 
 export default function CabinetMood() {
   const { moodHistory } = useMoodStore();
-  const moodData = useMemo(() => generateMoodDataFromHistory(moodHistory), [moodHistory]);
-  const [view, setView] = useState<"chart" | "heatmap">("chart");
+  const { getTimeOfDayStats } = usePracticesStore();
+  const [isMounted, setIsMounted] = useState(false);
+  const [practiceTimeStats, setPracticeTimeStats] = useState({
+    total: 0,
+    mostActiveTime: "—",
+    timeActivity: [
+      { label: "Утро", value: 0, count: 0, isMax: false },
+      { label: "День", value: 0, count: 0, isMax: false },
+      { label: "Вечер", value: 0, count: 0, isMax: false },
+      { label: "Ночь", value: 0, count: 0, isMax: false },
+    ],
+    activityInsight: "Пройди первую практику, чтобы увидеть аналитику",
+    formattedHour: "00:00",
+  });
+  
+  const chartData = useMemo(() => {
+    const data: number[] = [];
+    for (let i = 13; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+      const entry = moodHistory.find(m => m.date === dateStr);
+      data.push(4 - moodKeyToLevel(entry?.mood || null));
+    }
+    return data;
+  }, [moodHistory]);
+  
+  const stats = useMemo(() => {
+    const levels = chartData;
+    const avg = levels.reduce((s, v) => s + v, 0) / levels.length;
+    const goodDays = levels.filter(v => v >= 3).length;
+    const trend = levels.slice(-7).reduce((s, v) => s + v, 0) / 7 - levels.slice(0, 7).reduce((s, v) => s + v, 0) / 7;
+    const stability = 100 - (Math.max(...levels) - Math.min(...levels)) * 15;
+    
+    const dist = [0, 0, 0, 0, 0];
+    levels.forEach(v => dist[4 - Math.round(v)]++);
+    const distPercent = dist.map(d => (d / levels.length) * 100);
+    
+    // Find best day
+    const dayNames = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
+    const maxValue = Math.max(...levels);
+    const bestDayIndex = levels.indexOf(maxValue);
+    const bestDate = new Date();
+    bestDate.setDate(bestDate.getDate() - 13 + bestDayIndex);
+    const bestDay = dayNames[bestDate.getDay()];
+    
+    return { avg, goodDays, trend, stability: Math.max(0, stability), distPercent, bestDay };
+  }, [chartData]);
+  
+  // Update practice time stats on client only
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    setIsMounted(true);
+    
+    const updateStats = () => {
+      const stats = getTimeOfDayStats();
+      const total = stats.total || 1;
+      
+      const morningPercent = (stats.morning / total) * 100;
+      const afternoonPercent = (stats.afternoon / total) * 100;
+      const eveningPercent = (stats.evening / total) * 100;
+      const nightPercent = (stats.night / total) * 100;
+      
+      const maxPercent = Math.max(morningPercent, afternoonPercent, eveningPercent, nightPercent);
+      
+      const timeActivity = [
+        { label: "Утро", value: morningPercent, count: stats.morning, isMax: morningPercent === maxPercent && stats.morning > 0 },
+        { label: "День", value: afternoonPercent, count: stats.afternoon, isMax: afternoonPercent === maxPercent && stats.afternoon > 0 },
+        { label: "Вечер", value: eveningPercent, count: stats.evening, isMax: eveningPercent === maxPercent && stats.evening > 0 },
+        { label: "Ночь", value: nightPercent, count: stats.night, isMax: nightPercent === maxPercent && stats.night > 0 },
+      ];
+      
+      let activityInsight = "";
+      if (stats.total === 0) {
+        activityInsight = "Пройди первую практику, чтобы увидеть аналитику";
+      } else if (stats.total < 3) {
+        activityInsight = `${stats.total} ${stats.total === 1 ? 'практика' : 'практики'} — продолжай для точной аналитики`;
+      } else {
+        const mostActive = timeActivity.find(t => t.isMax);
+        if (mostActive) {
+          if (mostActive.label === "Утро") activityInsight = "Ты чаще занимаешься утром — планируй практики на 6:00–12:00";
+          else if (mostActive.label === "День") activityInsight = "Твоё активное время — день. Планируй на 12:00–18:00";
+          else if (mostActive.label === "Вечер") activityInsight = "Вечер — твоё время. Планируй практики на 18:00–22:00";
+          else activityInsight = "Ты сова! Твоё время — после 22:00";
+        }
+      }
+      
+      const formattedHour = stats.mostActiveHour < 10 
+        ? `0${stats.mostActiveHour}:00` 
+        : `${stats.mostActiveHour}:00`;
+      
+      setPracticeTimeStats({
+        total: stats.total,
+        mostActiveTime: stats.total > 0 ? stats.mostActiveTime : "—",
+        timeActivity,
+        activityInsight,
+        formattedHour,
+      });
+    };
+    
+    // Delay update to ensure Zustand stores are rehydrated
+    setTimeout(updateStats, 0);
+    
+    // Subscribe to practices store changes
+    const unsubscribe = usePracticesStore.subscribe(
+      (state) => state.completedPractices,
+      () => updateStats()
+    );
+    
+    return () => unsubscribe();
+  }, [getTimeOfDayStats]);
+  
+  const currentMood = moodLevels[4 - Math.round(stats.avg)];
+  const adviceColor = stats.trend > 0.2 ? '#8fb583' : stats.trend < -0.2 ? '#9a8fb5' : '#7a9ebb';
 
-  // Calculate stats
-  const avgMood = moodData.reduce((sum, d) => sum + d.mood, 0) / moodData.length;
-  const bestDay = moodData.reduce((best, d) => d.mood > best.mood ? d : best);
-  const streak = moodData.filter(d => d.mood >= 4).length;
-  const trend = avgMood > 3 ? "+0.3" : "-0.2";
+  const getAdvice = () => {
+    if (stats.trend > 0.3) return 'Отличная динамика! Продолжай практики — они работают.';
+    if (stats.trend < -0.3) return stats.avg < 2 
+      ? 'Попробуй дыхание 4-7-8 или запиши мысли в дневник.'
+      : 'Добавь короткую медитацию утром для стабилизации.';
+    if (stats.goodDays < 5) return 'Отмечай 3 вещи благодарности ежедневно — это меняет восприятие.';
+    if (stats.stability < 60) return 'Регулярный сон поможет выровнять настроение.';
+    return 'Стабильное состояние. Добавь новую практику для роста.';
+  };
 
   return (
-    <div className="max-w-5xl mx-auto h-full flex flex-col overflow-hidden">
+    <div className="h-full flex flex-col gap-2">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="mb-4 flex-shrink-0"
-      >
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-1 h-1 rounded-full bg-[#7a9ebb]/50" />
-          <span className="text-[10px] uppercase tracking-[0.2em] text-white/30">Благополучие</span>
-          <div className="h-px flex-1 bg-gradient-to-r from-white/[0.06] to-transparent" />
+      <div className="flex items-center justify-between flex-shrink-0">
+        <div className="flex items-center gap-2">
+          <div className="w-1 h-1 rounded-full" style={{ backgroundColor: currentMood.color }} />
+          <span className="text-[9px] uppercase tracking-[0.15em] text-white/30">Трекер настроения</span>
         </div>
-        <h1 className="text-xl md:text-2xl font-heading font-light text-white mb-1">
-          Трекер настроения
-        </h1>
-        <p className="text-white/40 text-xs">
-          Отслеживай своё эмоциональное состояние
-        </p>
-      </motion.div>
-
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 min-h-0 items-stretch">
-        {/* Left - Main Chart */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="lg:col-span-2 flex flex-col"
-        >
-          <div className="relative p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] overflow-hidden h-full flex flex-col">
-            {/* Decorative elements */}
-            <div className="absolute -right-20 -bottom-20 w-60 h-60 opacity-20">
-              <svg viewBox="0 0 200 200" fill="none" className="w-full h-full">
-                <circle cx="100" cy="100" r="80" stroke="rgba(122,158,187,0.2)" strokeWidth="1" />
-                <circle cx="100" cy="100" r="60" stroke="rgba(122,158,187,0.1)" strokeWidth="0.5" strokeDasharray="4 8" />
-              </svg>
-            </div>
-
-            <div className="relative z-10 flex-1 flex flex-col">
-              {/* View Toggle */}
-              <div className="flex items-center justify-between mb-6 flex-shrink-0">
-                <span className="text-xs uppercase tracking-[0.15em] text-white/40">Последние 30 дней</span>
-                <div className="flex rounded-lg bg-white/[0.03] p-1">
-                  <button
-                    onClick={() => setView("chart")}
-                    className={`px-3 py-1.5 rounded-md text-xs transition-all ${
-                      view === "chart" ? "bg-white/[0.08] text-white" : "text-white/40 hover:text-white/60"
-                    }`}
-                  >
-                    График
-                  </button>
-                  <button
-                    onClick={() => setView("heatmap")}
-                    className={`px-3 py-1.5 rounded-md text-xs transition-all ${
-                      view === "heatmap" ? "bg-white/[0.08] text-white" : "text-white/40 hover:text-white/60"
-                    }`}
-                  >
-                    Карта
-                  </button>
-                </div>
-              </div>
-
-              {/* Chart/Heatmap */}
-              <div className="flex-1 flex items-center justify-center min-h-0">
-                {view === "chart" ? (
-                  <div className="flex flex-col md:flex-row items-center gap-8 w-full">
-                    <div className="flex-shrink-0">
-                      <MoodCircleChart data={moodData} />
-                    </div>
-                    <div className="flex-1 w-full">
-                      <p className="text-xs text-white/40 mb-4">Эта неделя</p>
-                      <WeekMoodChart data={moodData} />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="w-full">
-                    <p className="text-xs text-white/40 mb-4">Карта настроения за месяц</p>
-                    <MoodHeatmap data={moodData} />
-                  </div>
-                )}
-              </div>
-
-              {/* Mood Legend */}
-              <div className="mt-6 pt-6 border-t border-white/[0.06] flex-shrink-0">
-                <div className="flex flex-wrap items-center justify-center gap-6">
-                  {moods.map((mood) => (
-                    <div key={mood.level} className="flex items-center gap-2">
-                      <div className="w-5 h-5">
-                        {mood.icon(mood.color, "w-full h-full")}
-                      </div>
-                      <span className="text-[10px] text-white/40 whitespace-nowrap">{mood.label}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Right - Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-col gap-3 h-full"
-        >
-          <StatCard
-            icon={TrendUpIcon}
-            label="Тренд"
-            value={trend}
-            sublabel="за последнюю неделю"
-            color="#8fb583"
-          />
-          <StatCard
-            icon={StarIcon}
-            label="Лучший день"
-            value={bestDay.date}
-            sublabel={moods[bestDay.mood - 1].label}
-            color="#b49b78"
-          />
-          <StatCard
-            icon={HeartIcon}
-            label="Хорошие дни"
-            value={`${streak}`}
-            sublabel="за месяц"
-            color="#7a9ebb"
-          />
-          <StatCard
-            icon={CalendarIcon}
-            label="Записей"
-            value={`${moodData.length}`}
-            sublabel="всего отслежено"
-            color="#9a8fb5"
-          />
-        </motion.div>
+        <span className="text-[10px] text-white/30">14 дней</span>
       </div>
 
-      {/* Insights Section - Hidden for compact view */}
-      {/* <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.3 }}
-        className="mt-4 flex-shrink-0"
-      >
-        <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
-          <div className="flex items-center gap-2 mb-4">
-            <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4 text-[#b49b78]">
-              <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.5" />
-              <path d="M10 6 L10 10 L13 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <span className="text-xs uppercase tracking-[0.15em] text-white/40">Инсайты</span>
+      {/* Main Content - Two Columns */}
+      <div className="flex-1 flex gap-3 min-h-0">
+        {/* Left: Chart */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex-1 rounded-xl bg-white/[0.02] border border-white/[0.06] p-3 flex flex-col min-w-0"
+        >
+          {/* Chart Header */}
+          <div className="flex items-center justify-between mb-1 flex-shrink-0">
+            <span className="text-xs text-white/50">Динамика</span>
+            <div className="flex gap-2">
+              {moodLevels.slice(0, 3).map((m, i) => (
+                <div key={i} className="flex items-center gap-1">
+                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: m.color }} />
+                  <span className="text-[8px] text-white/30">{m.label}</span>
+                </div>
+              ))}
+            </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 rounded-xl bg-white/[0.02]">
-              <div className="flex items-center gap-2 mb-2">
-                <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4 text-[#b49b78]">
-                  <circle cx="10" cy="14" r="5" stroke="currentColor" strokeWidth="1.5" />
-                  <path d="M10 9 L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                  <path d="M7 6 L10 4 L13 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                <span className="text-sm text-white/70">Лучшее время</span>
+          {/* Chart */}
+          <div className="flex-1 min-h-0">
+            <WaveChart data={chartData} />
+          </div>
+          
+          {/* X-axis */}
+          <div className="flex justify-between px-2 mt-1 flex-shrink-0">
+            {Array.from({ length: 7 }).map((_, i) => {
+              const d = new Date();
+              d.setDate(d.getDate() - 13 + i * 2);
+              return <span key={i} className="text-[8px] text-white/20">{d.getDate()}</span>;
+            })}
+          </div>
+        </motion.div>
+
+        {/* Right: Stats & Advice */}
+        <div className="w-64 flex flex-col gap-2 flex-shrink-0">
+          {/* Current State - Compact */}
+          <div 
+            className="p-3 rounded-xl border"
+            style={{ backgroundColor: `${currentMood.color}10`, borderColor: `${currentMood.color}25` }}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-[8px] text-white/40 uppercase">Сейчас</span>
+                <p className="text-base font-heading" style={{ color: currentMood.color }}>{currentMood.label}</p>
               </div>
-              <p className="text-xs text-white/40">Твоё настроение обычно лучше всего утром</p>
-            </div>
-            <div className="p-4 rounded-xl bg-white/[0.02]">
-              <div className="flex items-center gap-2 mb-2">
-                <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4 text-[#8fb583]">
-                  <path d="M4 16 L8 10 L12 12 L16 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  <circle cx="16" cy="4" r="2" fill="currentColor" opacity="0.3" stroke="currentColor" strokeWidth="1" />
-                </svg>
-                <span className="text-sm text-white/70">Положительный тренд</span>
+              <div className="text-right">
+                <span className="text-[8px] text-white/40 uppercase">Тренд</span>
+                <p className="text-sm text-white/60">
+                  {stats.trend > 0.2 ? '↑' : stats.trend < -0.2 ? '↓' : '→'}
+                </p>
               </div>
-              <p className="text-xs text-white/40">Твоё среднее настроение растёт последние 2 недели</p>
-            </div>
-            <div className="p-4 rounded-xl bg-white/[0.02]">
-              <div className="flex items-center gap-2 mb-2">
-                <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4 text-[#7a9ebb]">
-                  <path d="M10 3 Q14 6, 14 10 Q14 14, 10 17 Q6 14, 6 10 Q6 6, 10 3" stroke="currentColor" strokeWidth="1.5" fill="none" />
-                  <path d="M10 5 L10 15" stroke="currentColor" strokeWidth="0.75" opacity="0.5" />
-                </svg>
-                <span className="text-sm text-white/70">Рекомендация</span>
-              </div>
-              <p className="text-xs text-white/40">Практика дыхания помогает в дни тревоги</p>
             </div>
           </div>
+
+          {/* Quick Stats Row */}
+          <div className="grid grid-cols-2 gap-2">
+            <div className="p-2 rounded-lg bg-white/[0.02] border border-white/[0.05] text-center">
+              <p className="text-lg font-heading text-[#8fb583]">{stats.goodDays}</p>
+              <p className="text-[8px] text-white/30 uppercase">Хороших дней</p>
+            </div>
+            <div className="p-2 rounded-lg bg-white/[0.02] border border-white/[0.05] text-center">
+              <p className="text-lg font-heading text-[#b49b78]">{stats.stability.toFixed(0)}%</p>
+              <p className="text-[8px] text-white/30 uppercase">Стабильность</p>
+            </div>
+          </div>
+
+          {/* Best Day + Best Time */}
+          <div className="grid grid-cols-2 gap-2">
+            <div className="p-2 rounded-lg bg-white/[0.02] border border-white/[0.05]">
+              <span className="text-[8px] text-white/30 uppercase">Лучший день</span>
+              <p className="text-xs text-white/70 mt-0.5">{stats.bestDay}</p>
+            </div>
+            <div className="p-2 rounded-lg bg-gradient-to-r from-[#8fb583]/10 to-transparent border border-[#8fb583]/20">
+              <span className="text-[8px] text-[#8fb583]/60 uppercase">Твоё время</span>
+              <p className="text-xs text-white/70 mt-0.5" suppressHydrationWarning>
+                {practiceTimeStats.total > 0 ? practiceTimeStats.mostActiveTime : "—"}
+              </p>
+            </div>
+          </div>
+
+          {/* Activity Tracker - Real Time Data */}
+          <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[8px] text-white/30 uppercase">Когда ты занимаешься</span>
+              <span className="text-[8px] text-white/20" suppressHydrationWarning>{practiceTimeStats.total} практик</span>
+            </div>
+            <div className="flex items-end justify-between gap-1.5 h-12">
+              {practiceTimeStats.timeActivity.map((activity, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                  <div className="relative w-full flex items-end justify-center" style={{ height: 36 }}>
+                    <motion.div
+                      className="w-full rounded-t relative"
+                      style={{ 
+                        backgroundColor: activity.isMax ? '#8fb583' : 'rgba(255,255,255,0.08)',
+                        boxShadow: activity.isMax ? '0 0 12px #8fb58340' : 'none'
+                      }}
+                      initial={{ height: 0 }}
+                      animate={{ height: practiceTimeStats.total > 0 ? `${Math.max((activity.value / 100) * 36, activity.count > 0 ? 8 : 0)}px` : 4 }}
+                      transition={{ duration: 0.6, delay: i * 0.1 }}
+                    />
+                    {activity.count > 0 && (
+                      <span className="absolute -top-3 text-[8px] text-white/50">{activity.count}</span>
+                    )}
+                  </div>
+                  <span className={`text-[8px] ${activity.isMax ? 'text-[#8fb583]' : 'text-white/30'}`}>
+                    {activity.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <p className="text-[9px] text-white/50 mt-2 text-center leading-relaxed" suppressHydrationWarning>
+              {practiceTimeStats.activityInsight}
+            </p>
+            {practiceTimeStats.total >= 3 && (
+              <p className="text-[8px] text-[#8fb583]/60 mt-1 text-center" suppressHydrationWarning>
+                Пик активности: {practiceTimeStats.formattedHour}
+              </p>
+            )}
+          </div>
+
+          {/* Distribution - Compact */}
+          <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+            <span className="text-[8px] text-white/30 uppercase">Распределение</span>
+            <div className="mt-1.5 space-y-1">
+              {moodLevels.map((m, i) => (
+                <CompactBar key={i} label={m.label} value={stats.distPercent[i]} color={m.color} />
+              ))}
+            </div>
+          </div>
+
+          {/* Advice - Compact */}
+          <div 
+            className="flex-1 p-2.5 rounded-xl border min-h-0"
+            style={{ 
+              background: `linear-gradient(135deg, ${adviceColor}15 0%, transparent 100%)`,
+              borderColor: `${adviceColor}30`
+            }}
+          >
+            <div className="flex items-center gap-1.5 mb-1.5">
+              <div className="w-3.5 h-3.5">
+                <LightBulbLeafIcon color={adviceColor} />
+              </div>
+              <span className="text-[8px] uppercase tracking-wider" style={{ color: adviceColor }}>
+                {stats.trend > 0.2 ? 'Отлично!' : stats.trend < -0.2 ? 'Совет' : 'Рекомендация'}
+              </span>
+            </div>
+            <p className="text-[11px] text-white/60 leading-relaxed">{getAdvice()}</p>
+          </div>
         </div>
-      </motion.div> */}
+      </div>
     </div>
   );
 }
-

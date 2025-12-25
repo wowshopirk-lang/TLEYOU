@@ -319,9 +319,16 @@ export default function CabinetLayout({
   // Zustand stores
   const { currentMood, setMood, moodHistory } = useMoodStore();
   const { openedCards } = useCardsStore();
-  const { getCompletedCount } = usePracticesStore();
+  const { getCompletedCount, completedPractices } = usePracticesStore();
   const { getEntriesCount } = useJournalStore();
   // useUserStore accessed via getState() in useEffect to avoid unused variable warnings
+  
+  // Update practices count when completedPractices changes (after mount)
+  useEffect(() => {
+    if (isMounted) {
+      setPracticesCount(completedPractices.length);
+    }
+  }, [completedPractices.length, isMounted]);
   
   // Проверяем, было ли настроение уже выбрано сегодня
   const getDateKey = () => {
@@ -341,27 +348,8 @@ export default function CabinetLayout({
     const dayOfMonth = new Date().getDate();
     setEncouragement(encouragements[dayOfMonth % encouragements.length]);
 
-    // Get user name from localStorage
+    // Mark as mounted and load data
     if (typeof window !== 'undefined') {
-      try {
-        const userData = localStorage.getItem('user');
-        if (userData) {
-          const user = JSON.parse(userData);
-          if (user.name && user.name.trim()) {
-            setUserName(user.name.trim());
-          } else if (user.email) {
-            // Extract name from email if name not available
-            const emailName = user.email.split('@')[0];
-            setUserName(emailName.charAt(0).toUpperCase() + emailName.slice(1));
-          }
-        }
-        // If no user data, userName stays empty and will show nothing
-      } catch (error) {
-        console.error('Error reading user data:', error);
-        // Don't set default name, let it be empty
-      }
-      
-      // Mark as mounted
       setIsMounted(true);
       
       // Record visit and update stats from stores after hydration
@@ -374,6 +362,18 @@ export default function CabinetLayout({
         // Record visit and update streak
         useUserStore.getState().recordVisit();
         setStreak(useUserStore.getState().getStreak());
+        
+        // Get user name from store
+        const storeName = useUserStore.getState().name;
+        const storeEmail = useUserStore.getState().email;
+        
+        if (storeName && storeName.trim()) {
+          setUserName(storeName.trim());
+        } else if (storeEmail) {
+          // Extract name from email if name not available
+          const emailName = storeEmail.split('@')[0];
+          setUserName(emailName.charAt(0).toUpperCase() + emailName.slice(1));
+        }
       };
       
       // Delay update to ensure Zustand stores are rehydrated
@@ -385,10 +385,7 @@ export default function CabinetLayout({
         () => setCardsCount(useCardsStore.getState().openedCards.length)
       );
       
-      const unsubscribePractices = usePracticesStore.subscribe(
-        (state) => state.completedPractices,
-        () => setPracticesCount(usePracticesStore.getState().getCompletedCount())
-      );
+      // Practices count is updated via useEffect hook when completedPractices changes
       
       const unsubscribeJournal = useJournalStore.subscribe(
         (state) => state.entries,
@@ -400,11 +397,26 @@ export default function CabinetLayout({
         () => setStreak(useUserStore.getState().getStreak())
       );
       
+      // Subscribe to user name changes
+      const unsubscribeUserName = useUserStore.subscribe(
+        (state) => state.name,
+        () => {
+          const storeName = useUserStore.getState().name;
+          const storeEmail = useUserStore.getState().email;
+          if (storeName && storeName.trim()) {
+            setUserName(storeName.trim());
+          } else if (storeEmail) {
+            const emailName = storeEmail.split('@')[0];
+            setUserName(emailName.charAt(0).toUpperCase() + emailName.slice(1));
+          }
+        }
+      );
+      
       return () => {
         unsubscribeCards();
-        unsubscribePractices();
         unsubscribeJournal();
         unsubscribeUser();
+        unsubscribeUserName();
       };
     }
   }, []);
@@ -806,7 +818,7 @@ export default function CabinetLayout({
                   className="flex items-center gap-3 p-2 rounded-xl bg-white/[0.02] border border-white/[0.05]"
                 >
                   {/* Progress indicator - fills based on streak (max 30 days = full) */}
-                  <div className="relative w-10 h-10">
+                  <div className="relative w-16 h-16 flex-shrink-0">
                     <svg className="w-full h-full -rotate-90" viewBox="0 0 56 56">
                       <circle cx="28" cy="28" r="24" stroke="rgba(255,255,255,0.05)" strokeWidth="2.5" fill="none" />
                       <motion.circle
@@ -821,14 +833,14 @@ export default function CabinetLayout({
                       />
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-sm font-heading text-[#8fb583]" suppressHydrationWarning>{streak}</span>
+                      <span className="text-xl font-heading text-[#8fb583]" suppressHydrationWarning>{streak}</span>
                     </div>
                   </div>
                   
                   {/* Text content */}
-                  <div className="text-right">
-                    <p className="text-xs text-white/90 font-light leading-tight">дней подряд</p>
-                    <p className="text-[8px] uppercase tracking-[0.1em] text-white/30 max-w-[100px] hidden lg:block">
+                  <div className="text-right min-w-0">
+                    <p className="text-xs text-white/90 font-light leading-tight whitespace-nowrap">дней подряд</p>
+                    <p className="text-[9px] uppercase tracking-[0.05em] text-white/40 leading-tight mt-0.5 max-w-[120px]">
                       {encouragement}
                     </p>
                   </div>

@@ -1,7 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useUserStore } from "@/stores/userStore";
+import { usePracticesStore } from "@/stores/practicesStore";
+import { useCardsStore } from "@/stores/cardsStore";
+import { useJournalStore } from "@/stores/journalStore";
 
 // Icons
 const UserIcon = () => (
@@ -47,26 +51,75 @@ const CrownIcon = () => (
   </svg>
 );
 
-// Stats data
-const stats = [
-  { label: "Дней практики", value: "12", color: "#8fb583" },
-  { label: "Карточек пройдено", value: "8", color: "#b49b78" },
-  { label: "Записей в дневнике", value: "15", color: "#9a8fb5" },
-  { label: "Тестов завершено", value: "3", color: "#7a9ebb" },
-];
-
 export default function CabinetProfile() {
-  const [profile, setProfile] = useState({
-    name: "Анна",
-    email: "anna@example.com",
-    notifications: true,
-  });
+  const { name, email, notifications, updateName, updateEmail, setNotifications } = useUserStore();
+  const { getCompletedCount } = usePracticesStore();
+  const { openedCards } = useCardsStore();
+  const { getEntriesCount } = useJournalStore();
+  
+  const [isMounted, setIsMounted] = useState(false);
+  const [localName, setLocalName] = useState('');
+  const [localEmail, setLocalEmail] = useState('');
+  const [localNotifications, setLocalNotifications] = useState(true);
   const [isSaved, setIsSaved] = useState(false);
 
+  // Stats data - computed from stores
+  const [stats, setStats] = useState([
+    { label: "Дней практики", value: "0", color: "#8fb583" },
+    { label: "Карточек пройдено", value: "0", color: "#b49b78" },
+    { label: "Записей в дневнике", value: "0", color: "#9a8fb5" },
+    { label: "Тестов завершено", value: "0", color: "#7a9ebb" },
+  ]);
+
+  useEffect(() => {
+    setIsMounted(true);
+    
+    // Load data from stores after mount
+    setTimeout(() => {
+      const userName = useUserStore.getState().name;
+      const userEmail = useUserStore.getState().email;
+      const userNotifications = useUserStore.getState().notifications;
+      
+      setLocalName(userName || '');
+      setLocalEmail(userEmail || '');
+      setLocalNotifications(userNotifications);
+      
+      // Update stats
+      const practicesCount = usePracticesStore.getState().getCompletedCount();
+      const cardsCount = useCardsStore.getState().openedCards.length;
+      const journalCount = useJournalStore.getState().getEntriesCount();
+      
+      setStats([
+        { label: "Дней практики", value: String(practicesCount), color: "#8fb583" },
+        { label: "Карточек пройдено", value: String(cardsCount), color: "#b49b78" },
+        { label: "Записей в дневнике", value: String(journalCount), color: "#9a8fb5" },
+        { label: "Тестов завершено", value: "0", color: "#7a9ebb" },
+      ]);
+    }, 0);
+  }, []);
+
   const handleSave = () => {
+    updateName(localName);
+    updateEmail(localEmail);
+    setNotifications(localNotifications);
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 2000);
   };
+
+  if (!isMounted) {
+    return (
+      <div className="max-w-3xl mx-auto">
+        <div className="animate-pulse">
+          <div className="h-8 bg-white/5 rounded w-48 mb-4" />
+          <div className="h-40 bg-white/5 rounded-2xl mb-6" />
+          <div className="space-y-4">
+            <div className="h-24 bg-white/5 rounded-xl" />
+            <div className="h-24 bg-white/5 rounded-xl" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -110,15 +163,15 @@ export default function CabinetProfile() {
             {/* Avatar */}
             <div className="relative">
               <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#8fb583]/30 to-[#4a6741]/30 flex items-center justify-center border border-white/[0.1]">
-                <span className="text-3xl text-white/80 font-heading">{profile.name.charAt(0)}</span>
+                <span className="text-3xl text-white/80 font-heading">{localName ? localName.charAt(0).toUpperCase() : '?'}</span>
               </div>
               {/* Online indicator */}
               <div className="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-[#8fb583] border-2 border-[#0a0c0a]" />
             </div>
 
             <div className="flex-1 text-center md:text-left">
-              <h2 className="text-xl font-heading text-white/90 mb-1">{profile.name}</h2>
-              <p className="text-sm text-white/40 mb-4">{profile.email}</p>
+              <h2 className="text-xl font-heading text-white/90 mb-1">{localName || 'Не указано'}</h2>
+              <p className="text-sm text-white/40 mb-4">{localEmail || 'Не указано'}</p>
               
               {/* Stats */}
               <div className="flex flex-wrap gap-4 justify-center md:justify-start">
@@ -196,8 +249,9 @@ export default function CabinetProfile() {
             </div>
             <input
               type="text"
-              value={profile.name}
-              onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+              value={localName}
+              onChange={(e) => setLocalName(e.target.value)}
+              placeholder="Ваше имя"
               className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl pl-11 pr-4 py-3 text-white/80 placeholder-white/30 focus:outline-none focus:border-[#8fb583]/40 transition-colors"
             />
           </div>
@@ -212,8 +266,9 @@ export default function CabinetProfile() {
             </div>
             <input
               type="email"
-              value={profile.email}
-              onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+              value={localEmail}
+              onChange={(e) => setLocalEmail(e.target.value)}
+              placeholder="your@email.com"
               className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl pl-11 pr-4 py-3 text-white/80 placeholder-white/30 focus:outline-none focus:border-[#8fb583]/40 transition-colors"
             />
           </div>
@@ -232,14 +287,14 @@ export default function CabinetProfile() {
               </div>
             </div>
             <button
-              onClick={() => setProfile({ ...profile, notifications: !profile.notifications })}
+              onClick={() => setLocalNotifications(!localNotifications)}
               className={`relative w-12 h-6 rounded-full transition-colors duration-300 ${
-                profile.notifications ? 'bg-[#8fb583]' : 'bg-white/10'
+                localNotifications ? 'bg-[#8fb583]' : 'bg-white/10'
               }`}
             >
               <div
                 className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all duration-300 ${
-                  profile.notifications ? 'left-7' : 'left-1'
+                  localNotifications ? 'left-7' : 'left-1'
                 }`}
               />
             </button>

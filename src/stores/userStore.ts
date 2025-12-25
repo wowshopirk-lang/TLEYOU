@@ -62,6 +62,10 @@ const isYesterday = (dateStr: string): boolean => {
 };
 
 export interface UserState {
+  // Данные профиля
+  name: string;
+  email: string;
+  
   // Даты посещений (уникальные дни)
   visitDates: string[];
   
@@ -71,7 +75,14 @@ export interface UserState {
   // Дата начала подписки (YYYY-MM-DD)
   subscriptionStartDate: string | null;
   
+  // Настройки
+  notifications: boolean;
+  
   // Методы
+  setProfile: (name: string, email: string) => void;
+  updateName: (name: string) => void;
+  updateEmail: (email: string) => void;
+  setNotifications: (enabled: boolean) => void;
   recordVisit: () => void;
   getStreak: () => number;
   getTotalVisits: () => number;
@@ -85,9 +96,28 @@ export interface UserState {
 export const useUserStore = create<UserState>()(
   persist(
     (set, get) => ({
+      name: '',
+      email: '',
       visitDates: [],
       lastVisitDate: null,
       subscriptionStartDate: null,
+      notifications: true,
+
+      setProfile: (name: string, email: string) => {
+        set({ name, email });
+      },
+
+      updateName: (name: string) => {
+        set({ name });
+      },
+
+      updateEmail: (email: string) => {
+        set({ email });
+      },
+
+      setNotifications: (enabled: boolean) => {
+        set({ notifications: enabled });
+      },
 
       setSubscriptionStartDate: (date: string) => {
         set({ subscriptionStartDate: date });
@@ -179,9 +209,12 @@ export const useUserStore = create<UserState>()(
     {
       name: 'user-storage',
       partialize: (state) => ({
+        name: state.name,
+        email: state.email,
         visitDates: state.visitDates,
         lastVisitDate: state.lastVisitDate,
         subscriptionStartDate: state.subscriptionStartDate,
+        notifications: state.notifications,
       }),
     }
   )

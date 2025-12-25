@@ -183,7 +183,7 @@ const DayCell = ({
   return (
     <motion.button
       onClick={onClick}
-      className={`relative aspect-square p-1 rounded-xl transition-all duration-200 ${
+      className={`relative w-full h-full rounded-xl transition-all duration-200 flex flex-col items-center justify-center ${
         isSelected 
           ? 'bg-white/[0.1] ring-1 ring-[#8fb583]/50' 
           : isToday
@@ -196,7 +196,7 @@ const DayCell = ({
       whileTap={{ scale: 0.98 }}
     >
       {/* Date number */}
-      <span className={`text-sm ${
+      <span className={`text-sm leading-none ${
         isToday ? 'text-[#8fb583] font-medium' : 'text-white/60'
       }`}>
         {day.date}
@@ -205,14 +205,14 @@ const DayCell = ({
       {/* Mood indicator */}
       {day.mood && (
         <div 
-          className="absolute top-1 right-1 w-2 h-2 rounded-full"
+          className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full"
           style={{ backgroundColor: moodColors[day.mood] || "#8fb583" }}
         />
       )}
 
       {/* Activity indicators */}
       {hasActivity && (
-        <div className="absolute bottom-1 left-1 right-1 flex items-center justify-center gap-0.5">
+        <div className="flex items-center justify-center gap-0.5 mt-1">
           {day.practices.length > 0 && (
             <div className="w-1 h-1 rounded-full bg-[#8fb583]" />
           )}
@@ -230,6 +230,13 @@ const DayCell = ({
     </motion.button>
   );
 };
+
+// Inactive Day Cell (for prev/next month)
+const InactiveDayCell = ({ date }: { date: number }) => (
+  <div className="relative w-full h-full rounded-xl flex flex-col items-center justify-center">
+    <span className="text-sm leading-none text-white/20">{date}</span>
+  </div>
+);
 
 // Day Detail Panel
 const DayDetail = ({ day, date }: { day: DayData; date: Date }) => (
@@ -452,9 +459,14 @@ export default function CabinetCalendar() {
 
   // Calculate calendar grid
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
-  const adjustedFirstDay = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1; // Monday start
+  const adjustedFirstDay = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1; // Monday start (0-6)
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const daysInPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
+  
+  // Calculate last day of month weekday (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+  const lastDayOfMonth = new Date(currentYear, currentMonth, daysInMonth).getDay();
+  // Days needed to complete the last week (if last day is Sunday, we don't need next month days)
+  const daysToShowNextMonth = lastDayOfMonth === 0 ? 0 : 7 - lastDayOfMonth;
 
   const prevMonth = () => {
     if (currentMonth === 0) {
@@ -563,15 +575,15 @@ export default function CabinetCalendar() {
       </motion.div>
 
       {/* Calendar Grid */}
-      <div className="flex-1 grid grid-cols-1 xl:grid-cols-3 gap-3 min-h-0 overflow-hidden">
+      <div className="flex-1 grid grid-cols-1 xl:grid-cols-3 gap-3 min-h-0">
         {/* Calendar */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="xl:col-span-2 min-h-0"
+          className="xl:col-span-2 min-h-0 flex flex-col"
         >
-          <div className="relative p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] overflow-hidden h-full">
+          <div className="relative p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] flex-1 flex flex-col min-h-0">
             {/* Decorative elements */}
             <div className="absolute -right-16 -top-16 w-48 h-48 opacity-20 pointer-events-none">
               <svg viewBox="0 0 200 200" fill="none" className="w-full h-full">
@@ -581,7 +593,7 @@ export default function CabinetCalendar() {
             </div>
 
             {/* Month Navigation */}
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-3 flex-shrink-0">
               <button
                 onClick={prevMonth}
                 className="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center text-white/40 hover:text-white/70 hover:bg-white/[0.06] transition-all"
@@ -607,26 +619,25 @@ export default function CabinetCalendar() {
             </div>
 
             {/* Day Names */}
-            <div className="grid grid-cols-7 gap-1 mb-2">
+            <div className="grid grid-cols-7 gap-1 mb-2 flex-shrink-0">
               {dayNames.map((day) => (
-                <div key={day} className="text-center py-2">
+                <div key={day} className="text-center py-1">
                   <span className="text-[10px] uppercase tracking-wider text-white/30">{day}</span>
                 </div>
               ))}
             </div>
 
             {/* Calendar Days */}
-            <div className="grid grid-cols-7 gap-1">
-              {/* Previous month days */}
+            <div className="grid grid-cols-7 grid-rows-6 gap-1 flex-1 min-h-0">
+              {/* Previous month days - только в начале месяца, если первый день не понедельник */}
               {Array.from({ length: adjustedFirstDay }).map((_, i) => (
-                <div key={`prev-${i}`} className="aspect-square p-1 flex items-start justify-start">
-                  <span className="text-sm text-white/20">
-                    {daysInPrevMonth - adjustedFirstDay + i + 1}
-                  </span>
-                </div>
+                <InactiveDayCell 
+                  key={`prev-${i}`} 
+                  date={daysInPrevMonth - adjustedFirstDay + i + 1} 
+                />
               ))}
 
-              {/* Current month days */}
+              {/* Current month days - ВСЕ дни от 1 до конца месяца */}
               {currentMonthData.map((day) => (
                 <DayCell
                   key={day.date}
@@ -638,17 +649,15 @@ export default function CabinetCalendar() {
                 />
               ))}
 
-              {/* Next month days */}
-              {Array.from({ length: 42 - adjustedFirstDay - daysInMonth }).map((_, i) => (
-                <div key={`next-${i}`} className="aspect-square p-1 flex items-start justify-start">
-                  <span className="text-sm text-white/20">{i + 1}</span>
-                </div>
+              {/* Next month days - только в конце месяца, если последний день не воскресенье */}
+              {Array.from({ length: daysToShowNextMonth }).map((_, i) => (
+                <InactiveDayCell key={`next-${i}`} date={i + 1} />
               ))}
             </div>
 
             {/* Legend - compact */}
-            <div className="mt-3 pt-2 border-t border-white/[0.06]">
-              <div className="flex flex-wrap items-center justify-center gap-3">
+            <div className="mt-2 pt-2 border-t border-white/[0.06] flex-shrink-0">
+              <div className="flex flex-wrap items-center justify-center gap-2">
                 <div className="flex items-center gap-1">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#8fb583]" />
                   <span className="text-[9px] text-white/40">Практика</span>

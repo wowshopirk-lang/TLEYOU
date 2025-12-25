@@ -39,7 +39,7 @@ export default function PracticeDetail({ practiceId }: { practiceId: string }) {
   const [hasStarted, setHasStarted] = useState(false);
   
   const practice = getPracticeById(practiceId);
-  const { isFavorite, addToFavorites, removeFromFavorites, isPracticeCompletedFully } = usePracticesStore();
+  const { isFavorite, addToFavorites, removeFromFavorites, isPracticeCompletedFully, favoritePractices } = usePracticesStore();
 
   if (!practice) {
     return (
@@ -55,9 +55,13 @@ export default function PracticeDetail({ practiceId }: { practiceId: string }) {
   }
 
   const isCompleted = isPracticeCompletedFully(practice.id);
-  const isFav = isFavorite(practice.id);
+  const isFav = favoritePractices.includes(practice.id);
 
-  const handleToggleFavorite = () => {
+  const handleToggleFavorite = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (isFav) {
       removeFromFavorites(practice.id);
     } else {
@@ -70,7 +74,8 @@ export default function PracticeDetail({ practiceId }: { practiceId: string }) {
   };
 
   const handleComplete = () => {
-    // Practice completed, can navigate back or show completion message
+    // Practice completed, redirect to practices page
+    router.push('/cabinet/practices');
   };
 
   // Render practice component based on type
