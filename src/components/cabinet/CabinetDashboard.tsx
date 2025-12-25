@@ -116,34 +116,34 @@ const baseActions = [
 const ActionIcon = ({ icon, color }: { icon: string; color: string }) => {
   const icons: Record<string, React.ReactNode> = {
     practice: (
-      <svg viewBox="0 0 20 20" fill="none" className="w-full h-full" style={{ color }}>
+      <svg viewBox="0 0 20 20" fill="none" className="w-5 h-5" style={{ color }}>
         <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.5" />
         <path d="M8 7 L13 10 L8 13 Z" fill="currentColor" opacity="0.4" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
       </svg>
     ),
     leaf: (
-      <svg viewBox="0 0 20 20" fill="none" className="w-full h-full" style={{ color }}>
+      <svg viewBox="0 0 20 20" fill="none" className="w-5 h-5" style={{ color }}>
         <path d="M10 3 C6 3, 4 6, 4 9 C4 12, 6 14, 8 15.5 C9 16.5, 10 17, 10 18 C10 17, 11 16.5, 12 15.5 C14 14, 16 12, 16 9 C16 6, 14 3, 10 3" stroke="currentColor" strokeWidth="1.5" fill="none" />
       </svg>
     ),
     chat: (
-      <svg viewBox="0 0 20 20" fill="none" className="w-full h-full" style={{ color }}>
+      <svg viewBox="0 0 20 20" fill="none" className="w-5 h-5" style={{ color }}>
         <path d="M10 3 C5 3, 2 6, 2 9 C2 11, 3 13, 4.5 14 L4 17 L7 15.5 C8 16, 9 16, 10 16 C15 16, 18 13, 18 9 C18 6, 15 3, 10 3" stroke="currentColor" strokeWidth="1.5" fill="none" />
       </svg>
     ),
     heart: (
-      <svg viewBox="0 0 20 20" fill="none" className="w-full h-full" style={{ color }}>
+      <svg viewBox="0 0 20 20" fill="none" className="w-5 h-5" style={{ color }}>
         <path d="M10 17 C10 17, 3 12, 3 7.5 C3 4.5, 6 3, 8 4.5 C9 5.2, 10 6, 10 6 C10 6, 11 5.2, 12 4.5 C14 3, 17 4.5, 17 7.5 C17 12, 10 17, 10 17" stroke="currentColor" strokeWidth="1.5" fill="none" />
       </svg>
     ),
     tests: (
-      <svg viewBox="0 0 20 20" fill="none" className="w-full h-full" style={{ color }}>
+      <svg viewBox="0 0 20 20" fill="none" className="w-5 h-5" style={{ color }}>
         <rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
         <path d="M6 10 L8 12 L14 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
     mood: (
-      <svg viewBox="0 0 20 20" fill="none" className="w-full h-full" style={{ color }}>
+      <svg viewBox="0 0 20 20" fill="none" className="w-5 h-5" style={{ color }}>
         <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.5" />
         <path d="M7 12 C8 13, 9 13.5, 10 13.5 C11 13.5, 12 13, 13 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none" />
         <circle cx="7" cy="8" r="1" fill="currentColor" />
@@ -260,26 +260,26 @@ export default function CabinetDashboard() {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
         transition={{ duration: 0.5 }}
-        className="flex flex-col lg:flex-row items-start gap-4 lg:gap-6 h-full"
+        className="flex flex-col lg:flex-row items-stretch gap-4 lg:gap-6"
       >
-        {/* Left - Card of the Day (выровнена по верхнему краю) */}
+        {/* Left - Card of the Day (одинаковая высота с правым блоком) */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="flex justify-center flex-shrink-0 w-full lg:w-[340px] self-start"
+          className="flex justify-center flex-shrink-0 w-full lg:w-[360px]"
         >
           <div 
-            className="block cursor-pointer w-full"
+            className="block cursor-pointer w-full h-full"
             onClick={handleOpenCard}
           >
-            <div className="group relative">
+            <div className="group relative h-full">
               {/* Ambient glow */}
-              <div className="absolute -inset-8 bg-gradient-radial from-[#b49b78]/15 via-transparent to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-700 rounded-full blur-2xl" />
+              <div className="absolute -inset-6 bg-gradient-radial from-[#b49b78]/15 via-transparent to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-700 rounded-full blur-2xl" />
               
-              {/* Card with flip animation */}
+              {/* Card container - fills parent height */}
               <motion.div 
-                className="relative w-full aspect-[3/4.2] max-w-[340px]"
+                className="relative w-full h-full max-w-[360px]"
                 animate={{ rotateY: isFlipping ? 180 : 0 }}
                 transition={{ duration: 0.6, ease: "easeInOut" }}
                 style={{ transformStyle: "preserve-3d" }}
@@ -328,26 +328,26 @@ export default function CabinetDashboard() {
                   </div>
 
                   {/* Content */}
-                  <div className="relative z-10 h-full flex flex-col items-center justify-center p-8 text-center">
+                  <div className="relative z-10 h-full flex flex-col items-center justify-center p-10 text-center">
                     {todayCardData.isOpened ? (
                       <>
                         {/* Opened card - show question */}
-                        <div className="w-6 h-6 mb-3 text-[#8fb583]">
+                        <div className="w-7 h-7 mb-4 text-[#8fb583]">
                           <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
                             <path d="M5 12 L10 17 L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                           </svg>
                         </div>
-                        <p className="text-[10px] uppercase tracking-[0.25em] text-[#8fb583]/70 mb-4">
+                        <p className="text-xs uppercase tracking-[0.25em] text-[#8fb583]/70 mb-4">
                           Открыта сегодня
                         </p>
-                        <p className="text-lg lg:text-xl text-white/90 leading-relaxed font-light px-2">
+                        <p className="text-xl lg:text-2xl text-white/90 leading-relaxed font-light px-2">
                           {todayCard?.question}
                         </p>
                       </>
                     ) : (
                       <>
                         {/* Not opened - show invitation to open */}
-                        <div className="w-12 h-12 mb-4 opacity-60">
+                        <div className="w-14 h-14 mb-5 opacity-60">
                           <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
                             <rect x="8" y="8" width="28" height="36" rx="3" stroke="#b49b78" strokeWidth="1.5" fill="none" />
                             <rect x="12" y="4" width="28" height="36" rx="3" stroke="#b49b78" strokeWidth="1" opacity="0.3" fill="none" />
@@ -355,13 +355,13 @@ export default function CabinetDashboard() {
                             <path d="M16 26 L24 26" stroke="#b49b78" strokeWidth="1" opacity="0.3" />
                           </svg>
                         </div>
-                        <p className="text-xs uppercase tracking-[0.25em] text-[#b49b78]/70 mb-3">
+                        <p className="text-sm uppercase tracking-[0.25em] text-[#b49b78]/70 mb-3">
                           Карточка дня
                         </p>
-                        <p className="text-sm text-white/50 mb-4">
+                        <p className="text-base text-white/50 mb-4">
                           Нажми, чтобы открыть
                         </p>
-                        <div className="text-[10px] text-white/30">
+                        <div className="text-xs text-white/30">
                           Карточка #{todayCard?.id} из 30
                         </div>
                       </>
@@ -388,7 +388,7 @@ export default function CabinetDashboard() {
         </motion.div>
 
         {/* Right - Personalized Content */}
-        <div className="flex-1 flex flex-col gap-4 w-full self-start">
+        <div className="flex-1 flex flex-col gap-3.5 w-full">
           {/* Статистика открытых карточек */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -396,7 +396,7 @@ export default function CabinetDashboard() {
             transition={{ duration: 0.4, delay: 0.15 }}
           >
             <Link href="/cabinet/cards">
-              <div className="group p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] hover:border-[#b49b78]/20 transition-all cursor-pointer">
+              <div className="group p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] hover:border-[#b49b78]/20 transition-all cursor-pointer">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-[10px] uppercase tracking-widest text-white/30 mb-1">Коллекция</p>
@@ -420,10 +420,10 @@ export default function CabinetDashboard() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.2 }}
-              className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05]"
+              className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.05]"
             >
               <p className="text-sm text-white/60 mb-1">{content.greeting}</p>
-              <p className="text-base lg:text-lg text-white/90 font-light italic">
+              <p className="text-base text-white/90 font-light italic">
                 &ldquo;{content.affirmation}&rdquo;
               </p>
             </motion.div>
@@ -435,14 +435,14 @@ export default function CabinetDashboard() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.3 }}
-              className="grid grid-cols-2 gap-3"
+              className="grid grid-cols-2 gap-2.5"
             >
               {content.practices.map((practice, i) => {
                 const practiceData = getPracticeByMoodAndIndex(currentMood, i);
                 const practiceId = practiceData?.id || "";
                 return (
                   <Link key={i} href={`/cabinet/practices?practice=${practiceId}`}>
-                    <div className="group flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] transition-all duration-300 hover:bg-[#8fb583]/5 hover:border-[#8fb583]/20">
+                    <div className="group flex items-center gap-2.5 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] transition-all duration-300 hover:bg-[#8fb583]/5 hover:border-[#8fb583]/20">
                       <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-[#8fb583]/10 border border-[#8fb583]/20 flex-shrink-0">
                         <ActionIcon icon="practice" color="#8fb583" />
                       </div>
@@ -462,7 +462,7 @@ export default function CabinetDashboard() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.35 }}
-            className="grid grid-cols-2 gap-3"
+            className="grid grid-cols-2 gap-2.5"
           >
             {baseActions.map((action, i) => (
               <Link key={i} href={action.href}>
@@ -470,17 +470,17 @@ export default function CabinetDashboard() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 0.4 + i * 0.05 }}
-                  className="group flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] transition-all duration-300 hover:bg-white/[0.04] hover:border-white/[0.1]"
+                  className="group flex items-center gap-3 p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.05] transition-all duration-300 hover:bg-white/[0.04] hover:border-white/[0.1]"
                 >
                   <div 
-                    className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:scale-110 border"
+                    className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:scale-110 border"
                     style={{ backgroundColor: `${action.color}10`, borderColor: `${action.color}20` }}
                   >
                     <ActionIcon icon={action.icon} color={action.color} />
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm text-white/85 font-light">{action.label}</p>
-                    <p className="text-[9px] text-white/30 uppercase tracking-wider">{action.sub}</p>
+                    <p className="text-[10px] text-white/30 uppercase tracking-wider">{action.sub}</p>
                   </div>
                 </motion.div>
               </Link>
@@ -492,13 +492,14 @@ export default function CabinetDashboard() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.5 }}
+            className="mt-auto"
           >
             {(() => {
               const expertTipOfDay = getTipOfDay();
               if (!expertTipOfDay) return null;
               return (
                 <Link href="/cabinet/experts">
-                  <div className="group p-4 rounded-2xl bg-gradient-to-br from-[#8fb583]/10 to-[#7a9ebb]/10 border border-[#8fb583]/20 hover:border-[#8fb583]/30 transition-all cursor-pointer">
+                  <div className="group p-4 rounded-xl bg-gradient-to-br from-[#8fb583]/10 to-[#7a9ebb]/10 border border-[#8fb583]/20 hover:border-[#8fb583]/30 transition-all cursor-pointer">
                     <div className="flex items-center justify-between">
                       <div className="flex-1 min-w-0">
                         <p className="text-[10px] uppercase tracking-widest text-[#8fb583]/70 mb-1">Совет дня</p>
